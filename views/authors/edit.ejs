@@ -1,0 +1,100 @@
+<!-- views/edit.ejs -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Author Edit Page</title>
+</head>
+<body class="flex flex-col min-h-screen bg-gradient-to-r from-gray-500 to-gray-100 bg-cover">
+        <nav class="flex items-center justify-between bg-blue-900 p-4 w-full">
+            <div class="flex items-center space-x-4">
+            <img src="images/logo.png" class="h-14 w-auto" alt="Logo">
+            </div>
+        <div class="flex space-x-4">
+            <button class="px-4 py-2 bg-gray-700 text-white rounded" onclick="window.location.href='/'">Home</button>
+            <button class="px-4 py-2 bg-gray-700 text-white rounded" onclick="window.location.href='/author/settings'">Settings</button>
+            <button class="px-4 py-2 bg-gray-700 text-white rounded" onclick="window.location.href='/author'">Back</button>
+            <button class="px-4 py-2 bg-red-600 text-white rounded logoutBtn" onclick="window.location.href='/logout'">Logout</button>
+        </div>
+    </nav>
+    
+    <div class="text-white mt-12 px-4 text-center">
+        <h1 class="text-5xl font-semibold leading-normal">Author Edit Page</h1>
+        <div class="flex justify-center items-center space-x-4 text-2xl">
+            <h2><%= blog_title %></h2>
+            <h3>By: <%= author_name %></h3>
+        </div>
+        <br>
+        <% if (article) { %>
+            <div class="text-gray-800">
+                <div class="bg-white rounded-lg shadow-lg p-8 max-w-3xl mx-auto text-left mb-8">
+                    <h3 class="text-3xl font-bold">Edit an article</h3>
+                    <form action="/author/edit/<%= article.id %>" method="post">
+                        <div class="mb-4">
+                            <label for="title" class="block text-gray-700">Title:</label>
+                            <input type="text" id="title" name="title" value="<%= article.title %>" class="mt-2 p-2 w-full border border-gray-300 rounded" required>
+                        </div>
+                        <div class="mb-4">
+                            <label for="content" class="block text-gray-700">Content:</label>
+                            <textarea id="content" name="content" rows="5" class="mt-2 p-2 w-full border border-gray-300 rounded" required><%= article.content %></textarea>
+                        </div>
+                        <div class="mb-4">
+                            <p><strong>Created:</strong> <em><%= article.created_at %></em></p>
+                            <p><strong>Last Modified:</strong> <em><%= article.last_modified %></em></p>
+                        </div>
+                        <div class="mb-4">
+                            <label for="status" class="block text-gray-700">Status:</label>
+                            <select id="status" name="status" class="mt-2 p-2 w-full border border-gray-300 rounded" required>
+                                <option value="draft" <%= article.status === 'draft' ? 'selected' : '' %>>Set as Draft</option>
+                                <option value="published" <%= article.status === 'published' ? 'selected' : '' %>>Publish</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="w-full px-4 py-2 bg-cyan-700 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:bg-indigo-700">Save Changes</button>
+                    </form>
+                </div>
+            </div>
+        <% } else { %>
+            <div class="text-gray-800">
+                <div class="bg-white rounded-lg shadow-lg p-8 max-w-3xl mx-auto text-left mb-8">
+                    <h3 class="text-3xl font-bold">Create a new article</h3>
+                    <form action="/author/edit" method="post">
+                        <div class="mb-4">
+                            <label for="title" class="block text-gray-700">Title:</label>
+                            <input type="text" id="title" name="title" class="mt-2 p-2 w-full border border-gray-300 rounded" required>
+                        </div>
+                        <div class="mb-4">
+                            <label for="content" class="block text-gray-700">Content:</label>
+                            <textarea id="content" name="content" rows="5" class="mt-2 p-2 w-full border border-gray-300 rounded" required></textarea>
+                        </div>
+                        <div class="mb-4">
+                            <label for="status" class="block text-gray-700">Status:</label>
+                            <select id="status" name="status" class="mt-2 p-2 w-full border border-gray-300 rounded" required>
+                                <option value="draft">Set as Draft</option>
+                                <option value="published">Publish</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="w-full px-4 py-2 bg-cyan-700 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:bg-indigo-700">Submit</button>
+                    </form>
+                </div>
+            </div>
+        <% } %>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript">
+        $(".btn").click(function () {
+            alert("Article created");
+        });
+
+        $(".editbtn").click(function () {
+            alert("Article Edited");
+        });
+
+        $(".logoutBtn").click(function () {
+            alert("Logged out");
+        });
+    </script>
+</body>
+</html>
