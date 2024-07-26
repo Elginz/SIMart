@@ -47,6 +47,19 @@ CREATE TABLE IF NOT EXISTS users (
     authorised BOOLEAN DEFAULT False
 );
 
+
+-- new table of users [USE THIS]
+CREATE TABLE IF NOT EXISTS users 
+    user_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    email TEXT NOT NULL,
+    name TEXT NOT NULL,
+    password TEXT NOT NULL,
+    school TEXT NOT NULL, 
+    course TEXT NOT NULL,
+    description TEXT NOT NULL
+);
+
+
 -- default author account
 INSERT INTO users ('email', 'username', 'password', 'authorised')VALUES('author@mail.com', 'author', 'author123', True);
 INSERT INTO users ('email', 'username', 'password', 'authorised')VALUES('user@mail.com', 'user', 'user123', False);
