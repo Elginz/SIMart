@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS articles (
     likes INTEGER DEFAULT 0
 );
 
--- create table for authors, to be edited in Settings 
+-- create table for authors, to be edited in Settings (Remove this. The author name and everuthing to be edited should be in the user table)
 CREATE TABLE IF NOT EXISTS authorSettings (
     author_id INTEGER PRIMARY KEY AUTOINCREMENT,
     blog_title TEXT NOT NULL,
