@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS users (
     authorised BOOLEAN DEFAULT False
 );
 
-
+-- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 -- new table of users [USE THIS]
 CREATE TABLE IF NOT EXISTS users 
     user_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -56,10 +56,50 @@ CREATE TABLE IF NOT EXISTS users
     password TEXT NOT NULL,
     school TEXT NOT NULL, 
     course TEXT NOT NULL,
+    star_rating,
     description TEXT NOT NULL
+    -- option for profile pic 
+);
+
+CREATE TABLE IF NOT EXISTS product (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    -- seller id 
+    user_id, foreign key 
+    product_name TEXT NOT NULL,
+    content_description TEXT,
+    price, values or free
+    category, 
+    transaction_type,
+    condition, 
+    created_at DATETIME NOT NULL,
+    published_at DATETIME,
+    availability BOOLEAN DEFAULT true,
+);
+
+-- Reviews
+CREATE TABLE IF NOT EXISTS reviews (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id TEXT NOT NULL,
+    commentContent TEXT NOT NULL,
+    created_at DATETIME NOT NULL,
+    stars_assigned
+    FOREIGN KEY (article_id) REFERENCES articles(id) ON DELETE CASCADE
+);
+
+-- Favourites
+CREATE TABLE IF NOT EXISTS favourites (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    FOREIGN KEY (user_id) REFERENCES articles(id) ON DELETE CASCADE
+    FOREIGN KEY (product_id) REFERENCES articles(id) ON DELETE CASCADE
 );
 
 
+-- put images here 
+
+
+
+
+-- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 -- default author account
 INSERT INTO users ('email', 'username', 'password', 'authorised')VALUES('author@mail.com', 'author', 'author123', True);
 INSERT INTO users ('email', 'username', 'password', 'authorised')VALUES('user@mail.com', 'user', 'user123', False);
