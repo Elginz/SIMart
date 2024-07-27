@@ -14,10 +14,10 @@ CREATE TABLE IF NOT EXISTS users (
     name TEXT NOT NULL,
     password TEXT NOT NULL,
     -- compile list of schools and add it here
-    school TEXT NOT NULL CHECK(school IN ('University of London', 'University of Wollogong')),
+    school TEXT NOT NULL CHECK(school IN ('University of London', 'University of Wollongong')),
     -- compile list of courses and add it here
     course TEXT NOT NULL CHECK(course IN ('Bsc Computer Science', 'Diploma in Banking & Finance')),
-    stars INTEGER NOT NULL CHECK(stars IN (1, 2, 3, 4, 5)),
+    stars INTEGER NOT NULL CHECK(stars IN (0, 1, 2, 3, 4, 5)),
     description TEXT NOT NULL
     -- profile pic?
 );
@@ -101,10 +101,10 @@ CREATE TABLE IF NOT EXISTS comments (
 -- CREATING AND INSERTING DATA. THESE ARE THE OLD DATA TO BE ADDED IN 
 -- default author account
 INSERT INTO users (email, name, password, school, course, stars, description) 
-VALUES ('author@mail.com', 'author', 'author123', 'University of London', 'Bsc Computer Science', 5, 'Author of this blog');
+VALUES ('sean@mail.com', 'sean', '123', 'University of London', 'Bsc Computer Science', 5, 'Professor of this site');
 
 INSERT INTO users (email, name, password, school, course, stars, description) 
-VALUES ('user@mail.com', 'user', 'user123', 'University of London', 'Bsc Computer Science', 5, 'User of this blog');
+VALUES ('matthew@mail.com', 'matthew', '123', 'University of London', 'Bsc Computer Science', 5, 'User of this site');
 
 -- Setting up default data for articles function
 INSERT INTO articles (title, content, status, created_at, last_modified, published_at, reads, likes) 
