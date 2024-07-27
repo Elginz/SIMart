@@ -27,7 +27,7 @@ app.use(session({
     resave: false,
     store: new SQLiteStore,
     cookie:{
-        maxAge: 10000 * 60  //set for 1 minute
+        maxAge: 10000 * 60 * 10  //set for 10 minutes
     }
 }));
 
@@ -48,6 +48,9 @@ app.use('/', indexRoute);
 
 //Home page to login/register
 app.get("/", (req, res) => {
+    if (!req.session.isAuthenticated) {
+        return res.redirect('/login');
+    }
     res.render("index.ejs", {
         user: req.session.user
     });
@@ -72,23 +75,25 @@ app.get("/logout", (req, res) => {
 
 //Handle login
 app.post("/login", (req, res) => {
-    const { username, password } = req.body;
-    const query = "SELECT * FROM users WHERE username = ? AND password = ?";
-    global.db.get(query, [username, password], function (err, user) {
+    const { email, password } = req.body; // Use 'email' instead of 'name'
+
+    const query = "SELECT * FROM users WHERE email = ? AND password = ?"; // Updated query
+
+    console.log('Executing query:', query, 'with parameters:', [email, password]);
+
+    global.db.get(query, [email, password], function (err, user) {
         if (err) {
+            console.error('Error executing query:', err);
             return res.status(500).send(err.message);
         }
-        if (user){
+        if (user) {
             req.session.user = user;
-            //User has been authenticated
             req.session.isAuthenticated = true;
             res.redirect('/');
+        } else {
+            res.render('login.ejs', { error: 'Incorrect email or password.' }); // Updated error message
         }
-        else {
-            // Incorrect username or password
-            res.render('login.ejs', { error: 'Incorrect username or password.' });
-        }
-        });
+    });
 });
 
 // Display Register page
@@ -96,19 +101,37 @@ app.get("/register", (req, res) => {
         res.render("register.ejs");
 });
 
+
 // Handle registration
 app.post("/register", (req, res) => {
-    const { username, password, email } = req.body;
-    const Userquery = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
-    global.db.run(Userquery, [username, password, email], function (err) {
+    const { name, password, email, school, course, description } = req.body;
+    // Back end email validation
+    const emailDomain = '@mymail.sim.edu.sg';
+    if (!email.endsWith(emailDomain)) {
+        return res.render("register.ejs", { error: 'Please use a SIM email address with ' + emailDomain });
+    }
+    // Check if email already exists
+    const checkEmailQuery = "SELECT * FROM users WHERE email = ?";
+    global.db.get(checkEmailQuery, [email], function (err, row) {
         if (err) {
             return res.status(500).send(err.message);
         }
-            res.redirect('/login');
-        });
-});
+        if (row) {
+            return res.render("register.ejs", { error: 'Email is already in use.' });
+        } else {
+            // If email is not in use
+            const Userquery = "INSERT INTO users (name, password, email, school, course, description, stars) VALUES (?, ?, ?, ?, ?, ?, 0)";
+            global.db.run(Userquery, [name, password, email, school, course, description], function (err) {
+                if (err) {
+                    return res.status(500).send(err.message);
+                }
+                res.redirect('/login');
+            });
+    }})});
+
 
 // Make the web application listen for HTTP requests
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)
 })
+
