@@ -18,9 +18,11 @@
                 <h1 class="text-3xl font-bold leading-normal">Login to SMart</h1>
             </div>
             <% if (typeof error !== 'undefined') { %>
-                <p class="text-red-500"><%= error %></p>
+                <div class ="text-center mb-4">
+                    <p class="text-red-500 font-bold"><%= error %></p>
+                </div>
             <% } %>
-            <form action="/login" method="POST" class="space-y-4">
+        <form action="/login" method="POST" class="space-y-4">
                 <div>
                     <label for="email" class="block mb-2">SIM Email Address</label>
                     <input type="email" id="email" name="email" placeholder="Enter your SIM email" required class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-black">
@@ -31,11 +33,13 @@
                     <input type="password" id="password" name="password" placeholder="Enter your password" required class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-black">
                 </div>
                 <div>
-                    <button type="submit" class="w-full px-4 py-2 bg-red-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:bg-indigo-700">Log in</button>
+                    <button type="submit" class="w-full px-4 py-2 bg-red-600 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:bg-indigo-700">Log in</button>
                 </div>
             </form>
 
+            <div class="text-center mt-8">
             <p class="mt-4 text-gray-600">New to SMart?<a href="/register" class="text-indigo-500 hover:underline"> Sign Up</a></p>
+            </div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
