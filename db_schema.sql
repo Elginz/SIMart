@@ -8,7 +8,7 @@ BEGIN TRANSACTION;
 -- THESE ARE THE NEW TABLES USED
 
 -- Users Table
-CREATE TABLE IF NOT EXISTS users(
+CREATE TABLE IF NOT EXISTS users (
     user_id INTEGER PRIMARY KEY AUTOINCREMENT,
     email TEXT NOT NULL,
     name TEXT NOT NULL,
@@ -35,7 +35,6 @@ CREATE TABLE IF NOT EXISTS product (
     created_at DATETIME NOT NULL,
     availability BOOLEAN DEFAULT true,
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
-
 );
 
 -- Reviews Table 
@@ -59,8 +58,6 @@ CREATE TABLE IF NOT EXISTS favourites (
 
 
 -- put images here 
-
-
 
 
 -- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -99,46 +96,26 @@ CREATE TABLE IF NOT EXISTS comments (
     FOREIGN KEY (article_id) REFERENCES articles(id) ON DELETE CASCADE
 );
 
--- Create table of users, with authorisations or not
-CREATE TABLE IF NOT EXISTS users (
-    user_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    email TEXT NOT NULL,
-    username TEXT NOT NULL,
-    password TEXT NOT NULL,
-    authorised BOOLEAN DEFAULT False
-);
-
 
 -- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 -- CREATING AND INSERTING DATA. THESE ARE THE OLD DATA TO BE ADDED IN 
-
 -- default author account
-INSERT INTO users ('email', 'username', 'password', 'authorised')VALUES('author@mail.com', 'author', 'author123', True);
-INSERT INTO users ('email', 'username', 'password', 'authorised')VALUES('user@mail.com', 'user', 'user123', False);
+INSERT INTO users (email, name, password, school, course, stars, description) 
+VALUES ('author@mail.com', 'author', 'author123', 'University of London', 'Bsc Computer Science', 5, 'Author of this blog');
 
+INSERT INTO users (email, name, password, school, course, stars, description) 
+VALUES ('user@mail.com', 'user', 'user123', 'University of London', 'Bsc Computer Science', 5, 'User of this blog');
 
 -- Setting up default data for articles function
 INSERT INTO articles (title, content, status, created_at, last_modified, published_at, reads, likes) 
 VALUES ('First Published Article', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris semper erat at sollicitudin rutrum. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Interdum et malesuada fames ac ante ipsum primis in faucibus. Duis in luctus massa, sit amet aliquam quam. Suspendisse ut sollicitudin tortor. Aenean suscipit convallis neque, sit amet venenatis risus consectetur et. Nam nec egestas purus. Vivamus ac accumsan libero. Integer posuere nibh a massa viverra euismod.
-
 ', 'published', datetime('now', '-10 days'), datetime('now', '-5 days'), datetime('now', '-9 days'), 150, 10);
-
-INSERT INTO articles (title, content, status, created_at, last_modified, published_at, reads, likes) 
-VALUES ('Second Published Article', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris semper erat at sollicitudin rutrum. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Interdum et malesuada fames ac ante ipsum primis in faucibus. Duis in luctus massa, sit amet aliquam quam. Suspendisse ut sollicitudin tortor. Aenean suscipit convallis neque, sit amet venenatis risus consectetur et. Nam nec egestas purus. Vivamus ac accumsan libero. Integer posuere nibh a massa viverra euismod.
-
-', 'published', datetime('now', '-7 days'), datetime('now', '-3 days'), datetime('now', '-6 days'), 250, 20);
 
 INSERT INTO articles (title, content, status, created_at, last_modified, published_at, reads, likes) 
 VALUES ('First draft Article', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris semper erat at sollicitudin rutrum. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Interdum et malesuada fames ac ante ipsum primis in faucibus. Duis in luctus massa, sit amet aliquam quam. Suspendisse ut sollicitudin tortor. Aenean suscipit convallis neque, sit amet venenatis risus consectetur et. Nam nec egestas purus. Vivamus ac accumsan libero. Integer posuere nibh a massa viverra euismod.
 
 ', 'draft', datetime('now', '-5 days'), datetime('now', '-5 days'), datetime('now', '-9 days'), 150, 10);
 
-INSERT INTO articles (title, content, status, created_at, last_modified, published_at, reads, likes) 
-VALUES ('Second draft Article', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris semper erat at sollicitudin rutrum. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Interdum et malesuada fames ac ante ipsum primis in faucibus. Duis in luctus massa, sit amet aliquam quam. Suspendisse ut sollicitudin tortor. Aenean suscipit convallis neque, sit amet venenatis risus consectetur et. Nam nec egestas purus. Vivamus ac accumsan libero. Integer posuere nibh a massa viverra euismod.
-
-', 'draft', datetime('now', '-3 days'), datetime('now', '-3 days'), datetime('now', '-6 days'), 250, 20);
-
 
 
 COMMIT;
-
