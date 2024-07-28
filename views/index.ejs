@@ -11,17 +11,15 @@
     <style>
         .carousel{
             position: relative; /* Relative positioning */
-            /* width: 90%;
-            height: 0; */
-            /* padding-top: 37.5%;  */
-            /* Aspect ratio 8:3 */
             overflow: hidden;
-
         }
         .swiper-container {
-            height: 15%;
+            height: 10%;
             width: 90%;
             overflow: hidden; /* Hide overflow */
+        }
+        .swiper-wrapper{
+            aspect-ratio: 8/3;
         }
         /* Adjusting styles for nav buttons */
         .swiper-button-next,
@@ -30,6 +28,14 @@
             position: absolute;
             transform: translateY(-50%);
         }
+        /* .swiper-button-next {
+            image: url('https://img.icons8.com/?size=100&id=100715&format=png&color=000000'); 
+        }
+
+        .swiper-button-prev {
+            image: url('https://img.icons8.com/?size=100&id=100697&format=png&color=000000'); 
+        } */
+
         .swiper-pagination {
             position: relative; /* Relative positioning */
             margin-top: 2%; /* Adjust margin as needed */
@@ -42,6 +48,7 @@
 </head>
 <body>
     <div class="flex flex-col min-h-screen bg-amber-50 bg-cover">
+        <!-- Navigation bar -->
         <nav class="flex items-center justify-between p-3 w-full" style="background-color: #041562;">
             <div class="flex items-center space-x-4">
                 <img src="/images/logo.png" class="h-14 w-auto" alt="Logo"> 
@@ -59,6 +66,7 @@
                 <button class="px-4 py-2 text-white rounded w-20" onclick="window.location.href='/listProduct'" style="background-color: #DA1212">List</button> 
             </div>
         </nav>
+        <!-- End of Navigation bar -->
 
         <!-- Carousell  -->
         <div class = "flex justify-center mt-6 carousel">
@@ -82,7 +90,7 @@
             </div>
         </div>
         <!-- End of Carousell -->
-
+        <br>
         <!-- Categories -->
         <h1 class="text-2xl md:text-3xl leading-normal mb-4 ml-10">Categories</h1>
         <div class="flex overflow-x-auto space-x-2 p-4 justify-center">
