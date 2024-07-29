@@ -52,13 +52,19 @@ CREATE TABLE IF NOT EXISTS favourites (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL,
     product_id INTEGER NOT NULL,
+    photo BLOB NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
     FOREIGN KEY (product_id) REFERENCES product(id) ON DELETE CASCADE
 );
 
-
 -- put images here 
-
+CREATE TABLE IF NOT EXISTS images (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    product_id INTEGER NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES product(id) ON DELETE CASCADE
+);
 
 -- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 -- THESE ARE THE [OLD TABLES] THAT ARE CURRENTLY USED IN THE EJS AND JS FILES. 
@@ -106,16 +112,10 @@ VALUES ('sean@mail.com', 'sean', '123', 'University of London', 'Bsc Computer Sc
 INSERT INTO users (email, name, password, school, course, stars, description) 
 VALUES ('matthew@mail.com', 'matthew', '123', 'University of London', 'Bsc Computer Science', 5, 'User of this site');
 
--- Setting up default data for articles function
-INSERT INTO articles (title, content, status, created_at, last_modified, published_at, reads, likes) 
-VALUES ('First Published Article', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris semper erat at sollicitudin rutrum. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Interdum et malesuada fames ac ante ipsum primis in faucibus. Duis in luctus massa, sit amet aliquam quam. Suspendisse ut sollicitudin tortor. Aenean suscipit convallis neque, sit amet venenatis risus consectetur et. Nam nec egestas purus. Vivamus ac accumsan libero. Integer posuere nibh a massa viverra euismod.
-', 'published', datetime('now', '-10 days'), datetime('now', '-5 days'), datetime('now', '-9 days'), 150, 10);
-
-INSERT INTO articles (title, content, status, created_at, last_modified, published_at, reads, likes) 
-VALUES ('First draft Article', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris semper erat at sollicitudin rutrum. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Interdum et malesuada fames ac ante ipsum primis in faucibus. Duis in luctus massa, sit amet aliquam quam. Suspendisse ut sollicitudin tortor. Aenean suscipit convallis neque, sit amet venenatis risus consectetur et. Nam nec egestas purus. Vivamus ac accumsan libero. Integer posuere nibh a massa viverra euismod.
-
-', 'draft', datetime('now', '-5 days'), datetime('now', '-5 days'), datetime('now', '-9 days'), 150, 10);
-
-
+-- default listings
+SELECT user_id FROM users WHERE email = 'sean@mail.com';
+INSERT INTO product (user_id, product_name, content_description, price, category, transaction_type, condition, created_at, availability) 
+VALUES ((SELECT user_id FROM users WHERE email = 'sean@mail.com'), 'Headphones', 'Used once over my headscarf, so dont have to worry about hygine. Figured i didnt need it actualy hence selling comes with original full box and its accessories warranty not activated, Model is on photo, so you can google its functions on your end. Bought at $149, my loss your gain', 
+        '120', 'Electronics', 'Sell', 'Lighly used', '2021-11-11 11:11:11', true);
 
 COMMIT;
