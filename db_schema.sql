@@ -41,6 +41,7 @@ CREATE TABLE IF NOT EXISTS product (
 CREATE TABLE IF NOT EXISTS reviews (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL,
+    commenterName  TEXT NOT NULL,
     commentContent TEXT NOT NULL,
     created_at DATETIME NOT NULL,
     stars_given INTEGER NOT NULL CHECK(stars_given IN (1, 2, 3, 4, 5)),
