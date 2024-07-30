@@ -114,9 +114,10 @@ INSERT INTO users (email, name, password, school, course, stars, description)
 VALUES ('matthew@mail.com', 'matthew', '123', 'University of London', 'Bsc Computer Science', 5, 'User of this site');
 
 -- default listings
-SELECT user_id FROM users WHERE email = 'sean@mail.com';
-INSERT INTO product (user_id, product_name, content_description, price, category, transaction_type, condition, created_at, availability) 
-VALUES ((SELECT user_id FROM users WHERE email = 'sean@mail.com'), 'Headphones', 'Used once over my headscarf, so dont have to worry about hygine. Figured i didnt need it actualy hence selling comes with original full box and its accessories warranty not activated, Model is on photo, so you can google its functions on your end. Bought at $149, my loss your gain', 
-        '120', 'Electronics', 'Sell', 'Lighly used', '2021-11-11 11:11:11', true);
+-- SELECT user_id FROM users WHERE email = 'sean@mail.com';
+-- INSERT INTO product (user_id, product_name, content_description, price, category, transaction_type, condition, created_at, availability) 
+-- VALUES ((SELECT user_id FROM users WHERE email = 'sean@mail.com'), 'Headphones', 'Used once over my headscarf, so dont have to worry about hygine. Figured i didnt need it actualy hence selling comes with original full box and its accessories warranty not activated, Model is on photo, so you can google its functions on your end. Bought at $149, my loss your gain', 
+--         '120', 'Electronics', 'Sell', 'Lighly used', '2021-11-11 11:11:11', true);
 
 COMMIT;
+
