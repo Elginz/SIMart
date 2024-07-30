@@ -44,7 +44,7 @@ global.db = new sqlite3.Database('./database.db',function(err){
 }); 
 
 //Routes set up
-app.use('/', indexRoute);
+// app.use('/', indexRoute);
 
 //Home page to login/register
 app.get("/", (req, res) => {
@@ -101,7 +101,6 @@ app.get("/register", (req, res) => {
         res.render("register.ejs");
 });
 
-
 // Handle registration
 app.post("/register", (req, res) => {
     const { name, password, email, school, course, description } = req.body;
@@ -128,6 +127,44 @@ app.post("/register", (req, res) => {
                 res.redirect('/login');
             });
     }})});
+
+// Display profile page
+app.get('/profile', (req, res) => {;
+    if (!req.session.isAuthenticated) {
+        return res.redirect('/login');
+    }
+    const email = req.session.user.email;
+
+    const userQuery = "SELECT * FROM users WHERE email = ?";
+        
+    global.db.get(userQuery, [email], (err, user) => {
+        if (err) {
+            return res.status(500).send(err.message);
+        } else {
+            const listingsQuery = "SELECT * FROM product WHERE user_id = ?";
+            global.db.all(listingsQuery, [user.user_id], (err, listings) => {
+                if (err) {
+                    return res.status(500).send(err.message);
+                } else {
+                    const reviewsQuery = "SELECT * FROM reviews WHERE user_id = ?";
+                    global.db.all(reviewsQuery, [user.user_id], (err, reviews) => {
+                        if (err) {
+                            return res.status(500).send(err.message);
+                        } else {
+                            res.render("profile.ejs", {
+                                user: user,
+                                listings: listings,
+                                reviews: reviews
+                            });
+                        }
+                    });
+                }
+            });
+        }
+    });
+});
+
+app.use('/', indexRoute);
 
 
 // Make the web application listen for HTTP requests
