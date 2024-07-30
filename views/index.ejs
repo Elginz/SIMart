@@ -185,6 +185,32 @@
             },
         });
 
+        function changeTextColor(id) {
+            const elements = document.querySelectorAll('.cursor-pointer');
+            elements.forEach(el => {
+                el.classList.remove('red');
+                el.classList.remove('underline');
+                el.classList.add('text-black');
+            });
+            document.getElementById(id).classList.remove('text-black');
+            document.getElementById(id).classList.add('red');
+            document.getElementById(id).classList.add('underline');
+    
+            if(id == "listings") {
+                document.getElementById("listingsContent").classList.remove('hidden');
+                document.getElementById("reviewsContent").classList.add('hidden');
+                document.getElementById("favoritesContent").classList.add('hidden');
+            } else if(id == "reviews") {
+                document.getElementById("reviewsContent").classList.remove('hidden');
+                document.getElementById("listingsContent").classList.add('hidden');
+                document.getElementById("favoritesContent").classList.add('hidden');
+            } else if (id == "favorites") {
+                document.getElementById("favoritesContent").classList.remove('hidden');
+                document.getElementById("reviewsContent").classList.add('hidden');
+                document.getElementById("listingsContent").classList.add('hidden');
+            }
+        }
+
     </script>
     
 </body>
