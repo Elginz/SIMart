@@ -97,13 +97,24 @@ app.post("/login", (req, res) => {
 });
 
 // Display Register page
+// app.get("/register", (req, res) => {
+//         res.render("register.ejs");
+// });
+
 app.get("/register", (req, res) => {
-        res.render("register.ejs");
+    const query = "SELECT course_name FROM courses";
+    global.db.all(query, [], (err, rows) => {
+        if (err) {
+            return res.status(500).send(err.message);
+        }
+        res.render("register.ejs", { courses: rows });
+    });
 });
+
 
 // Handle registration
 app.post("/register", (req, res) => {
-    const { name, password, email, school, course, description } = req.body;
+    const { name, password, email, course, description } = req.body;
     // Back end email validation
     const emailDomain = '@mymail.sim.edu.sg';
     if (!email.endsWith(emailDomain)) {
@@ -119,8 +130,8 @@ app.post("/register", (req, res) => {
             return res.render("register.ejs", { error: 'Email is already in use.' });
         } else {
             // If email is not in use
-            const Userquery = "INSERT INTO users (name, password, email, school, course, description, stars) VALUES (?, ?, ?, ?, ?, ?, 0)";
-            global.db.run(Userquery, [name, password, email, school, course, description], function (err) {
+            const Userquery = "INSERT INTO users (name, password, email, course, description, rating) VALUES (?, ?, ?, ?, ?, 0)";
+            global.db.run(Userquery, [name, password, email, course, description], function (err) {
                 if (err) {
                     return res.status(500).send(err.message);
                 }
@@ -134,4 +145,3 @@ app.use('/', indexRoute);
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)
 })
-
