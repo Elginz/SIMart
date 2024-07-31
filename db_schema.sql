@@ -7,18 +7,21 @@ BEGIN TRANSACTION;
 -- ////////////////////////////////////////////////////////
 -- THESE ARE THE NEW TABLES USED
 
+-- Courses Table
+CREATE TABLE IF NOT EXISTS courses (
+    course_name TEXT PRIMARY KEY
+);
+
 -- Users Table
 CREATE TABLE IF NOT EXISTS users (
     user_id INTEGER PRIMARY KEY AUTOINCREMENT,
     email TEXT NOT NULL,
     name TEXT NOT NULL,
     password TEXT NOT NULL,
-    -- compile list of schools and add it here
-    school TEXT NOT NULL CHECK(school IN ('University of London', 'University of Wollongong')),
-    -- compile list of courses and add it here
-    course TEXT NOT NULL CHECK(course IN ('Bsc Computer Science', 'Diploma in Banking & Finance')),
-    stars INTEGER NOT NULL CHECK(stars IN (0, 1, 2, 3, 4, 5)),
-    description TEXT NOT NULL
+    course TEXT NOT NULL,
+    rating INTEGER NOT NULL CHECK(rating IN (0, 1, 2, 3, 4, 5)),
+    description TEXT NOT NULL,
+    FOREIGN KEY (course) REFERENCES courses(course_name) ON DELETE RESTRICT
     -- profile pic?
 );
 
@@ -30,7 +33,7 @@ CREATE TABLE IF NOT EXISTS product (
     content_description TEXT,
     price FLOAT NOT NULL,
     category TEXT NOT NULL CHECK(category IN ('Fashion', 'Electronics', 'Lifestyle', 'Recreation', 'Collectibles', 'Resources', 'Others')),
-    transaction_type TEXT NOT NULL CHECK(transaction_type IN ('Trade', 'Sell', 'Free')),
+    transaction_type TEXT NOT NULL CHECK(transaction_type IN ('Trade', 'Sell', 'Free', 'Free, Trade', 'Sell, Trade')),
     condition TEXT NOT NULL CHECK(condition IN ('Brand new', 'Like new', 'Lightly used', 'Moderately used', 'Heavily used')),
     created_at DATETIME NOT NULL,
     availability BOOLEAN DEFAULT true,
@@ -53,7 +56,7 @@ CREATE TABLE IF NOT EXISTS favourites (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL,
     product_id INTEGER NOT NULL,
-    photo BLOB NOT NULL,
+    photo BLOB,
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
     FOREIGN KEY (product_id) REFERENCES product(id) ON DELETE CASCADE
 );
@@ -106,12 +109,16 @@ CREATE TABLE IF NOT EXISTS comments (
 
 -- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 -- CREATING AND INSERTING DATA. THESE ARE THE OLD DATA TO BE ADDED IN 
--- default author account
-INSERT INTO users (email, name, password, school, course, stars, description) 
-VALUES ('sean@mail.com', 'sean', '123', 'University of London', 'Bsc Computer Science', 5, 'Professor of this site');
 
-INSERT INTO users (email, name, password, school, course, stars, description) 
-VALUES ('matthew@mail.com', 'matthew', '123', 'University of London', 'Bsc Computer Science', 5, 'User of this site');
+INSERT INTO courses (course_name) VALUES ('University of London, Bsc Computer Science');
+INSERT INTO courses (course_name) VALUES ('University of Wollongong, Diploma in Banking & Finance');
+
+-- default author account
+INSERT INTO users (email, name, password, course, rating, description) 
+VALUES ('sean@mail.com', 'sean', '123', 'University of London, Bsc Computer Science', 5, 'Professor of this site');
+
+INSERT INTO users (email, name, password, course, rating, description) 
+VALUES ('matthew@mail.com', 'matthew', '123', 'University of Wollongong, Diploma in Banking & Finance', 5, 'User of this site');
 
 -- default listings
 SELECT user_id FROM users WHERE email = 'sean@mail.com';
