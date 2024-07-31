@@ -31,22 +31,14 @@
                         <input type="text" id="name" name="name" placeholder="What's Your Name?" required class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-black">
                     </div>
                     <div>
-                        <label for="school" class="block mb-2">School</label>
-                        <select id="school" name="school" required class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-black">
-                            <option value="" disabled selected>Select your school</option>
-                            <!-- remember to update the database after adding options -->
-                            <option value="University of London">University of London</option>
-                            <option value="University of Wollongong">University of Wollongong</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="course" class="block mb-2">Course</label>
+                        <label for="school" class="block mb-2">Course</label>
                         <select id="course" name="course" required class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-black">
                             <option value="" disabled selected>Select your course</option>
-                            <!-- remember to update the database after adding options -->
-                            <option value="Bsc Computer Science">Bsc Computer Science</option>
-                            <option value="Diploma in Banking & Finance">Diploma in Banking & Finance</option>
+                            <% courses.forEach(course => { %>
+                                <option value="<%= course.course_name %>"><%= course.course_name %></option>
+                            <% }) %>
                         </select>
+        
                     </div>
                     <div>
                         <label for="description" class="block mb-2">Describe Yourself</label>
