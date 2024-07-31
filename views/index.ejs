@@ -51,7 +51,9 @@
         <!-- Navigation bar -->
         <nav class="flex items-center justify-between p-3 w-full" style="background-color: #041562;">
             <div class="flex items-center space-x-4">
-                <img src="/images/logo.png" class="h-14 w-auto" alt="Logo"> 
+                <a href="/">
+                    <img src="/images/logo.png" class="h-14 w-auto" alt="Logo">
+                </a>
             </div>
             <div class="flex items-center justify-center space-x-4">
                 <a href="/fashion" class="p-4 text-white text-xl">Fashion</a>
@@ -61,8 +63,8 @@
                 <a href="/collectibles" class="p-4 text-white text-xl">Collectibles</a>
                 <a href="/resources" class="p-4 text-white text-xl">Resources</a>
                 <a href="/others" class="pl-4 pr-3 py-4 text-white text-xl">Others</a>
-                <a href="/profile" class="py-3"><img src="https://img.icons8.com/?size=100&id=85050&format=png&color=FFFFFF" alt="Profile Icon" class="h-10 w-10"></a>
-                <a class="py-3" onclick="changeTextColor('favorites')"><img src="https://img.icons8.com/?size=100&id=85038&format=png&color=FFFFFF" alt="Favorites Icon" class="h-10 w-10"></a>
+                <a href="/profile?section=listings" class="py-3"><img src="https://img.icons8.com/?size=100&id=85050&format=png&color=FFFFFF" alt="Profile Icon" class="h-10 w-10"></a>
+                <a href="/profile?section=favourites" class="py-3"><img src="https://img.icons8.com/?size=100&id=85038&format=png&color=FFFFFF" alt="Favourites Icon" class="h-10 w-10"></a>
                 <button class="px-4 py-2 mr-5 w-20 text-white rounded" onclick="window.location.href='/listProduct'" style="background-color: #DA1212">List</button> 
             </div>
         </nav>
@@ -185,29 +187,44 @@
             },
         });
 
-        function changeTextColor(id) {
+        //Javascript for the favourites icon
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const section = urlParams.get('section') || 'listings'; // Default to 'listings' if no section is specified
+            switchSection(section);
+        });
+
+        function switchSection(id) {
             const elements = document.querySelectorAll('.cursor-pointer');
             elements.forEach(el => {
-                el.classList.remove('red');
-                el.classList.remove('underline');
+                el.classList.remove('red', 'underline');
                 el.classList.add('text-black');
             });
-            document.getElementById(id).classList.remove('text-black');
-            document.getElementById(id).classList.add('red');
-            document.getElementById(id).classList.add('underline');
-    
-            if(id == "listings") {
-                document.getElementById("listingsContent").classList.remove('hidden');
-                document.getElementById("reviewsContent").classList.add('hidden');
-                document.getElementById("favoritesContent").classList.add('hidden');
-            } else if(id == "reviews") {
-                document.getElementById("reviewsContent").classList.remove('hidden');
-                document.getElementById("listingsContent").classList.add('hidden');
-                document.getElementById("favoritesContent").classList.add('hidden');
-            } else if (id == "favorites") {
-                document.getElementById("favoritesContent").classList.remove('hidden');
-                document.getElementById("reviewsContent").classList.add('hidden');
-                document.getElementById("listingsContent").classList.add('hidden');
+
+            const selectedElement = document.getElementById(id);
+            selectedElement.classList.remove('text-black');
+            selectedElement.classList.add('red', 'underline');
+
+            const sections = {
+                listings: "listings-section",
+                reviews: "reviews-section",
+                favourites: "favourites-section"
+            };
+
+            for (const section in sections) {
+                document.getElementById(sections[section]).classList.add('hidden');
+            }
+
+            switch(id) {
+                case 'listings':
+                    document.getElementById(sections.listings).classList.remove('hidden');
+                    break;
+                case 'reviews':
+                    document.getElementById(sections.reviews).classList.remove('hidden');
+                    break;
+                case 'favourites':
+                    document.getElementById(sections.favourites).classList.remove('hidden');
+                    break;
             }
         }
 
