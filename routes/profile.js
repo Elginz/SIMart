@@ -20,7 +20,11 @@ router.get('/', (req, res) => {;
     global.db.get(userQuery, [email], (err, user) => {
         if (err) {
             return res.status(500).send(err.message);
-        } else {
+        } 
+        if (!user) {
+            return res.status(404).send("User not found");
+        }
+        else {
              // Query to get all courses from the database
             const schoolsQuery = "SELECT * FROM courses";
             global.db.all(schoolsQuery, [], (err, schools) => {
