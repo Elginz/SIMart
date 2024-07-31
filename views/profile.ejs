@@ -1,18 +1,46 @@
-<!-- views/author.ejs -->
+<!-- views/profile.ejs -->
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="/main.css" rel="stylesheet">
-    <title>Profiles</title>
+    <title>Profile Page</title>
+    <style>
+        input,
+        #name-display{ text-transform: capitalize; }
+        
+        /* color */
+        .red {
+            color: #DA1212;
+        }
+
+        /* For edit icon */
+        .edit-container {
+            position: relative;
+        }
+
+        #name-edit,
+        #course-edit,
+        #description-edit {
+            visibility: hidden;
+        }
+
+        .edit-container:hover #name-edit,
+        .edit-container:hover #course-edit,
+        .edit-container:hover #description-edit {
+            visibility: visible;
+        }
+      </style>
 </head>
 <body>
 <div class="flex flex-col min-h-screen bg-amber-50 bg-cover">
+    <!-- Navigation bar -->
     <nav class="flex items-center justify-between p-3 w-full" style="background-color: #041562;">
         <div class="flex items-center space-x-4">
-            <img src="/images/logo.png" class="h-14 w-auto" alt="Logo"> 
+            <a href="/">
+                <img src="/images/logo.png" class="h-14 w-auto" alt="Logo">
+            </a>
         </div>
         <div class="flex items-center justify-center space-x-4">
             <a href="/fashion" class="p-4 text-white text-xl">Fashion</a>
@@ -22,69 +50,110 @@
             <a href="/collectibles" class="p-4 text-white text-xl">Collectibles</a>
             <a href="/resources" class="p-4 text-white text-xl">Resources</a>
             <a href="/others" class="pl-4 pr-3 py-4 text-white text-xl">Others</a>
-            <a href="/profile" class="py-3"><img src="https://img.icons8.com/?size=100&id=85050&format=png&color=FFFFFF" alt="Profile Icon" class="h-10 w-10"></a>
-            <a class="py-3" onclick="changeTextColor('favorites')"><img src="https://img.icons8.com/?size=100&id=85038&format=png&color=FFFFFF" alt="Favorites Icon" class="h-10 w-10"></a>
-            <button class="px-4 py-2 mr-5 text-white rounded w-20" onclick="window.location.href='/product'" style="background-color: #DA1212">List</button> 
+            <a href="/profile?section=listings" class="py-3"><img src="https://img.icons8.com/?size=100&id=85050&format=png&color=FFFFFF" alt="Profile Icon" class="h-10 w-10"></a>
+            <a href="/profile?section=favourites" class="py-3"><img src="https://img.icons8.com/?size=100&id=85038&format=png&color=FFFFFF" alt="Favourites Icon" class="h-10 w-10"></a>
+            <button class="px-4 py-2 mr-5 w-20 text-white rounded" onclick="window.location.href='/listProduct'" style="background-color: #DA1212">List</button> 
         </div>
     </nav>
+    <!-- End of Navigation bar -->
 
+    <!-- User's profile -->
     <div class="flex p-10 w-full">
-        <div class="flex items-center justify-end w-1/2 pr-52 py-4">
+        <!-- Profile picture -->
+        <div class="flex justify-center w-[45%] py-4">
             <img src="/images/chihiro.jpeg" alt="Profile Picture" class="w-80 h-80 object-cover rounded-full">
         </div>
-        <div class="space-y-2 pr-20 py-4">
-            <div class="flex edit-container">
-                <div class="font-bold text-5xl">
-                    <p id="name"><%= user.name %></p>
+        <!-- Profile information -->
+        <div class="flex flex-col justify-start space-y-2 w-[55%] py-4">
+
+            <!-- User's name -->
+            <form action="/profile/update-name" method="post" class="inline">
+                <div class="flex items-center edit-container">
+                    <div class="font-bold text-5xl">
+                        <span id="name-display"><%= user.name %></span>
+                        <input type="text" id="name-input" name="name" value="<%= user.name %>" class="bg-transparent p-2 border border-gray-300 rounded focus:outline-none hidden">
+                    </div>
+                    <div>
+                        <img src="https://img.icons8.com/?size=100&id=89802&format=png&color=da1212" alt="Edit Icon" id="name-edit" class="mx-4 py-2 w-8 edit-button" onclick="toggleEdit('name')">
+                        <button type="submit" id="name-save" class="ml-2 w-20 h-10 text-white object-cover rounded-xl hidden" style="background-color: #DA1212;">Save</button>
+                    </div>
                 </div>
-                <div>
-                    <img src="https://img.icons8.com/?size=100&id=89802&format=png&color=da1212" alt="Edit Icon" class="mx-4 py-2 w-8 edit-icon" onclick="changeToInput('name')">
-                </div>
+            </form>
+
+            <!-- User's rating -->
+            <div class="flex items-center space-x-2 text-xl">
+                <span><%= user.rating %>.0</span>
+                <span id="rating-display">
+                    <img src="/images/<%= user.rating %> star.png" alt="<%= user.rating %> star" class="h-8">
+                </span>
             </div>
-            <p class="text-lg">Rating</p>
-            <div class="flex edit-container">
-                <div class="font-bold text-2xl">
-                    <p id="course"><%= user.school %>, <%= user.course %></p>
+
+            <!-- User's course -->
+            <form action="/profile/update-course" method="post" class="inline">
+                <div class="flex items-center edit-container">
+                    <div class="font-bold text-2xl">
+                        <span id="course-display"><%= user.course %></span>
+                        <select id="course-input" name="course" multiple class="bg-transparent border border-gray-300 rounded hidden">
+                            <% schools.forEach(school => { %>
+                                <option value="<%= school.course_name %>" <%= user.course === school.course_name ? 'selected' : '' %>><%= school.course_name %></option>
+                            <% }) %>
+                        </select>
+                    </div>
+                    <div>
+                        <img src="https://img.icons8.com/?size=100&id=89802&format=png&color=da1212" alt="Edit Icon" id="course-edit" class="mx-4 py-2 w-8 edit-button" onclick="toggleEdit('course')">
+                        <button type="submit" id="course-save" class="ml-2 w-20 h-10 text-white object-cover rounded-xl hidden" style="background-color: #DA1212;">Save</button>
+                    </div>
                 </div>
-                <div>
-                    <img src="https://img.icons8.com/?size=100&id=89802&format=png&color=da1212" alt="Edit Icon" class="mx-4 w-8 edit-icon" onclick="changeToInput('course')">
+            </form>
+
+            <!-- User's email address -->
+            <!-- visible only if the user is not viewing their own profile -->
+            <!-- <a href="mailto:<%= user.email %>" class="flex items-center">
+                <img src="https://img.icons8.com/?size=100&id=2848&format=png&color=da1212" alt="Email Icon" class="w-8 h-8">
+            </a> -->
+
+            <!-- User's description -->
+            <form action="/profile/update-description" method="post" class="inline">
+                <div class="flex items-center edit-container">
+                    <div class="text-2xl">
+                        <span id="description-display"><%= user.description %></span>
+                        <textarea id="description-input" name="description" rows="3" cols="50" value="<%= user.description %>" class="bg-transparent p-2 border border-gray-300 rounded focus:outline-none hidden"><%= user.description %></textarea>
+                    </div>
+                    <div>
+                        <img src="https://img.icons8.com/?size=100&id=89802&format=png&color=da1212" alt="Edit Icon" id="description-edit" class="mx-4 py-2 w-8 edit-button" onclick="toggleEdit('description')">
+                        <button type="submit" id="description-save" class="ml-2 w-20 h-10 text-white object-cover rounded-xl hidden" style="background-color: #DA1212;">Save</button>
+                    </div>
                 </div>
-            </div>
-            <a href="/outlook"><img src="https://img.icons8.com/?size=100&id=2848&format=png&color=da1212" alt="Email Icon" class="mt-2 h-10 w-10"></a>
-            <div class="flex edit-container">
-                <div class="text-2xl">
-                    <p id="description">Hi I'm Isabelle, a computer science student with a passion for coding, music, and discovering new places!</p>
-                    <!-- <p id="description"><%= user.description %></p> -->
-                </div>
-                <div>
-                    <img src="https://img.icons8.com/?size=100&id=89802&format=png&color=da1212" alt="Edit Icon" class="mx-3 py-2 w-8 edit-icon" onclick="changeToInput('description')">
-                </div>
+            </form>
+
+            <!-- Logout button -->
+            <!-- Visible only if the user is viewing their own profile -->
+            <div>
+                <button class="px-4 py-2 text-white text-lg rounded logoutBtn" style="background-color: #DA1212;" onclick="window.location.href='/logout'">Logout</button>
             </div>
         </div>
-        <!-- <div id="toggleDiv"><img src="https://img.icons8.com/?size=100&id=43809&format=png&color=da1212" alt="Edit Icon" class="pt-52 w-11"></div> -->
     </div>
 
+    <!-- Section names -->
     <div class="w-full">
         <div class="flex pl-32 space-x-10 ">
-            <p id="listings" class="p-4 cursor-pointer font-bold red underline text-3xl" onclick="changeTextColor('listings')">Listings</p>
-            <p id="reviews" class="p-4 cursor-pointer font-bold text-black text-3xl" onclick="changeTextColor('reviews')">Reviews</p>
-            <p id="favorites" class="p-4 cursor-pointer font-bold text-black text-3xl" onclick="changeTextColor('favorites')">Favorites</p>
+            <a href="/profile?section=listings" id="listings" class="p-4 cursor-pointer font-bold red underline text-3xl">Listings</a>
+            <a href="/profile?section=reviews" id="reviews" class="p-4 cursor-pointer font-bold red underline text-3xl">Reviews</a>
+            <a href="/profile?section=favourites" id="favourites" class="p-4 cursor-pointer font-bold red underline text-3xl">Favourites</a>
         </div>
         
-        <!-- Listings -->
-        <div id="listingsContent" class="grid grid-cols-4 gap-2 pl-32 pr-20 pt-4">
+        <!-- Listings section -->
+        <div id="listings-section" class="grid grid-cols-4 gap-2 pl-32 pr-20 pt-4">
             <% listings.forEach((listing, index) => { %>
-            <div class="flex flex-cols justify-center py-6" data-transaction-type="<%= listing.transaction_type %>">
+            <div class="flex justify-center py-6 item" data-transaction-type="<%= listing.transaction_type %>">
                 <div class="w-full h-auto">
                     <img src="/images/bracelet.jpg" class="w-80 h-96 object-cover rounded-lg">
                     <p class="pt-3 pb-1 font-bold text-2xl"><%= listing.product_name %></p>
                     <p class="pb-1 text-xl">$<%= listing.price %></p>
                     <div class="flex space-x-1">
-                        <div id="first-<%= index %>" class="px-4 py-1 rounded-full text-white" style="background-color: #DA1212;">
-                            <!-- <p>Free</p> -->
+                        <div id="listings-<%= index %>-first" class="px-4 py-1 rounded-full text-white" style="background-color: #DA1212;">
                         </div>
-                        <div id="second-<%= index %>" class="px-4 py-1 rounded-full text-white hidden" style="background-color: #DA1212;">
-                            <!-- <p>Trade</p> -->
+                        <div id="listings-<%= index %>-second" class="px-4 py-1 rounded-full text-white hidden" style="background-color: #DA1212;">
                         </div>
                     </div>
                 </div>
@@ -92,169 +161,139 @@
             <% }) %>
        </div>
 
-       <!-- Reviews -->
-       <div id="reviewsContent" class="flex flex-col justify-center px-36 hidden">
-        <% for (let i = 0; i < 6; i++) { %>
-            <div class="flex pl-12 pr-10 py-8 my-2 rounded-xl" style="background-color: #D9D9D9;">
+       <!-- Reviews section -->
+       <div id="reviews-section" class="flex flex-col justify-center px-36 hidden">
+        <% reviews.forEach((review, index) => { %>
+            <div class="flex pl-12 pr-10 py-7 my-2 rounded-xl" style="background-color: #D9D9D9;">
                 <div>
                     <img src="/images/chihiro.jpeg" alt="Profile Picture" class="w-24 h-20 object-cover rounded-full">
                 </div>
-                <div class="flex flex-col px-7">
-                    <p class="font-bold text-xl">Tyler</p>
-                    <p>Rating</p>
-                    <p class="text-lg">Great transaction! Met up at school as agreed, and the item was exactly as described. The seller was punctual and friendly. Would definitely deal with them again. Thanks!</p>
+                <div class="flex flex-col px-7 space-y-2">
+                    <p class="font-bold text-xl"><%= review.commenterName %></p>
+                    <span id="review-rating">
+                        <img src="/images/<%= review.stars_given %> star.png" alt="<%= review.stars_given %> star" class="h-6">
+                    </span>
+                    <p class="text-lg"><%= review.commentContent %></p>
                 </div>
             </div>
-        <% } %>
+        <% }) %>
        </div>
 
-        <!-- Favorites -->
-        <div id="favoritesContent" class="grid grid-cols-4 gap-2 pl-32 pr-20 pt-4 hidden">
-            <% for (let i = 0; i < 8; i++) { %>
-            <div class="flex flex-cols justify-center py-6">
+        <!-- Favourites section -->
+        <div id="favourites-section" class="grid grid-cols-4 gap-2 pl-32 pr-20 pt-4 hidden">
+            <% favourites.forEach((favourite, index) => { %>
+            <div class="flex justify-center py-6 item" data-transaction-type="<%= favourite.transaction_type %>">
                 <div class="w-full h-auto">
                     <img src="/images/bracelet.jpg" class="w-80 h-96 object-cover rounded-lg">
-                    <p class="pt-3 pb-1 font-bold text-2xl">Bracelet</p>
-                    <p class="pb-1 text-xl">$120</p>
+                    <p class="pt-3 pb-1 font-bold text-2xl"><%= favourite.product_name %></p>
+                    <p class="pb-1 text-xl">$<%= favourite.price %></p>
                     <div class="flex space-x-1">
-                        <div id="first" class="px-4 py-1 rounded-full text-white" style="background-color: #DA1212;">
-                            <p>Free</p>
+                        <div id="favourites-<%= index %>-first" class="px-4 py-1 rounded-full text-white" style="background-color: #DA1212;">
                         </div>
-                        <div id="second" class="px-4 py-1 rounded-full text-white hidden" style="background-color: #DA1212;">
-                            <p>Trade</p>
+                        <div id="favourites-<%= index %>-second" class="px-4 py-1 rounded-full text-white hidden" style="background-color: #DA1212;">
                         </div>
                     </div>
                 </div>
             </div>
-            <% } %>
+            <% }) %>
        </div>
     </div>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    function deleteArticle(id) {
-        fetch(`/author/delete-article/${id}`, { method: 'DELETE' })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    window.location.reload();
-                } else {
-                    alert('Error deleting article');
-                }
-            });
-    }
-
-    function publishArticle(id) {
-        fetch(`/author/publish-article/${id}`, { method: 'POST' })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    window.location.reload();
-                } else {
-                    alert('Error publishing article');
-                }
-            });
-    }
 
     $(".logoutBtn").click(function () {
         alert("Logged Out");
     });
 
-    function changeTextColor(id) {
+    document.addEventListener('DOMContentLoaded', function() {
+        // For transaction type
+        switchTransactionType('listings');
+        switchTransactionType('favourites');
+        // Extract the section from URL and switch section accordingly
+        const urlParams = new URLSearchParams(window.location.search);
+        const section = urlParams.get('section') || 'listings'; // Default to 'listings' if no section is specified
+        switchSection(section);
+    });
+
+    // switch section
+    function switchSection(id) {
         const elements = document.querySelectorAll('.cursor-pointer');
         elements.forEach(el => {
-            el.classList.remove('red');
-            el.classList.remove('underline');
+            el.classList.remove('red', 'underline');
             el.classList.add('text-black');
         });
-        document.getElementById(id).classList.remove('text-black');
-        document.getElementById(id).classList.add('red');
-        document.getElementById(id).classList.add('underline');
 
-        if(id == "listings") {
-            document.getElementById("listingsContent").classList.remove('hidden');
-            document.getElementById("reviewsContent").classList.add('hidden');
-            document.getElementById("favoritesContent").classList.add('hidden');
-        } else if(id == "reviews") {
-            document.getElementById("reviewsContent").classList.remove('hidden');
-            document.getElementById("listingsContent").classList.add('hidden');
-            document.getElementById("favoritesContent").classList.add('hidden');
-        } else if (id == "favorites") {
-            document.getElementById("favoritesContent").classList.remove('hidden');
-            document.getElementById("reviewsContent").classList.add('hidden');
-            document.getElementById("listingsContent").classList.add('hidden');
+        const selectedElement = document.getElementById(id);
+        selectedElement.classList.remove('text-black');
+        selectedElement.classList.add('red', 'underline');
+
+        const sections = {
+            listings: "listings-section",
+            reviews: "reviews-section",
+            favourites: "favourites-section"
+        };
+
+        for (const section in sections) {
+            document.getElementById(sections[section]).classList.add('hidden');
+        }
+
+        switch(id) {
+            case 'listings':
+                document.getElementById(sections.listings).classList.remove('hidden');
+                break;
+            case 'reviews':
+                document.getElementById(sections.reviews).classList.remove('hidden');
+                break;
+            case 'favourites':
+                document.getElementById(sections.favourites).classList.remove('hidden');
+                break;
         }
     }
 
-    function changeToInput(id) {
-        if(id == "name") {
-            const editIcons = document.querySelectorAll('.edit-icon');
-            editIcons[0].classList.add('hidden');
-            var name = document.getElementById("name");
-            var text = name.innerText;
-            var input = document.createElement("input");
-            input.className = id.className; // Preserve the same styling
-            input.value = text;
-            input.onblur = function() { // Change back to <p> on blur
-                changeToParagraph(input, id);
-            };
-
-            name.replaceWith(input);
-            input.focus();
-        } else if(id == "description") {
-            const editIcons = document.querySelectorAll('.edit-icon');
-            editIcons[2].classList.add('hidden');
-            var desc = document.getElementById("description");
-            var text = desc.innerText;
-            var textarea = document.createElement("textArea");
-            textarea.className = id.className; // Preserve the same styling
-            textarea.value = text;
-            textarea.rows = 5;// Set the number of rows
-            textarea.cols = 66; // Set the number of columns
-            textarea.onblur = function() { // Change back to <p> on blur
-                changeToParagraph(textarea, id);
-            };
-
-            desc.replaceWith(textarea);
-            textarea.focus();
+    // To edit user's information
+    function toggleEdit(field) {
+        const displayElement = document.getElementById(`${field}-display`);
+        const inputElement = document.getElementById(`${field}-input`);
+        const editIcon = document.getElementById(`${field}-edit`);
+        const saveButton = document.getElementById(`${field}-save`);
+        document.querySelectorAll('.edit-button').forEach(icon => icon.classList.add('hidden'));
+        
+        if (displayElement.classList.contains('hidden')) {
+            displayElement.classList.remove('hidden');
+            inputElement.classList.add('hidden');
+            editIcon.classList.remove('hidden');
+            saveButton.classList.add('hidden');
+        } else {
+            displayElement.classList.add('hidden');
+            inputElement.classList.remove('hidden');
+            editIcon.classList.add('hidden');
+            saveButton.classList.remove('hidden');
         }
     }
 
-    function changeToParagraph(input, id) {
-        const editIcons = document.querySelectorAll('.edit-icon');
-        editIcons.forEach(icon => icon.classList.remove('hidden'));
-        var text = input.value;
-        var pElement = document.createElement("p");
-        pElement.id = id;
-        pElement.className = input.className; // Preserve the same styling
-        pElement.innerText = text;
-        input.replaceWith(pElement);
-    }
+    // For the transaction type
+    function switchTransactionType(field) {
+        const section = document.getElementById(`${field}-section`);
+        const sectionItems = section.querySelectorAll('.item');
 
-    document.addEventListener('DOMContentLoaded', switchText);
-
-    function switchText() {
-        const listingsContent = document.getElementById('listingsContent');
-        const listingsItems = listingsContent.querySelectorAll('.flex-cols');
-
-        listingsItems.forEach((item, index) => {
-            const transactionType = item.dataset.transactionType;
-            const firstBubble = document.getElementById(`first-${index}`);
-            const secondBubble = document.getElementById(`second-${index}`);
+        sectionItems.forEach((item, index) => {
+            const transactionType = item.dataset.transactionType.split(',').map(t => t.trim()); // Split by comma and trim whitespace
+            const firstBubble = document.getElementById(`${field}-${index}-first`);
+            const secondBubble = document.getElementById(`${field}-${index}-second`);
             
             if (firstBubble) {
-                if (transactionType === "Free") {
-                    firstBubble.innerHTML = '<p>Free</p>';
-                } else if (transactionType === "Sell") {
-                    firstBubble.innerHTML = '<p>Sell</p>';
-                } else if (transactionType === "Trade") {
-                    firstBubble.innerHTML = '<p>Trade</p>';
+                if (transactionType.length === 1) {
+                    firstBubble.innerHTML = `<p>${transactionType[0]}</p>`;
+                    firstBubble.classList.remove('hidden');
+                    secondBubble.classList.add('hidden');
+                } else if (transactionType.length === 2) {
+                    firstBubble.innerHTML = `<p>${transactionType[0]}</p>`;
+                    secondBubble.innerHTML = `<p>${transactionType[1]}</p>`;
+                    firstBubble.classList.remove('hidden');
+                    secondBubble.classList.remove('hidden');
                 }
-            }
-            
-            if (secondBubble) {
-                secondBubble.innerHTML = '<p>Exchange</p>';
             }
         });
     }
