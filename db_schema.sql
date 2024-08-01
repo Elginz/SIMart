@@ -110,8 +110,25 @@ CREATE TABLE IF NOT EXISTS comments (
 -- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 -- CREATING AND INSERTING DATA. THESE ARE THE OLD DATA TO BE ADDED IN 
 
-INSERT INTO courses (course_name) VALUES ('University of London, Bsc Computer Science');
+INSERT INTO courses (course_name) VALUES ('University of London, BSc Computer Science');
+INSERT INTO courses (course_name) VALUES ('University of London, BSc in Business & Management');
+INSERT INTO courses (course_name) VALUES ('University of London, BSc in Data Science & Business Analytics');
+INSERT INTO courses (course_name) VALUES ('University of London, BSc in Accounting and Finance');
+INSERT INTO courses (course_name) VALUES ('University of Wollongong, Bachelor of Computer Science (Game and Mobile Development)');
+INSERT INTO courses (course_name) VALUES ('University of Wollongong, Bachelor of Information Technology');
+INSERT INTO courses (course_name) VALUES ('University of Wollongong, Bachelor of Commerce (Finance)');
+INSERT INTO courses (course_name) VALUES ('RMIT University, Bachelor of Business (Accountancy)');
+INSERT INTO courses (course_name) VALUES ('RMIT University, Bachelor of Business (Marketing)');
+INSERT INTO courses (course_name) VALUES ('RMIT University, Bachelor of Information Technology');
+INSERT INTO courses (course_name) VALUES ('University at Buffalo, Bachelor of Science in Business Administration');
+INSERT INTO courses (course_name) VALUES ('University at Buffalo, Bachelor of Arts in Psychology');
+INSERT INTO courses (course_name) VALUES ('University at Buffalo, Bachelor of Arts in Communication');
+INSERT INTO courses (course_name) VALUES ('University of Birmingham, BSc in International Business');
+INSERT INTO courses (course_name) VALUES ('University of Birmingham, BSc in Economics');
+INSERT INTO courses (course_name) VALUES ('University of Birmingham, BSc in Business Management');
+
 INSERT INTO courses (course_name) VALUES ('University of Wollongong, Diploma in Banking & Finance');
+
 
 -- default author account
 INSERT INTO users (email, name, password, course, rating, description) 
