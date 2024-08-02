@@ -28,18 +28,17 @@
             position: absolute;
             transform: translateY(-50%);
         }
-        /* .swiper-button-next {
-            image: url('https://img.icons8.com/?size=100&id=100715&format=png&color=000000'); 
-        }
-
-        .swiper-button-prev {
-            image: url('https://img.icons8.com/?size=100&id=100697&format=png&color=000000'); 
-        } */
-
         .swiper-pagination {
             position: relative; /* Relative positioning */
             margin-top: 2%; /* Adjust margin as needed */
         }
+
+        .item {
+            border: 1px solid #ddd; /* Add a border if needed */
+            border-radius: 8px; /* Rounded corners */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Shadow effect */
+}
+
 
         
     </style>
@@ -69,6 +68,11 @@
             </div>
         </nav>
         <!-- End of Navigation bar -->
+
+        <!-- Search bar -->
+
+
+        <!-- End of search bar -->
 
         <!-- Carousell  -->
         <div class = "flex justify-center mt-6 carousel">
@@ -125,13 +129,33 @@
                 Others
             </button>
         </div>
-        <!-- End of div for categories -->     
+        <!-- End of Categories -->     
+
 
         <!-- Start of Listings -->
         <h1 class="text-2xl md:text-3xl leading-normal mb-4 mt-24 ml-10">Newly listed</h1>
-        <div>
-
+        <div id="listings-section" class="grid grid-cols-4 gap-2 pl-32 pr-20 pt-4">
+            <% if (product && product.length > 0) { %>
+                <% product.forEach((listing, index) => { %>
+                    <div class="flex justify-center py-6 item" data-transaction-type="<%= listing.transaction_type %>">
+                        <div class="w-full h-auto">
+                            <img src="<%= listing.image %>" class="w-80 h-96 object-cover rounded-lg">
+                            <p class="pt-3 pb-1 font-bold text-2xl"><%= listing.product_name %></p>
+                            <p class="pb-1 text-xl">$<%= listing.price %></p>
+                            <div class="flex space-x-1">
+                                <div id="listings-<%= index %>-first" class="px-4 py-1 rounded-full text-white" style="background-color: #DA1212;">
+                                </div>
+                                <div id="listings-<%= index %>-second" class="px-4 py-1 rounded-full text-white hidden" style="background-color: #DA1212;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <% }) %>
+            <% } else { %>
+                <p>No listings available.</p>
+            <% } %>
         </div>
+
         <!-- End of Listings -->
     </div>
 
@@ -226,6 +250,42 @@
                     document.getElementById(sections.favourites).classList.remove('hidden');
                     break;
             }
+        }
+
+
+        document.addEventListener('DOMContentLoaded', function() {
+        // For transaction type
+        switchTransactionType('listings');
+        switchTransactionType('favourites');
+        // Extract the section from URL and switch section accordingly
+        const urlParams = new URLSearchParams(window.location.search);
+        const section = urlParams.get('section') || 'listings'; // Default to 'listings' if no section is specified
+        switchSection(section);
+    });
+
+        // For the transaction type
+        function switchTransactionType(field) {
+            const section = document.getElementById(`${field}-section`);
+            const sectionItems = section.querySelectorAll('.item');
+
+            sectionItems.forEach((item, index) => {
+                const transactionType = item.dataset.transactionType.split(',').map(t => t.trim()); // Split by comma and trim whitespace
+                const firstBubble = document.getElementById(`${field}-${index}-first`);
+                const secondBubble = document.getElementById(`${field}-${index}-second`);
+                
+                if (firstBubble) {
+                    if (transactionType.length === 1) {
+                        firstBubble.innerHTML = `<p>${transactionType[0]}</p>`;
+                        firstBubble.classList.remove('hidden');
+                        secondBubble.classList.add('hidden');
+                    } else if (transactionType.length === 2) {
+                        firstBubble.innerHTML = `<p>${transactionType[0]}</p>`;
+                        secondBubble.innerHTML = `<p>${transactionType[1]}</p>`;
+                        firstBubble.classList.remove('hidden');
+                        secondBubble.classList.remove('hidden');
+                    }
+                }
+            });
         }
 
     </script>
