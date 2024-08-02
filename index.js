@@ -159,3 +159,29 @@ app.use('/', indexRoute);
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)
 })
+
+//JORDAN's EDIT
+const express = require("express");
+const app = express();
+const path = require("path");
+const bodyParser = require("body-parser");
+const indexRoute = require("./routes/indexRoute");
+
+// Set up the middleware
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+app.use(express.static(path.join(__dirname, "public")));
+
+// Set the view engine
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
+
+// Use the router
+app.use("/", indexRoute);
+
+// Start the server
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
+});
+
