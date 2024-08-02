@@ -1,6 +1,5 @@
 /**
 * index.js
-* This is your main app entry point
 */
 
 // Set up express, bodyparser and EJS
@@ -43,16 +42,21 @@ global.db = new sqlite3.Database('./database.db',function(err){
     }
 }); 
 
-//Routes set up
-// app.use('/', indexRoute);
-
 //Home page to login/register
 app.get("/", (req, res) => {
     if (!req.session.isAuthenticated) {
         return res.redirect('/login');
     }
-    res.render("index.ejs", {
-        user: req.session.user
+    const listings = "SELECT * FROM product";
+    global.db.all(listings, [], (err, product) => {
+        if (err) {
+            return res.status(500).send(err.message);
+        } else {
+        res.render("index.ejs", {
+            product: product,
+            user: req.session.user
+            });
+        };
     });
 });
 
@@ -97,10 +101,6 @@ app.post("/login", (req, res) => {
 });
 
 // Display Register page
-// app.get("/register", (req, res) => {
-//         res.render("register.ejs");
-// });
-
 app.get("/register", (req, res) => {
     const query = "SELECT course_name FROM courses";
     global.db.all(query, [], (err, rows) => {
