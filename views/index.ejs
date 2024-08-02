@@ -42,7 +42,6 @@
 
         
     </style>
-
     <title>Home</title>
 </head>
 <body>
@@ -70,8 +69,20 @@
         <!-- End of Navigation bar -->
 
         <!-- Search bar -->
-
-
+        <div class="bg-gray-200 rounded-lg shadow-lg w-full mx-auto">
+            <form id="filter-form" class="flex space-x-4 justify-center py-4" action="/" method="GET">
+                <input type="text" name="product_name" placeholder="Product Name" class="px-4 py-2 border rounded-md shadow-lg" style = "width: 50%;" value="<%= typeof product_name !== 'undefined' ? product_name : '' %>">
+                <select name="transaction_type" class="px-4 py-2 border rounded-md shadow-lg">
+                    <option value="" <%= !transaction_type ? 'selected' : '' %>>All</option>
+                    <option value="Sell" <%= transaction_type === 'Sell' ? 'selected' : '' %>>For Sale</option>
+                    <option value="Trade" <%= transaction_type === 'Trade' ? 'selected' : '' %>>For Trade</option>
+                    <option value="Free" <%= transaction_type === 'Free' ? 'selected' : '' %>>For Free</option>
+                </select>
+                <button type="submit" class="px-4 py-2 text-white rounded-md bg-[#DA1212]" onclick="window.location.href='/Filter'">
+                    <img src="https://img.icons8.com/?size=100&id=82712&format=png&color=FFFFFF" class="w-6 h-6">
+                </button>
+            </form>
+        </div>
         <!-- End of search bar -->
 
         <!-- Carousell  -->
@@ -292,3 +303,4 @@
     
 </body>
 </html>
+
