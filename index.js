@@ -47,18 +47,32 @@ app.get("/", (req, res) => {
     if (!req.session.isAuthenticated) {
         return res.redirect('/login');
     }
-    const listings = "SELECT * FROM product ORDER BY created_at";
-    global.db.all(listings, [], (err, product) => {
+    const { product_name, transaction_type} = req.query;
+    let query = "SELECT * FROM product WHERE 1=1";
+    const params = [];
+    if (product_name) {
+        query += " AND product_name LIKE ?";
+        params.push(`%${product_name}%`);
+    }
+    if (transaction_type) {
+        query += " AND transaction_type = ?";
+        params.push(transaction_type);
+    }
+    query += " ORDER BY created_at";
+    global.db.all(query, params, (err, products) => {
         if (err) {
             return res.status(500).send(err.message);
         } else {
-        res.render("index.ejs", {
-            product: product,
-            user: req.session.user
+            res.render("index.ejs", {
+                product: products,
+                user: req.session.user,
+                product_name: product_name,
+                transaction_type: transaction_type
             });
-        };
+        }
     });
 });
+
 
 // Display login page
 app.get("/login", (req, res) => {
