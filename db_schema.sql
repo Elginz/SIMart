@@ -110,54 +110,49 @@ CREATE TABLE IF NOT EXISTS comments (
 -- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 -- CREATING AND INSERTING DATA. THESE ARE THE OLD DATA TO BE ADDED IN 
 
-INSERT INTO courses (course_name) VALUES ('University of London, BSc Computer Science');
-INSERT INTO courses (course_name) VALUES ('University of London, BSc in Business & Management');
-INSERT INTO courses (course_name) VALUES ('University of London, BSc in Data Science & Business Analytics');
-INSERT INTO courses (course_name) VALUES ('University of London, BSc in Accounting and Finance');
-INSERT INTO courses (course_name) VALUES ('University of Wollongong, Bachelor of Computer Science (Game and Mobile Development)');
-INSERT INTO courses (course_name) VALUES ('University of Wollongong, Bachelor of Information Technology');
-INSERT INTO courses (course_name) VALUES ('University of Wollongong, Bachelor of Commerce (Finance)');
-INSERT INTO courses (course_name) VALUES ('RMIT University, Bachelor of Business (Accountancy)');
-INSERT INTO courses (course_name) VALUES ('RMIT University, Bachelor of Business (Marketing)');
-INSERT INTO courses (course_name) VALUES ('RMIT University, Bachelor of Information Technology');
-INSERT INTO courses (course_name) VALUES ('University at Buffalo, Bachelor of Science in Business Administration');
-INSERT INTO courses (course_name) VALUES ('University at Buffalo, Bachelor of Arts in Psychology');
-INSERT INTO courses (course_name) VALUES ('University at Buffalo, Bachelor of Arts in Communication');
-INSERT INTO courses (course_name) VALUES ('University of Birmingham, BSc in International Business');
-INSERT INTO courses (course_name) VALUES ('University of Birmingham, BSc in Economics');
-INSERT INTO courses (course_name) VALUES ('University of Birmingham, BSc in Business Management');
+INSERT INTO courses (course_name) VALUES 
+('University of London, BSc Computer Science'),
+('University of London, BSc in Business & Management'),
+('University of London, BSc in Data Science & Business Analytics'),
+('University of London, BSc in Accounting and Finance'),
+('University of Wollongong, Bachelor of Computer Science (Game and Mobile Development)'),
+('University of Wollongong, Bachelor of Information Technology'),
+('University of Wollongong, Bachelor of Commerce (Finance)'),
+('RMIT University, Bachelor of Business (Accountancy)'),
+('RMIT University, Bachelor of Business (Marketing)'),
+('RMIT University, Bachelor of Information Technology'),
+('University at Buffalo, Bachelor of Science in Business Administration'),
+('University at Buffalo, Bachelor of Arts in Psychology'),
+('University at Buffalo, Bachelor of Arts in Communication'),
+('University of Birmingham, BSc in International Business'),
+('University of Birmingham, BSc in Economics'),
+('University of Birmingham, BSc in Business Management'),
+('University of Wollongong, Diploma in Banking & Finance');
 
-INSERT INTO courses (course_name) VALUES ('University of Wollongong, Diploma in Banking & Finance');
-
-
--- default author account
+-- Insert Users Data
 INSERT INTO users (email, name, password, course, rating, description) 
-VALUES ('sean@mail.com', 'sean', '123', 'University of London, Bsc Computer Science', 5, 'Professor of this site');
-
-INSERT INTO users (email, name, password, course, rating, description) 
-VALUES ('matthew@mail.com', 'matthew', '123', 'University of Wollongong, Diploma in Banking & Finance', 5, 'User of this site');
+VALUES 
+('sean@mail.com', 'sean', '123', 'University of London, BSc Computer Science', 5, 'Professor of this site'),
+('matthew@mail.com', 'matthew', '123', 'University of Wollongong, Diploma in Banking & Finance', 5, 'User of this site');
 
 -- default listings
-SELECT user_id FROM users WHERE email = 'sean@mail.com';
 INSERT INTO product (user_id, product_name, content_description, price, category, transaction_type, condition, created_at, availability) 
-VALUES ((SELECT user_id FROM users WHERE email = 'sean@mail.com'), 'Headphones', 'Used once over my headscarf, so dont have to worry about hygine. Figured i didnt need it actualy hence selling comes with original full box and its accessories warranty not activated, Model is on photo, so you can google its functions on your end. Bought at $149, my loss your gain', 
-        '120', 'Electronics', 'Sell', 'Lightly used', '2021-11-11 11:11:11', true);
-INSERT INTO product (user_id, product_name, content_description, price, category, transaction_type, condition, created_at, availability) 
-VALUES ((SELECT user_id FROM users WHERE email = 'matthew@mail.com'), 'Game console', 'Used once over my headscarf, so dont have to worry about hygine. Figured i didnt need it actualy hence selling comes with original full box and its accessories warranty not activated, Model is on photo, so you can google its functions on your end. Bought at $149, my loss your gain', 
-        '270', 'Electronics', ('Sell, Trade'), 'Lightly used', '2021-11-11 11:11:11', true);
+VALUES 
+((SELECT user_id FROM users WHERE email = 'sean@mail.com'), 'Headphones', 'Used once over my headscarf, so dont have to worry about hygine. Figured i didnt need it actualy hence selling comes with original full box and its accessories warranty not activated, Model is on photo, so you can google its functions on your end. Bought at $149, my loss your gain', 120, 'Electronics', 'Sell', 'Lightly used', '2021-11-11 11:11:11', true),
+((SELECT user_id FROM users WHERE email = 'matthew@mail.com'), 'Game console', 'Used once over my headscarf, so dont have to worry about hygine. Figured i didnt need it actualy hence selling comes with original full box and its accessories warranty not activated, Model is on photo, so you can google its functions on your end. Bought at $149, my loss your gain', 270, 'Electronics', 'Sell, Trade', 'Lightly used', '2021-11-11 11:11:11', true);
 
 -- default reviews
 INSERT INTO reviews (user_id, commenterName, commentContent, created_at, stars_given) 
-VALUES ((SELECT user_id FROM users WHERE email = 'sean@mail.com'), 'Tyler', 'Great transaction! Met up at school as agreed, and the item was exactly as described. The seller was punctual and friendly. Would definitely deal with them again. Thanks!', '2021-11-11 11:11:11', 3);
-INSERT INTO reviews (user_id, commenterName, commentContent, created_at, stars_given) 
-VALUES ((SELECT user_id FROM users WHERE email = 'sean@mail.com'), 'Emily', 'The transaction went smoothly. The item was in decent condition, though it showed a bit more wear than expected. Communication could have been better.', '2021-11-11 11:11:11', 4);
-INSERT INTO reviews (user_id, commenterName, commentContent, created_at, stars_given) 
-VALUES ((SELECT user_id FROM users WHERE email = 'sean@mail.com'), 'Lily', 'Excellent transaction! The buyer was prompt, friendly, and easy to coordinate with. We met at school for the exchange, and everything went smoothly.', '2021-11-11 11:11:11', 2);
-COMMIT;
+VALUES 
+((SELECT user_id FROM users WHERE email = 'sean@mail.com'), 'Tyler', 'Great transaction! Met up at school as agreed, and the item was exactly as described. The seller was punctual and friendly. Would definitely deal with them again. Thanks!', '2021-11-11 11:11:11', 3),
+((SELECT user_id FROM users WHERE email = 'sean@mail.com'), 'Emily', 'The transaction went smoothly. The item was in decent condition, though it showed a bit more wear than expected. Communication could have been better.', '2021-11-11 11:11:11', 4),
+((SELECT user_id FROM users WHERE email = 'sean@mail.com'), 'Lily', 'Excellent transaction! The buyer was prompt, friendly, and easy to coordinate with. We met at school for the exchange, and everything went smoothly.', '2021-11-11 11:11:11', 2);
 
 -- default favourites
 INSERT INTO favourites (user_id, product_id, photo) 
-VALUES ((SELECT user_id FROM users WHERE email = 'sean@mail.com'), (SELECT id FROM product WHERE user_id = (SELECT user_id FROM users WHERE email = 'matthew@mail.com')), '');
+VALUES 
+((SELECT user_id FROM users WHERE email = 'sean@mail.com'), (SELECT id FROM product WHERE user_id = (SELECT user_id FROM users WHERE email = 'matthew@mail.com')), '');
+
 
 
 COMMIT;
