@@ -33,8 +33,6 @@ router.get("/new", (req, res) => {
 router.post("/new", upload.single("image"), (req, res) => {
     const { name, description, price, category, transaction, condition } = req.body;
 
-    console.log(transaction);
-    console.log(category);
     // uncomment this to store the image path
     const image = req.file ? `/uploads/${req.file.filename}` : null;
 
@@ -64,11 +62,13 @@ router.post("/new", upload.single("image"), (req, res) => {
 // Display a single product
 router.get("/:id", (req, res) => {
     const query = "SELECT * FROM product WHERE id = ?";
-    global.db.get(query, [req.params.id], (err, product) => {
+    global.db.all(query, [req.params.id], (err, product) => {
         if (err) {
             return res.status(500).send(err.message);
         }
-        res.render("show_product.ejs", { product });
+        res.render("show_product.ejs", { 
+            product: product 
+        });
     });
 });
 
