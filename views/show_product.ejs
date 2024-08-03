@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= product.name %></title>
+    <link rel="stylesheet" href="/styles/style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-amber-50">
+    <div class="flex flex-col min-h-screen">
+        <!-- Navigation bar -->
+        <nav class="flex items-center justify-between p-3 w-full" style="background-color: #041562;">
+            <div class="flex items-center space-x-4">
+                <img src="/images/logo.png" class="h-14 w-auto" alt="Logo"> 
+            </div>
+            <div class="flex items-center justify-center space-x-4">
+                <a href="/fashion" class="p-4 text-white text-xl">Fashion</a>
+                <a href="/electronics" class="p-4 text-white text-xl">Electronics</a>
+                <a href="/lifestyle" class="p-4 text-white text-xl">Lifestyle</a>
+                <a href="/recreation" class="p-4 text-white text-xl">Recreation</a>
+                <a href="/collectibles" class="p-4 text-white text-xl">Collectibles</a>
+                <a href="/resources" class="p-4 text-white text-xl">Resources</a>
+                <a href="/others" class="pl-4 pr-3 py-4 text-white text-xl">Others</a>
+                <a href="/profile" class="py-3"><img src="https://img.icons8.com/?size=100&id=85050&format=png&color=FFFFFF" alt="Profile Icon" class="h-10 w-10"></a>
+                <a href="/profile/favorites" class="py-3"><img src="https://img.icons8.com/?size=100&id=85038&format=png&color=FFFFFF" alt="Favorites Icon" class="h-10 w-10"></a>
+                <button class="px-4 py-2 text-white rounded w-20" onclick="window.location.href='/listProduct'" style="background-color: #DA1212">List</button> 
+            </div>
+        </nav>
+        <!-- End of Navigation bar -->
+
+        <main class="flex flex-1 p-8">
+            <div class="flex flex-col md:flex-row md:space-x-10 w-full">
+                <div class="flex-1">
+                    <img src="<%= product.image_url %>" alt="<%= product.name %>" class="w-full h-auto rounded-lg shadow-lg">
+                    <div class="product-thumbnails mt-4 flex space-x-2">
+                        <% if (product.additional_images) { %>
+                            <% product.additional_images.split(',').forEach(function(image) { %>
+                                <img src="<%= image %>" alt="Thumbnail" class="w-20 h-20 rounded-lg border">
+                            <% }); %>
+                        <% } %>
+                    </div>
+                </div>
+                <div class="flex-1">
+                    <h1 class="text-4xl font-bold mb-4"><%= product.name %></h1>
+                    <p class="text-lg text-gray-700 mb-4"><%= product.condition %></p>
+                    <p class="text-base text-gray-600 mb-8"><%= product.description %></p>
+                    <button class="bg-red-600 text-white py-2 px-4 rounded-lg text-lg shadow-lg hover:bg-red-700 transition duration-200">Make an Offer</button>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="mt-auto w-full text-white py-4 flex flex-col items-center" style="background-color: #0d4aa6;">
+            <div class="w-full flex justify-between items-center px-10">
+                <h1 class="text-2xl md:text-3xl"> SMart</h1>
+                <div class="flex space-x-4 pr-12">
+                    <a href="/" class="text-white text-xl">About us</a>
+                    <a href="/" class="text-white text-xl">Contact us</a>
+                </div>
+            </div>
+            <div class="w-full flex justify-between px-10 mt-4">
+                <div class="flex space-x-4">
+                    <a href="https://twitter.com" target="_blank">
+                        <img src="https://img.icons8.com/?size=100&id=fJp7hepMryiw&format=png&color=FFFFFF" alt="Twitter Icon" class="h-10 w-10">
+                    </a>
+                    <a href="https://instagram.com" target="_blank">
+                        <img src="https://img.icons8.com/?size=100&id=32292&format=png&color=FFFFFF" alt="Instagram Icon" class="h-10 w-10">
+                    </a>
+                    <a href="https://facebook.com" target="_blank">
+                        <img src="https://img.icons8.com/?size=100&id=118467&format=png&color=FFFFFF" alt="Facebook Icon" class="h-10 w-10">
+                    </a>
+                    <a href="https://linkedin.com" target="_blank">
+                        <img src="https://img.icons8.com/?size=100&id=8808&format=png&color=FFFFFF" alt="LinkedIn Icon" class="h-10 w-10">
+                    </a>
+                </div>
+            </div>
+            <br>
+            <p class="text-xs">&copy; 2024 SMart. All rights reserved</p>
+        </footer>
+        <!-- End of footer -->
+    </div>
+</body>
+</html>
