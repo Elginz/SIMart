@@ -1,0 +1,78 @@
+<!-- views/profile.ejs -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Profile Page</title>
+    <style>
+        input,
+        #category-name{ text-transform: capitalize; }
+    </style>
+</head>
+<body>
+<div class="flex flex-col min-h-screen bg-amber-50 bg-cover">
+    <!-- Navigation bar -->
+    <%- include('navbar') %>
+
+    <span id="category-name" class="pl-16 pt-16 pb-10 font-bold text-3xl"><%= category %></span>
+    <div id="category-section" class="grid grid-cols-4 gap-2 pl-32 pr-20 pt-4 pb-14">
+        <% listings.forEach((listing, index) => { %>
+        <div class="flex justify-center py-6 item" data-transaction-type="<%= listing.transaction_type %>">
+            <div class="w-full h-auto">
+                <img src="/images/bracelet.jpg" class="w-80 h-96 object-cover rounded-lg">
+                <p class="pt-3 pb-1 font-bold text-2xl"><%= listing.product_name %></p>
+                <p class="pb-1 text-xl">$<%= listing.price %></p>
+                <div class="flex space-x-1">
+                    <div id="category-<%= index %>-first" class="px-4 py-1 rounded-full text-white" style="background-color: #DA1212;">
+                    </div>
+                    <div id="category-<%= index %>-second" class="px-4 py-1 rounded-full text-white hidden" style="background-color: #DA1212;">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <% }) %>
+   </div>
+
+            
+
+    <!-- Footer -->
+    <%- include('footer') %>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // For transaction type
+        switchTransactionType('category');
+    });
+
+    // For the transaction type
+    function switchTransactionType(field) {
+        const section = document.getElementById(`${field}-section`);
+        const sectionItems = section.querySelectorAll('.item');
+
+        sectionItems.forEach((item, index) => {
+            const transactionType = item.dataset.transactionType.split(',').map(t => t.trim()); // Split by comma and trim whitespace
+            const firstBubble = document.getElementById(`${field}-${index}-first`);
+            const secondBubble = document.getElementById(`${field}-${index}-second`);
+            
+            if (firstBubble) {
+                if (transactionType.length === 1) {
+                    firstBubble.innerHTML = `<p>${transactionType[0]}</p>`;
+                    firstBubble.classList.remove('hidden');
+                    secondBubble.classList.add('hidden');
+                } else if (transactionType.length === 2) {
+                    firstBubble.innerHTML = `<p>${transactionType[0]}</p>`;
+                    secondBubble.innerHTML = `<p>${transactionType[1]}</p>`;
+                    firstBubble.classList.remove('hidden');
+                    secondBubble.classList.remove('hidden');
+                }
+            }
+        });
+    }
+
+</script>
+</body>
+</html>
