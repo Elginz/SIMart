@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add a New Product</title>
-    <!-- <link rel="stylesheet" href="/styles/style.css"> -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .bubble-option {
@@ -27,7 +26,7 @@
         .file-input-container {
             position: relative;
             width: 100%;
-            height: 300px;
+            height: 200px;
             border: 2px dashed #ccc;
             display: flex;
             justify-content: center;
@@ -36,7 +35,7 @@
             background-color: #f7f7f7;
         }
         .file-input-container .plus-sign {
-            font-size: 3rem;
+            font-size: 2rem;
             color: #999;
         }
         .file-input-container input[type="file"] {
@@ -53,8 +52,8 @@
             flex-wrap: wrap;
         }
         .image-preview {
-            width: 140px;
-            height: 100px;
+            width: 120px;
+            height: 90px;
             border: 2px solid #ccc;
             border-radius: 5px;
             overflow: hidden;
@@ -86,124 +85,102 @@
             font-size: 16px;
             font-weight: bold;
         }
-        .main-content {
-            display: flex;
-            width: 100%;
-            height: calc(100vh - 160px); /* Adjust based on header and footer height */
-        }
-        .left-side {
-            flex: 1;
-            padding: 20px;
-        }
-        .right-side {
-            flex: 1;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        .right-side form {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-        .form-group textarea {
-            resize: none;
-        }
-        .submit-button {
-            align-self: flex-end;
+        @media (min-width: 640px) {
+            .file-input-container {
+                height: 300px;
+            }
+            .file-input-container .plus-sign {
+                font-size: 3rem;
+            }
+            .image-preview {
+                width: 140px;
+                height: 100px;
+            }
         }
     </style>
 </head>
-<body>
-    <div class="flex flex-col min-h-screen bg-amber-50 bg-cover">
-        <!-- Navigation bar -->
-        <%- include('navbar') %>
+<body class="bg-amber-50 flex flex-col min-h-screen">
+    <!-- Navigation bar -->
+    <%- include('navbar') %>
 
-        <form action="/product/new" method="POST" enctype="multipart/form-data">
-            <div class="main-content">
-                <div class="left-side">
-                    <h2 class="text-2xl mb-4">Upload Images</h2>
-                    <div class="file-input-container" id="file-input-container">
-                        <span class="plus-sign">+</span>
-                        <input type="file" name="image" id="image" accept="image/*" multiple onchange="previewImages(event)">
-                    </div>
-                    <div class="image-previews" id="image-previews">
-                        <!-- Image previews will be inserted here -->
-                    </div>
+    <form action="/product/new" method="POST" enctype="multipart/form-data" class="flex flex-col flex-grow">
+        <div class="flex flex-col md:flex-row flex-grow p-4">
+            <div class="md:w-1/2 p-2">
+                <h2 class="text-xl md:text-2xl mb-4">Upload Images</h2>
+                <div class="file-input-container" id="file-input-container">
+                    <span class="plus-sign">+</span>
+                    <input type="file" name="image" id="image" accept="image/*" multiple onchange="previewImages(event)">
                 </div>
-                <div class="right-side">
-                    <!-- <h1 class="text-3xl mb-8">Add a New Product</h1> -->
-                        <div class="form-group">
-                            <label for="category" class="block text-gray-700 font-bold">Category:</label>
-                            <select name="category" id="category" class="w-full border border-gray-300 rounded py-2 px-3" required>
-                                <option value="Fashion">Fashion</option>
-                                <option value="Electronics">Electronics</option>
-                                <option value="Lifestyle">Lifestyle</option>
-                                <option value="Recreation">Recreation</option>
-                                <option value="Collectibles">Collectibles</option>
-                                <option value="Resources">Resources</option>
-                                <option value="Others">Others</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="block text-gray-700 font-bold">Transaction:</label>
-                            <div class="transaction-options flex gap-4">
-                                <label class="bubble-option">
-                                    <input type="radio" id="Sell" name="transaction" value="Sell" required>
-                                    For Sale
-                                </label>
-                                <label class="bubble-option">
-                                    <input type="radio" id="Trade" name="transaction" value="Trade">
-                                    For Trade
-                                </label>
-                                <label class="bubble-option">
-                                    <input type="radio" id="Free" name="transaction" value="Free">
-                                    For Free
-                                </label>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="name" class="block text-gray-700 font-bold">Product Name:</label>
-                            <input type="text" name="name" id="name" class="w-full border border-gray-300 rounded py-2 px-3" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="block text-gray-700 font-bold">Condition:</label>
-                            <div class="condition-options flex gap-4">
-                                <label class="bubble-option">
-                                    <input type="radio" id="brand_new" name="condition" value="Brand new" required>
-                                    Brand New
-                                </label>
-                                <label class="bubble-option">
-                                    <input type="radio" id="lightly_used" name="condition" value="Lightly used">
-                                    Lightly Used
-                                </label>
-                                <label class="bubble-option">
-                                    <input type="radio" id="well_used" name="condition" value="Well used">
-                                    Well Used
-                                </label>
-                                <label class="bubble-option">
-                                    <input type="radio" id="heavily_used" name="condition" value="Heavily used">
-                                    Heavily Used
-                                </label>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="description" class="block text-gray-700 font-bold">Description:</label>
-                            <textarea name="description" id="description" class="w-full border border-gray-300 rounded py-2 px-3" required></textarea>
-                        </div>
-                        <button type="submit" class="submit-button bg-red-600 text-white py-2 px-4 rounded">Add Product</button>
+                <div class="image-previews" id="image-previews">
+                    <!-- Image previews will be inserted here -->
                 </div>
             </div>
-        </form>
-        <!-- Footer -->
-        <%- include('footer') %>
-    </div>
+            <div class="md:w-1/2 p-2">
+                <div class="form-group mb-4">
+                    <label for="category" class="block text-gray-700 font-bold">Category:</label>
+                    <select name="category" id="category" class="w-full border border-gray-300 rounded py-2 px-3" required>
+                        <option value="Fashion">Fashion</option>
+                        <option value="Electronics">Electronics</option>
+                        <option value="Lifestyle">Lifestyle</option>
+                        <option value="Recreation">Recreation</option>
+                        <option value="Collectibles">Collectibles</option>
+                        <option value="Resources">Resources</option>
+                        <option value="Others">Others</option>
+                    </select>
+                </div>
+                <div class="form-group mb-4">
+                    <label class="block text-gray-700 font-bold">Transaction:</label>
+                    <div class="transaction-options flex flex-wrap gap-4">
+                        <label class="bubble-option">
+                            <input type="radio" id="Sell" name="transaction" value="Sell" required>
+                            For Sale
+                        </label>
+                        <label class="bubble-option">
+                            <input type="radio" id="Trade" name="transaction" value="Trade">
+                            For Trade
+                        </label>
+                        <label class="bubble-option">
+                            <input type="radio" id="Free" name="transaction" value="Free">
+                            For Free
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group mb-4">
+                    <label for="name" class="block text-gray-700 font-bold">Product Name:</label>
+                    <input type="text" name="name" id="name" class="w-full border border-gray-300 rounded py-2 px-3" required>
+                </div>
+                <div class="form-group mb-4">
+                    <label class="block text-gray-700 font-bold">Condition:</label>
+                    <div class="condition-options flex flex-wrap gap-4">
+                        <label class="bubble-option">
+                            <input type="radio" id="brand_new" name="condition" value="Brand new" required>
+                            Brand New
+                        </label>
+                        <label class="bubble-option">
+                            <input type="radio" id="lightly_used" name="condition" value="Lightly used">
+                            Lightly Used
+                        </label>
+                        <label class="bubble-option">
+                            <input type="radio" id="well_used" name="condition" value="Well used">
+                            Well Used
+                        </label>
+                        <label class="bubble-option">
+                            <input type="radio" id="heavily_used" name="condition" value="Heavily used">
+                            Heavily Used
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group mb-4">
+                    <label for="description" class="block text-gray-700 font-bold">Description:</label>
+                    <textarea name="description" id="description" class="w-full border border-gray-300 rounded py-2 px-3" rows="4" required></textarea>
+                </div>
+                <button type="submit" class="bg-red-600 text-white py-2 px-4 rounded">Add Product</button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Footer -->
+    <%- include('footer') %>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -212,69 +189,59 @@
     
             transactionOptions.forEach(option => {
                 option.addEventListener('click', () => {
-                    // Remove 'selected' class from all transaction options
                     transactionOptions.forEach(opt => opt.classList.remove('selected'));
-                    // Add 'selected' class to the clicked transaction option
                     option.classList.add('selected');
-                    // Check the radio input inside the clicked transaction option
                     option.querySelector('input[type="radio"]').checked = true;
                 });
             });
     
             conditionOptions.forEach(option => {
                 option.addEventListener('click', () => {
-                    // Remove 'selected' class from all condition options
                     conditionOptions.forEach(opt => opt.classList.remove('selected'));
-                    // Add 'selected' class to the clicked condition option
                     option.classList.add('selected');
-                    // Check the radio input inside the clicked condition option
                     option.querySelector('input[type="radio"]').checked = true;
                 });
             });
         });
 
         function previewImages(event) {
-        const input = event.target;
-        const previewContainer = document.getElementById('image-previews');
-        const existingPreviews = previewContainer.querySelectorAll('.image-preview');    
+            const input = event.target;
+            const previewContainer = document.getElementById('image-previews');
+            const existingPreviews = previewContainer.querySelectorAll('.image-preview');    
 
-        if (existingPreviews.length >= 4) {
-            alert('You can upload a maximum of 4 images.');
-            return;
-        }
+            if (existingPreviews.length >= 4) {
+                alert('You can upload a maximum of 4 images.');
+                return;
+            }
 
-        const files = input.files;
-        if (files.length > 1) {
-            alert('You can only upload one image at a time.');
-            return;
-        }
+            const files = input.files;
+            if (files.length > 1) {
+                alert('You can only upload one image at a time.');
+                return;
+            }
 
-        const file = files[0];
-        const reader = new FileReader();
-        reader.onload = function () {
-            const result = reader.result;
-            const preview = document.createElement('div');
-            preview.classList.add('image-preview');
-            const img = document.createElement('img');
-            img.src = result;
-            preview.appendChild(img);
+            const file = files[0];
+            const reader = new FileReader();
+            reader.onload = function () {
+                const result = reader.result;
+                const preview = document.createElement('div');
+                preview.classList.add('image-preview');
+                const img = document.createElement('img');
+                img.src = result;
+                preview.appendChild(img);
 
-            // Create remove button
-            const removeBtn = document.createElement('button');
-            removeBtn.classList.add('remove-btn');
-            removeBtn.innerHTML = '&times;';
-            removeBtn.onclick = function () {
-                previewContainer.removeChild(preview);
+                const removeBtn = document.createElement('button');
+                removeBtn.classList.add('remove-btn');
+                removeBtn.innerHTML = '&times;';
+                removeBtn.onclick = function () {
+                    previewContainer.removeChild(preview);
+                };
+                preview.appendChild(removeBtn);
+
+                previewContainer.appendChild(preview);
             };
-            preview.appendChild(removeBtn);
-
-            previewContainer.appendChild(preview);
-
-            // Clear the input value to allow re-upload of the same file
-            // input.value = '';
-        };
-        reader.readAsDataURL(file);
-    }
+            reader.readAsDataURL(file);
+        }
     </script>
 </body>
 </html>
