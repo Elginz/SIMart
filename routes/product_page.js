@@ -33,7 +33,7 @@ router.get("/new", (req, res) => {
 router.post("/new", upload.single("image"), (req, res) => {
     const { name, description, price, category, transaction, condition } = req.body;
 
-    // uncomment this to store the binary data of the image
+    //To store the binary data of the image
     const image = req.file ? fs.readFileSync(req.file.path) : null;
 
     // Retrieve the user's email from session
