@@ -207,26 +207,29 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const bubbleOptions = document.querySelectorAll('.bubble-option');
-
-            bubbleOptions.forEach(option => {
+            const transactionOptions = document.querySelectorAll('.transaction-options .bubble-option');
+            const conditionOptions = document.querySelectorAll('.condition-options .bubble-option');
+    
+            transactionOptions.forEach(option => {
                 option.addEventListener('click', () => {
-                    // Remove 'selected' class from all options
-                    bubbleOptions.forEach(opt => opt.classList.remove('selected'));
-                    // Add 'selected' class to the clicked option
+                    // Remove 'selected' class from all transaction options
+                    transactionOptions.forEach(opt => opt.classList.remove('selected'));
+                    // Add 'selected' class to the clicked transaction option
                     option.classList.add('selected');
-                    // Check the radio input inside the clicked option
+                    // Check the radio input inside the clicked transaction option
                     option.querySelector('input[type="radio"]').checked = true;
                 });
             });
-
-            // to prevent the value of price to be null (find another way for this, this is temporary)
-            const form = document.getElementById('product-form');
-            form.addEventListener('submit', (event) => {
-                const priceInput = document.getElementById('price');
-                if (priceInput.value === "") {
-                    priceInput.value = "0";
-                }
+    
+            conditionOptions.forEach(option => {
+                option.addEventListener('click', () => {
+                    // Remove 'selected' class from all condition options
+                    conditionOptions.forEach(opt => opt.classList.remove('selected'));
+                    // Add 'selected' class to the clicked condition option
+                    option.classList.add('selected');
+                    // Check the radio input inside the clicked condition option
+                    option.querySelector('input[type="radio"]').checked = true;
+                });
             });
         });
 
