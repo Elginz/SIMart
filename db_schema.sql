@@ -128,7 +128,13 @@ INSERT INTO courses (course_name) VALUES
 ('University of Birmingham, BSc in International Business'),
 ('University of Birmingham, BSc in Economics'),
 ('University of Birmingham, BSc in Business Management'),
-('University of Wollongong, Diploma in Banking & Finance');
+('SIM Global, Diploma in Banking & Finance');
+('SIM Global, Diploma in Accounting');
+('SIM Global, Diploma in Information Technology');
+('SIM Global, Diploma in International Business');
+('SIM Global, Diploma in International Trade');
+('SIM Global, Diploma in Management Studies');
+('SIM Global, Diploma in Business');
 
 -- Insert Users Data
 INSERT INTO users (email, name, password, course, rating, description) 
