@@ -200,13 +200,15 @@ INSERT INTO courses (course_name) VALUES
 ('Grenoble Ecole de Management, MSc Fashion, Design and Luxury Management'),   
 ('Grenoble Ecole de Management, Bachelor in International Business (Top-up)'),   
 
-('SIM Global, Diploma in Banking & Finance');
-('SIM Global, Diploma in Accounting');
-('SIM Global, Diploma in Information Technology');
-('SIM Global, Diploma in International Business');
-('SIM Global, Diploma in International Trade');
-('SIM Global, Diploma in Management Studies');
-('SIM Global, Diploma in Business');
+('SIM Global Education, Diploma in Banking & Finance');
+('SIM Global Education, Diploma in Accounting (E-Learning)');
+('SIM Global Education, Diploma in Accounting');
+('SIM Global Education, Diploma in Information Technology');
+('SIM Global Education, Diploma in International Business (E-Learning)');
+('SIM Global Education, Diploma in International Business');
+('SIM Global Education, Diploma in International Trade');
+('SIM Global Education, Diploma in Management Studies (E-Learning)');
+('SIM Global Education, Diploma in Business');
         
 ('University at Buffalo, Bachelor of Science in Business Administration'),
 ('University at Buffalo, Bachelor of Arts in Psychology'),
