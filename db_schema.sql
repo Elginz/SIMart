@@ -112,6 +112,7 @@ CREATE TABLE IF NOT EXISTS comments (
 -- CREATING AND INSERTING DATA. THESE ARE THE OLD DATA TO BE ADDED IN 
 
 INSERT INTO courses (course_name) VALUES 
+    
 ('University of London, BSc in Computer Science'),
 ('University of London, BSc in Computer Science (User Experience)'),
 ('University of London, BSc in Computer Science (Machine Learning and Artificial Intelligence'),
@@ -199,22 +200,75 @@ INSERT INTO courses (course_name) VALUES
 ('Grenoble Ecole de Management, MSc Finance (Top-up)'),   
 ('Grenoble Ecole de Management, MSc Fashion, Design and Luxury Management'),   
 ('Grenoble Ecole de Management, Bachelor in International Business (Top-up)'),   
-
 ('SIM Global Education, Diploma in Banking & Finance');
+('SIM Global Education, Diploma in Banking & Finance (E-Learning)');
 ('SIM Global Education, Diploma in Accounting (E-Learning)');
 ('SIM Global Education, Diploma in Accounting');
 ('SIM Global Education, Diploma in Information Technology');
+('SIM Global Education, Diploma in Information Technology (E-Learning)');
 ('SIM Global Education, Diploma in International Business (E-Learning)');
 ('SIM Global Education, Diploma in International Business');
-('SIM Global Education, Diploma in International Trade');
 ('SIM Global Education, Diploma in Management Studies (E-Learning)');
-('SIM Global Education, Diploma in Business');
-        
-('University at Buffalo, Bachelor of Science in Business Administration'),
-('University at Buffalo, Bachelor of Arts in Psychology'),
-('University at Buffalo, Bachelor of Arts in Communication'),
-
-
+('SIM Global Education, Diploma in Management Studies');
+('SIM Global Education, Graduate Certificate in Human Resource Management (E-Learning)');
+('SIM Global Education, Graduate Diploma in Business Sustainability (Part-Time)');
+('SIM Global Education, Graduate Diploma in Data Science (E-Learning)');
+('SIM Global Education, Graduate Diploma in Business Analytics (Full-Time)');
+('SIM Global Education, Graduate Diploma in Industry 4.0 (Full-Time)');
+('SIM Global Education, Graduate Certificate in Cybersecurity Management (E-Learning)');
+('SIM Global Education, Graduate Certificate in Business Analytics (Part-Time)');
+('SIM Global Education, Specialist Diploma in Social Entrepreneurship (Part-Time)');
+('SIM Global Education, Graduate Diploma in Digital Marketing');
+('SIM Global Education, Graduate Diploma in Business Analytics (Part-Time)');
+('SIM Global Education, Graduate Diploma in Business Management (E-Learning)');
+('SIM Global Education, Graduate Certificate in Business Sustainability (Part-Time)');
+('SIM Global Education, Graduate Diploma in Human Resource Management (Full-Time)');
+('SIM Global Education, Graduate Certificate in Software Automation (Part-Time)');
+('SIM Global Education, Graduate Certificate in Industry 4.0 (Part-Time)');
+('SIM Global Education, Graduate Certificate in Information Technology Management (E-Learning)');
+('SIM Global Education, Graduate Diploma in Industry 4.0 (Part-Time)');
+('SIM Global Education, Graduate Diploma in Human Resource Management (Part-Time)');
+('SIM Global Education, Graduate Certificate in Business Digitalization (Part-Time)');
+('SIM Global Education, Graduate Certificate in Digital Marketing (E-Learning)');
+('SIM Global Education, Graduate Diploma in Business Sustainability (Full-Time)');
+('SIM Global Education, Graduate Certificate in Analytics (E-Learning)');
+('SIM Global Education, Management Foundation Studies - Blended');
+('SIM Global Education, Certificate in Pre-Sessional Business Management');
+('SIM Global Education, Information Technology Foundation Studies');
+('SIM Global Education, Certificate in Foundation Studies (E-Learning)');
+('SIM Global Education, Certificate in Pre-Sessional Business Management (E-Learning)');
+('SIM Global Education, Management Foundation Studies');
+('SIM Global Education, Information Technology Foundation Studies (E-Learning)');
+('SIM Global Education, Management Foundation Studies (E-Learning)');
+('SIM Global Education, Certificate in Foundation Studies');
+('University at Buffalo, Bachelor of Arts (International Trade)'),
+('University at Buffalo, Double Degree - Bachelor of Science (Geographic Information Science) and Bachelor of Arts (Psychology)'),
+('University at Buffalo, Double Degree - Bachelor of Science (Geographic Information Science) and Bachelor of Arts (International Trade)'),
+('University at Buffalo, Double Degree - Bachelor of Science (Business Administration) and Bachelor of Arts (Psychology)'),
+('University at Buffalo, Double Degree - Bachelor of Science (Geographic Information Science) and Bachelor of Arts (Communication)'),
+('University at Buffalo, Double Degree - Bachelor of Science (Business Administration) and Bachelor of Arts (Communication)'),    
+('University at Buffalo, Bachelor of Arts (Psychology)'),
+('University at Buffalo, Bachelor of Arts (Economics)'),
+('University at Buffalo, Double Major - Bachelor of Arts (International Trade and Psychology)'),
+('University at Buffalo, Bachelor of Science (Business Administration)'),
+('University at Buffalo, Double Degree - Bachelor of Science (Business Administration) and Bachelor of Arts (Economics)'),
+('University at Buffalo, Double Major - Bachelor of Arts (Communication and Psychology)'),
+('University at Buffalo, Double Degree - Bachelor of Science (Business Administration) and Bachelor of Arts (Sociology)'),   
+('University at Buffalo, Double Major - Bachelor of Arts (Communication and Sociology)'),
+('University at Buffalo, Double Degree - Bachelor of Science (Geographic Information Science) and Bachelor of Arts (Economics)'),
+('University at Buffalo, Double Major - Bachelor of Arts (Economics and Psychology)'),
+('University at Buffalo, Double Major - Bachelor of Arts (Communication and International Trade)'),
+('University at Buffalo, Double Major - Bachelor of Arts (International Trade and Sociology)'),
+('University at Buffalo, Bachelor of Arts (Sociology)'),
+('University at Buffalo, Bachelor of Arts (Communication)'),
+('University at Buffalo, Double Major - Bachelor of Arts (Economics and Sociology)'),
+('University at Buffalo, Double Major - Bachelor of Science (Business Administration and Geographic Information Science)'),
+('University at Buffalo, Double Major - Bachelor of Arts (Communication and Economics)'),
+('University at Buffalo, Bachelor of Science (Geographic Information Studies Science)'),
+('University at Buffalo, Double Degree - Bachelor of Science (Business Administration) and Bachelor of Arts (International Trade)'),  
+('University at Buffalo, Double Degree - Bachelor of Science (Geographic Information Science) and Bachelor of Arts (Sociology)'),
+('University at Buffalo, Double Major - Bachelor of Arts (Economics and International Trade)'),
+('University at Buffalo, Double Major - Bachelor of Arts (Psychology and Sociology)'),
 
 
 -- Insert Users Data
