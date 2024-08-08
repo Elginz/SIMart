@@ -31,6 +31,34 @@
         .edit-container:hover #description-edit {
             visibility: visible;
         }
+
+        /* Profile picture edit icon */
+        .profile-pic-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .profile-pic-edit-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            visibility: hidden;
+            cursor: pointer;
+            border-radius: 50%;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 5px;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .profile-pic-container:hover .profile-pic-edit-icon {
+            visibility: visible;
+        }
+
       </style>
 </head>
 <body>
@@ -42,7 +70,22 @@
     <div class="flex p-10 w-full">
         <!-- Profile picture -->
         <div class="flex justify-center w-[45%] py-4">
-            <img src="/images/chihiro.jpeg" alt="Profile Picture" class="w-80 h-80 object-cover rounded-full">
+            <div class="profile-pic-container">
+                <% if (!user.image) { %>
+                    <!-- Display placeholder if no image is available -->
+                    <img src="https://img.icons8.com/?size=100&id=23265&format=png&color=da1212" alt="Profile Picture" name="image" id="profile-picture" class="w-80 h-80 object-cover rounded-full">
+                <% } else { %>
+                    <img src="data:<%= user.image_type %>;base64,<%= user.image.toString('base64') %>" alt="Profile Picture" name="image" class="w-80 h-80 object-cover rounded-full">
+                <% } %>
+                <!-- File input to upload new image -->
+                <!-- Only available if it's the user's own profile -->
+                <form id="image-form" action="/profile/update-image" method="post" enctype="multipart/form-data">
+                    <input type="file" name="image" id="image-input" accept="image/*" style="display: none;" onchange="document.getElementById('image-form').submit();">
+                </form>
+                <div class="profile-pic-edit-icon" onclick="document.getElementById('image-input').click();">
+                    <img src="https://img.icons8.com/?size=100&id=89802&format=png&color=da1212" alt="Edit Icon" id="image-edit" class="w-16">
+                </div>
+            </div>
         </div>
         <!-- Profile information -->
         <div class="flex flex-col justify-start space-y-2 w-[55%] py-4">
