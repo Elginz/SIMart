@@ -18,6 +18,8 @@ CREATE TABLE IF NOT EXISTS users (
     email TEXT NOT NULL,
     name TEXT NOT NULL,
     password TEXT NOT NULL,
+    image BLOB,
+    image_type TEXT,
     course TEXT NOT NULL,
     rating INTEGER NOT NULL CHECK(rating IN (0, 1, 2, 3, 4, 5)),
     description TEXT NOT NULL,
@@ -30,7 +32,6 @@ CREATE TABLE IF NOT EXISTS product (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL,
     product_name TEXT NOT NULL,
-    image BLOB,
     content_description TEXT,
     price FLOAT NOT NULL,
     category TEXT NOT NULL CHECK(category IN ('Fashion', 'Electronics', 'Lifestyle', 'Recreation', 'Collectibles', 'Resources', 'Others')),
@@ -63,11 +64,11 @@ CREATE TABLE IF NOT EXISTS favourites (
 );
 
 -- put images here 
-CREATE TABLE IF NOT EXISTS images (
+CREATE TABLE IF NOT EXISTS product_images (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id INTEGER NOT NULL,
     product_id INTEGER NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    image BLOB,
+    image_type TEXT,
     FOREIGN KEY (product_id) REFERENCES product(id) ON DELETE CASCADE
 );
 
