@@ -2,7 +2,25 @@
 const express = require("express");
 const router = express.Router();
 const bodyParser = require("body-parser");
+const multer = require("multer");
+const path = require("path");
+const fs = require('fs');
 router.use(bodyParser.urlencoded({ extended: true }));
+
+// Configure multer storage
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'uploads/');
+    },
+    filename: function (req, file, cb) {
+        cb(null, Date.now() + path.extname(file.originalname));
+    }
+});
+
+const upload = multer({ 
+    storage: storage,
+    limits: { fileSize: 10 * 1024 * 1024 } // 10 MB limit
+});
 
 // I will change this part to be for modular
 // Route to handle GET requests to the profile page
@@ -71,6 +89,27 @@ router.get('/', (req, res) => {;
             });
             
         }
+    });
+});
+
+router.post('/update-image', upload.single('image'), (req, res) => {
+    if (!req.file) {
+        return res.status(400).send('No file uploaded.');
+    }
+
+    const email = req.session.user.email;
+
+    // Read file as binary data
+    const image = fs.readFileSync(req.file.path);
+    const imageType = req.file.mimetype;
+
+    // Query to update the user's name in the database
+    const updateImageQuery = "UPDATE users SET image = ?, image_type = ? WHERE email = ?";
+    global.db.run(updateImageQuery, [image, imageType, email], (err) => {
+        if (err) {
+            return res.status(500).send(err.message);
+        }
+        res.redirect('/profile');
     });
 });
 
