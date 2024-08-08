@@ -109,7 +109,7 @@
                 <h2 class="text-xl md:text-2xl mb-4">Upload Images</h2>
                 <div class="file-input-container" id="file-input-container">
                     <span class="plus-sign">+</span>
-                    <input type="file" name="image" id="image" accept="image/*" multiple onchange="previewImages(event)">
+                    <input type="file" name="images" id="images" accept="image/*" multiple onchange="previewImages(event)">
                 </div>
                 <div class="image-previews" id="image-previews">
                     <!-- Image previews will be inserted here -->
@@ -174,7 +174,7 @@
                     <label for="description" class="block text-gray-700 font-bold">Description:</label>
                     <textarea name="description" id="description" class="w-full border border-gray-300 rounded py-2 px-3" rows="4" required></textarea>
                 </div>
-                <button type="submit" class="bg-red-600 text-white py-2 px-4 rounded">Add Product</button>
+                <button type="submit" class="submit-button bg-red-600 text-white py-2 px-4 rounded">Add Product</button>
             </div>
         </div>
     </form>
@@ -208,40 +208,36 @@
             const input = event.target;
             const previewContainer = document.getElementById('image-previews');
             const existingPreviews = previewContainer.querySelectorAll('.image-preview');    
+            const files = input.files;
 
-            if (existingPreviews.length >= 4) {
+            if (files.length + existingPreviews.length > 4) {
                 alert('You can upload a maximum of 4 images.');
                 return;
             }
 
-            const files = input.files;
-            if (files.length > 1) {
-                alert('You can only upload one image at a time.');
-                return;
-            }
+            Array.from(files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function () {
+                    const result = reader.result;
+                    const preview = document.createElement('div');
+                    preview.classList.add('image-preview');
+                    const img = document.createElement('img');
+                    img.src = result;
+                    preview.appendChild(img);
 
-            const file = files[0];
-            const reader = new FileReader();
-            reader.onload = function () {
-                const result = reader.result;
-                const preview = document.createElement('div');
-                preview.classList.add('image-preview');
-                const img = document.createElement('img');
-                img.src = result;
-                preview.appendChild(img);
+                    const removeBtn = document.createElement('button');
+                    removeBtn.classList.add('remove-btn');
+                    removeBtn.innerHTML = '&times;';
+                    removeBtn.onclick = function () {
+                        previewContainer.removeChild(preview);
+                        input.value = ''; // Reset the input value to allow re-adding the same file
+                    };
+                    preview.appendChild(removeBtn);
 
-                const removeBtn = document.createElement('button');
-                removeBtn.classList.add('remove-btn');
-                removeBtn.innerHTML = '&times;';
-                removeBtn.onclick = function () {
-                    previewContainer.removeChild(preview);
-                    input.value = ''; // Reset the input value to allow re-adding the same file
+                    previewContainer.appendChild(preview);
                 };
-                preview.appendChild(removeBtn);
-
-                previewContainer.appendChild(preview);
-            };
-            reader.readAsDataURL(file);
+                reader.readAsDataURL(file);
+            });
         }
     </script>
 </body>
