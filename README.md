@@ -9,7 +9,7 @@ Currently the files and routes have been placed within **frontend** and **backen
 <h4 align="center">cd into backend before building and starting the code. </h4>
 
 
-**Issues Faced currently**
+**Issues Faced Currently**
 - Insertion of several default values in db_schema.sql is commented for now as it creates some issue. Try debugging this.
 - You may notice an error in building the code. Most of the error comes from the db. Type the following command in the terminal to view sql db issue. It manually executes schema file 
 
