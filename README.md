@@ -11,6 +11,6 @@ Currently the files and routes have been placed within **frontend** and **backen
 
 **Issues (potential)**
 - Insertion of several default values in db_schema.sql is commented for now as it creates some issue. So create a profile to login. **Try debugging this.**
-- You may notice an error in building the code. Most of the error comes from the db. Type the following command in the terminal to view sql db issue. It manually executes schema file 
+- You may notice an error in building the code. Most of the error comes from the db. Run the following command in the terminal to view sql db issue. It manually executes schema file 
 
 *sqlite3 backend/database.db < backend/db_schema.sql*
