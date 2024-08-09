@@ -6,8 +6,8 @@ Currently the files and routes have been placed within **frontend** and **backen
 
 *There is no node module inside the files as its too big, so add node modules (npm i) into both backend and frontend repositories.*
 
-- cd into backend
-- run npm build-db and run start
+<h4 align="center">cd into backend before building and starting the code. </h4>
+
 
 **Issues Faced currently**
 - Insertion of several default values in db_schema.sql is commented for now as it creates some issue. Try debugging this.
