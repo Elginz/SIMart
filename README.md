@@ -1,5 +1,16 @@
-Step by step basis (For those working on it)
+<h1 align="center">TEAM 58</h1>
 
-There is no node module inside the files, so add node modules (npm i) into both backend and front end.
+<h3 align="center">Step by step basis (Will make sense for those actually working on it)</h3>
 
-cd into backend before running npm run build-db and npm run start
+Currently the files and routes have been placed within **frontend** and **backend** the older files were moved into **older_files**
+
+*There is no node module inside the files as its too big, so add node modules (npm i) into both backend and frontend repositories.*
+
+- cd into backend
+- run npm build-db and run start
+
+**Issues Faced currently**
+- Insertion of several default values in db_schema.sql is commented for now as it creates some issue. Try debugging this.
+- You may notice an error in building the code. Most of the error comes from the db. Type the following command in the terminal to view sql db issue. It manually executes schema file 
+
+*sqlite3 backend/database.db < backend/db_schema.sql*
