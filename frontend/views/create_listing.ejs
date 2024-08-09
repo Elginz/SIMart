@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add a New Product</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .bubble-option {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 30px;
+            border: 2px solid #ccc;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .bubble-option.selected {
+            background-color: #DA1212;
+            color: white;
+            border-color: #DA1212;
+        }
+        .bubble-option input[type="radio"] {
+            display: none;
+        }
+        .file-input-container {
+            position: relative;
+            width: 100%;
+            height: 200px;
+            border: 2px dashed #ccc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            background-color: #f7f7f7;
+        }
+        .file-input-container .plus-sign {
+            font-size: 2rem;
+            color: #999;
+        }
+        .file-input-container input[type="file"] {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+        .image-previews {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+        .image-preview {
+            width: 120px;
+            height: 90px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            overflow: hidden;
+            background-color: #f7f7f7;
+            position: relative;
+        }
+        .image-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .image-preview:hover .remove-btn {
+            display: block;
+        }
+        .remove-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background-color: red;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: none;
+            cursor: pointer;
+            text-align: center;
+            line-height: 18px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        @media (min-width: 640px) {
+            .file-input-container {
+                height: 300px;
+            }
+            .file-input-container .plus-sign {
+                font-size: 3rem;
+            }
+            .image-preview {
+                width: 140px;
+                height: 100px;
+            }
+        }
+    </style>
+</head>
+<body class="bg-amber-50 flex flex-col min-h-screen">
+    <!-- Navigation bar -->
+    <%- include('navbar') %>
+
+    <form action="/product/new" method="POST" enctype="multipart/form-data" class="flex flex-col flex-grow">
+        <div class="flex flex-col md:flex-row flex-grow p-4">
+            <div class="md:w-1/2 p-2">
+                <h2 class="text-xl md:text-2xl mb-4">Upload Images</h2>
+                <div class="file-input-container" id="file-input-container">
+                    <span class="plus-sign">+</span>
+                    <input type="file" name="images" id="images" accept="image/*" multiple onchange="previewImages(event)">
+                </div>
+                <div class="image-previews" id="image-previews">
+                    <!-- Image previews will be inserted here -->
+                </div>
+            </div>
+            <div class="md:w-1/2 p-2">
+                <div class="form-group mb-4">
+                    <label for="category" class="block text-gray-700 font-bold">Category:</label>
+                    <select name="category" id="category" class="w-full border border-gray-300 rounded py-2 px-3" required>
+                        <option value="Fashion">Fashion</option>
+                        <option value="Electronics">Electronics</option>
+                        <option value="Lifestyle">Lifestyle</option>
+                        <option value="Recreation">Recreation</option>
+                        <option value="Collectibles">Collectibles</option>
+                        <option value="Resources">Resources</option>
+                        <option value="Others">Others</option>
+                    </select>
+                </div>
+                <div class="form-group mb-4">
+                    <label class="block text-gray-700 font-bold">Transaction:</label>
+                    <div class="transaction-options flex flex-wrap gap-4">
+                        <label class="bubble-option">
+                            <input type="radio" id="Sell" name="transaction" value="Sell" required>
+                            For Sale
+                        </label>
+                        <label class="bubble-option">
+                            <input type="radio" id="Trade" name="transaction" value="Trade">
+                            For Trade
+                        </label>
+                        <label class="bubble-option">
+                            <input type="radio" id="Free" name="transaction" value="Free">
+                            For Free
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group mb-4">
+                    <label for="name" class="block text-gray-700 font-bold">Product Name:</label>
+                    <input type="text" name="name" id="name" class="w-full border border-gray-300 rounded py-2 px-3" required>
+                </div>
+                <div class="form-group mb-4">
+                    <label class="block text-gray-700 font-bold">Condition:</label>
+                    <div class="condition-options flex flex-wrap gap-4">
+                        <label class="bubble-option">
+                            <input type="radio" id="brand_new" name="condition" value="Brand new" required>
+                            Brand New
+                        </label>
+                        <label class="bubble-option">
+                            <input type="radio" id="lightly_used" name="condition" value="Lightly used">
+                            Lightly Used
+                        </label>
+                        <label class="bubble-option">
+                            <input type="radio" id="well_used" name="condition" value="Well used">
+                            Well Used
+                        </label>
+                        <label class="bubble-option">
+                            <input type="radio" id="heavily_used" name="condition" value="Heavily used">
+                            Heavily Used
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group mb-4">
+                    <label for="description" class="block text-gray-700 font-bold">Description:</label>
+                    <textarea name="description" id="description" class="w-full border border-gray-300 rounded py-2 px-3" rows="4" required></textarea>
+                </div>
+                <button type="submit" class="submit-button bg-red-600 text-white py-2 px-4 rounded">Add Product</button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Footer -->
+    <%- include('footer') %>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const transactionOptions = document.querySelectorAll('.transaction-options .bubble-option');
+            const conditionOptions = document.querySelectorAll('.condition-options .bubble-option');
+    
+            transactionOptions.forEach(option => {
+                option.addEventListener('click', () => {
+                    transactionOptions.forEach(opt => opt.classList.remove('selected'));
+                    option.classList.add('selected');
+                    option.querySelector('input[type="radio"]').checked = true;
+                });
+            });
+    
+            conditionOptions.forEach(option => {
+                option.addEventListener('click', () => {
+                    conditionOptions.forEach(opt => opt.classList.remove('selected'));
+                    option.classList.add('selected');
+                    option.querySelector('input[type="radio"]').checked = true;
+                });
+            });
+        });
+
+        function previewImages(event) {
+            const input = event.target;
+            const previewContainer = document.getElementById('image-previews');
+            const existingPreviews = previewContainer.querySelectorAll('.image-preview');    
+            const files = input.files;
+
+            if (files.length + existingPreviews.length > 4) {
+                alert('You can upload a maximum of 4 images.');
+                return;
+            }
+
+            Array.from(files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function () {
+                    const result = reader.result;
+                    const preview = document.createElement('div');
+                    preview.classList.add('image-preview');
+                    const img = document.createElement('img');
+                    img.src = result;
+                    preview.appendChild(img);
+
+                    const removeBtn = document.createElement('button');
+                    removeBtn.classList.add('remove-btn');
+                    removeBtn.innerHTML = '&times;';
+                    removeBtn.onclick = function () {
+                        previewContainer.removeChild(preview);
+                        input.value = ''; // Reset the input value to allow re-adding the same file
+                    };
+                    preview.appendChild(removeBtn);
+
+                    previewContainer.appendChild(preview);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+    </script>
+</body>
+</html>

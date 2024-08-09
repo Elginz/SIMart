@@ -1,0 +1,331 @@
+<!-- views/profile.ejs -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Profile Page</title>
+    <style>
+        input,
+        #name-display{ text-transform: capitalize; }
+        
+        /* color */
+        .red {
+            color: #DA1212;
+        }
+
+        /* For edit icon */
+        .edit-container {
+            position: relative;
+        }
+
+        #name-edit,
+        #course-edit,
+        #description-edit {
+            visibility: hidden;
+        }
+
+        .edit-container:hover #name-edit,
+        .edit-container:hover #course-edit,
+        .edit-container:hover #description-edit {
+            visibility: visible;
+        }
+
+        /* Profile picture edit icon */
+        .profile-pic-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .profile-pic-edit-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            visibility: hidden;
+            cursor: pointer;
+            border-radius: 50%;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 5px;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .profile-pic-container:hover .profile-pic-edit-icon {
+            visibility: visible;
+        }
+
+      </style>
+</head>
+<body>
+<div class="flex flex-col min-h-screen bg-amber-50 bg-cover">
+    <!-- Navigation bar -->
+    <%- include('navbar') %>
+
+    <!-- User's profile -->
+    <div class="flex p-10 w-full">
+        <!-- Profile picture -->
+        <div class="flex justify-center w-[45%] py-4">
+            <div class="profile-pic-container">
+                <% if (!user.image) { %>
+                    <!-- Display placeholder if no image is available -->
+                    <img src="https://img.icons8.com/?size=100&id=23265&format=png&color=da1212" alt="Profile Picture" name="image" id="profile-picture" class="w-80 h-80 object-cover rounded-full">
+                <% } else { %>
+                    <img src="data:<%= user.image_type %>;base64,<%= user.image.toString('base64') %>" alt="Profile Picture" name="image" class="w-80 h-80 object-cover rounded-full">
+                <% } %>
+                <!-- File input to upload new image -->
+                <!-- Only available if it's the user's own profile -->
+                <form id="image-form" action="/profile/update-image" method="post" enctype="multipart/form-data">
+                    <input type="file" name="image" id="image-input" accept="image/*" style="display: none;" onchange="document.getElementById('image-form').submit();">
+                </form>
+                <div class="profile-pic-edit-icon" onclick="document.getElementById('image-input').click();">
+                    <img src="https://img.icons8.com/?size=100&id=89802&format=png&color=da1212" alt="Edit Icon" id="image-edit" class="w-16">
+                </div>
+            </div>
+        </div>
+        <!-- Profile information -->
+        <div class="flex flex-col justify-start space-y-2 w-[55%] py-4">
+
+            <!-- User's name -->
+            <form action="/profile/update-name" method="post" class="inline">
+                <div class="flex items-center edit-container">
+                    <div class="font-bold text-5xl">
+                        <span id="name-display"><%= user.name %></span>
+                        <input type="text" id="name-input" name="name" value="<%= user.name %>" class="bg-transparent p-2 border border-gray-300 rounded focus:outline-none hidden">
+                    </div>
+                    <div>
+                        <img src="https://img.icons8.com/?size=100&id=89802&format=png&color=da1212" alt="Edit Icon" id="name-edit" class="mx-4 py-2 w-8 edit-button" onclick="toggleEdit('name')">
+                        <button type="submit" id="name-save" class="ml-2 w-20 h-10 text-white object-cover rounded-xl hidden" style="background-color: #DA1212;">Save</button>
+                    </div>
+                </div>
+            </form>
+
+            <!-- User's rating -->
+            <div class="flex items-center space-x-2 text-xl">
+                <span><%= user.rating %>.0</span>
+                <span id="rating-display">
+                    <img src="/images/<%= user.rating %> star.png" alt="<%= user.rating %> star" class="h-8">
+                </span>
+            </div>
+
+            <!-- User's course -->
+            <form action="/profile/update-course" method="post" class="inline">
+                <div class="flex items-center edit-container">
+                    <div class="font-bold text-2xl">
+                        <span id="course-display"><%= user.course %></span>
+                        <select id="course-input" name="course" multiple class="bg-transparent border border-gray-300 rounded hidden">
+                            <% schools.forEach(school => { %>
+                                <option value="<%= school.course_name %>" <%= user.course === school.course_name ? 'selected' : '' %>><%= school.course_name %></option>
+                            <% }) %>
+                        </select>
+                    </div>
+                    <div>
+                        <img src="https://img.icons8.com/?size=100&id=89802&format=png&color=da1212" alt="Edit Icon" id="course-edit" class="mx-4 py-2 w-8 edit-button" onclick="toggleEdit('course')">
+                        <button type="submit" id="course-save" class="ml-2 w-20 h-10 text-white object-cover rounded-xl hidden" style="background-color: #DA1212;">Save</button>
+                    </div>
+                </div>
+            </form>
+
+            <!-- User's email address -->
+            <!-- visible only if the user is not viewing their own profile -->
+            <!-- <a href="mailto:<%= user.email %>" class="flex items-center">
+                <img src="https://img.icons8.com/?size=100&id=2848&format=png&color=da1212" alt="Email Icon" class="w-8 h-8">
+            </a> -->
+
+            <!-- User's description -->
+            <form action="/profile/update-description" method="post" class="inline">
+                <div class="flex items-center edit-container">
+                    <div class="text-2xl">
+                        <span id="description-display"><%= user.description %></span>
+                        <textarea id="description-input" name="description" rows="3" cols="50" value="<%= user.description %>" class="bg-transparent p-2 border border-gray-300 rounded focus:outline-none hidden"><%= user.description %></textarea>
+                    </div>
+                    <div>
+                        <img src="https://img.icons8.com/?size=100&id=89802&format=png&color=da1212" alt="Edit Icon" id="description-edit" class="mx-4 py-2 w-8 edit-button" onclick="toggleEdit('description')">
+                        <button type="submit" id="description-save" class="ml-2 w-20 h-10 text-white object-cover rounded-xl hidden" style="background-color: #DA1212;">Save</button>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Logout button -->
+            <!-- Visible only if the user is viewing their own profile -->
+            <div>
+                <button class="px-4 py-2 text-white text-lg rounded logoutBtn" style="background-color: #DA1212;" onclick="window.location.href='/logout'">Logout</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section names -->
+    <div class="w-full">
+        <div class="flex pl-32 space-x-10 ">
+            <a href="/profile?section=listings" id="listings" class="p-4 cursor-pointer font-bold red underline text-3xl">Listings</a>
+            <a href="/profile?section=reviews" id="reviews" class="p-4 cursor-pointer font-bold red underline text-3xl">Reviews</a>
+            <a href="/profile?section=favourites" id="favourites" class="p-4 cursor-pointer font-bold red underline text-3xl">Favourites</a>
+        </div>
+        
+        <!-- Listings section -->
+        <div id="listings-section" class="grid grid-cols-4 gap-2 pl-32 pr-20 pt-4">
+            <% listings.forEach((listing, index) => { %>
+            <div class="flex justify-center py-6 item" data-transaction-type="<%= listing.transaction_type %>">
+                <div class="w-full h-auto">
+                    <img src="/images/bracelet.jpg" class="w-80 h-96 object-cover rounded-lg">
+                    <p class="pt-3 pb-1 font-bold text-2xl"><%= listing.product_name %></p>
+                    <p class="pb-1 text-xl">$<%= listing.price %></p>
+                    <div class="flex space-x-1">
+                        <div id="listings-<%= index %>-first" class="px-4 py-1 rounded-full text-white" style="background-color: #DA1212;">
+                        </div>
+                        <div id="listings-<%= index %>-second" class="px-4 py-1 rounded-full text-white hidden" style="background-color: #DA1212;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <% }) %>
+       </div>
+
+       <!-- Reviews section -->
+       <div id="reviews-section" class="flex flex-col justify-center px-36 hidden">
+        <% reviews.forEach((review, index) => { %>
+            <div class="flex pl-12 pr-10 py-7 my-2 rounded-xl" style="background-color: #D9D9D9;">
+                <div>
+                    <img src="/images/chihiro.jpeg" alt="Profile Picture" class="w-24 h-20 object-cover rounded-full">
+                </div>
+                <div class="flex flex-col px-7 space-y-2">
+                    <p class="font-bold text-xl"><%= review.commenterName %></p>
+                    <span id="review-rating">
+                        <img src="/images/<%= review.stars_given %> star.png" alt="<%= review.stars_given %> star" class="h-6">
+                    </span>
+                    <p class="text-lg"><%= review.commentContent %></p>
+                </div>
+            </div>
+        <% }) %>
+       </div>
+
+        <!-- Favourites section -->
+        <div id="favourites-section" class="grid grid-cols-4 gap-2 pl-32 pr-20 pt-4 hidden">
+            <% favourites.forEach((favourite, index) => { %>
+            <div class="flex justify-center py-6 item" data-transaction-type="<%= favourite.transaction_type %>">
+                <div class="w-full h-auto">
+                    <img src="/images/bracelet.jpg" class="w-80 h-96 object-cover rounded-lg">
+                    <p class="pt-3 pb-1 font-bold text-2xl"><%= favourite.product_name %></p>
+                    <p class="pb-1 text-xl">$<%= favourite.price %></p>
+                    <div class="flex space-x-1">
+                        <div id="favourites-<%= index %>-first" class="px-4 py-1 rounded-full text-white" style="background-color: #DA1212;">
+                        </div>
+                        <div id="favourites-<%= index %>-second" class="px-4 py-1 rounded-full text-white hidden" style="background-color: #DA1212;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <% }) %>
+       </div>
+    </div>
+
+     <!-- Footer -->
+     <%- include('footer') %>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+
+    $(".logoutBtn").click(function () {
+        alert("Logged Out");
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // For transaction type
+        switchTransactionType('listings');
+        switchTransactionType('favourites');
+
+        // Extract the section from URL and switch section accordingly
+        const urlParams = new URLSearchParams(window.location.search);
+        const section = urlParams.get('section') || 'listings'; // Default to 'listings' if no section is specified
+        switchSection(section);
+    });
+
+    // switch section
+    function switchSection(id) {
+        const elements = document.querySelectorAll('.cursor-pointer');
+        elements.forEach(el => {
+            el.classList.remove('red', 'underline');
+            el.classList.add('text-black');
+        });
+
+        const selectedElement = document.getElementById(id);
+        selectedElement.classList.remove('text-black');
+        selectedElement.classList.add('red', 'underline');
+
+        const sections = {
+            listings: "listings-section",
+            reviews: "reviews-section",
+            favourites: "favourites-section"
+        };
+
+        for (const section in sections) {
+            document.getElementById(sections[section]).classList.add('hidden');
+        }
+
+        switch(id) {
+            case 'listings':
+                document.getElementById(sections.listings).classList.remove('hidden');
+                break;
+            case 'reviews':
+                document.getElementById(sections.reviews).classList.remove('hidden');
+                break;
+            case 'favourites':
+                document.getElementById(sections.favourites).classList.remove('hidden');
+                break;
+        }
+    }
+
+    // To edit user's information
+    function toggleEdit(field) {
+        const displayElement = document.getElementById(`${field}-display`);
+        const inputElement = document.getElementById(`${field}-input`);
+        const editIcon = document.getElementById(`${field}-edit`);
+        const saveButton = document.getElementById(`${field}-save`);
+        document.querySelectorAll('.edit-button').forEach(icon => icon.classList.add('hidden'));
+        
+        if (displayElement.classList.contains('hidden')) {
+            displayElement.classList.remove('hidden');
+            inputElement.classList.add('hidden');
+            editIcon.classList.remove('hidden');
+            saveButton.classList.add('hidden');
+        } else {
+            displayElement.classList.add('hidden');
+            inputElement.classList.remove('hidden');
+            editIcon.classList.add('hidden');
+            saveButton.classList.remove('hidden');
+        }
+    }
+
+    // For the transaction type
+    function switchTransactionType(field) {
+        const section = document.getElementById(`${field}-section`);
+        const sectionItems = section.querySelectorAll('.item');
+
+        sectionItems.forEach((item, index) => {
+            const transactionType = item.dataset.transactionType.split(',').map(t => t.trim()); // Split by comma and trim whitespace
+            const firstBubble = document.getElementById(`${field}-${index}-first`);
+            const secondBubble = document.getElementById(`${field}-${index}-second`);
+            
+            if (firstBubble) {
+                if (transactionType.length === 1) {
+                    firstBubble.innerHTML = `<p>${transactionType[0]}</p>`;
+                    firstBubble.classList.remove('hidden');
+                    secondBubble.classList.add('hidden');
+                } else if (transactionType.length === 2) {
+                    firstBubble.innerHTML = `<p>${transactionType[0]}</p>`;
+                    secondBubble.innerHTML = `<p>${transactionType[1]}</p>`;
+                    firstBubble.classList.remove('hidden');
+                    secondBubble.classList.remove('hidden');
+                }
+            }
+        });
+    }
+
+</script>
+</body>
+</html>

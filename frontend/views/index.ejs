@@ -1,0 +1,211 @@
+<!-- views/index.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Swiper CDN for carousell -->
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+    <style>
+        .carousel{
+            position: relative; /* Relative positioning */
+            overflow: hidden;
+            
+        }
+        .swiper-container {
+            height: 10%;
+            width: 75%;
+            overflow: hidden; /* Hide overflow */
+        }
+        .swiper-wrapper{
+            aspect-ratio: 8/3;
+        }
+        /* Adjusting styles for nav buttons */
+        .swiper-button-next,
+        .swiper-button-prev {
+            color:black;
+            position: absolute;
+            transform: translateY(-50%);
+        }
+        .swiper-pagination {
+            position: relative; /* Relative positioning */
+            margin-top: 2%; /* Adjust margin as needed */
+        }
+        .item {
+            border: 1px solid #ddd; /* Add a border if needed */
+            border-radius: 8px; /* Rounded corners */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Shadow effect */
+        }
+        
+    </style>
+    <title>Home</title>
+</head>
+<body>
+    <div class="flex flex-col min-h-screen bg-amber-50 bg-cover">
+        <!-- Navigation bar -->
+        <%- include('navbar') %>
+
+        <!-- Search bar -->
+        <div class="bg-gray-200 rounded-lg shadow-lg w-full mx-auto">
+            <form id="filter-form" class="flex space-x-4 justify-center py-4" action="/" method="GET">
+                <input type="text" name="product_name" placeholder="Product Name" class="px-4 py-2 border rounded-md shadow-lg" style = "width: 50%;" value="<%= typeof product_name !== 'undefined' ? product_name : '' %>">
+                <select name="transaction_type" class="px-4 py-2 border rounded-md shadow-lg">
+                    <option value="" <%= !transaction_type ? 'selected' : '' %>>All</option>
+                    <option value="Sell" <%= transaction_type === 'Sell' ? 'selected' : '' %>>For Sale</option>
+                    <option value="Trade" <%= transaction_type === 'Trade' ? 'selected' : '' %>>For Trade</option>
+                    <option value="Free" <%= transaction_type === 'Free' ? 'selected' : '' %>>For Free</option>
+                </select>
+                <button type="submit" class="px-4 py-2 text-white rounded-md bg-[#DA1212]" onclick="window.location.href='/Filter'">
+                    <img src="https://img.icons8.com/?size=100&id=82712&format=png&color=FFFFFF" class="w-6 h-6">
+                </button>
+            </form>
+        </div>
+        <!-- End of search bar -->
+
+        <!-- Carousell  -->
+        <div class = "flex justify-center mt-6 carousel">
+            <div class="swiper-container">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide">
+                        <img src="/images/donation.png" alt="Slide 1" class="w-full">
+                    </div>
+                    <div class="swiper-slide">
+                        <img src="https://via.placeholder.com/800x300" alt="Slide 2" class="w-full">
+                    </div>
+                    <div class="swiper-slide">
+                        <img src="https://via.placeholder.com/800x300" alt="Slide 3" class="w-full">
+                    </div>
+                </div>
+                <!-- Add Pagination -->
+                <div class="swiper-pagination"></div>
+                <!-- Add Navigation -->
+                <div class="swiper-button-next"></div>
+                <div class="swiper-button-prev"></div>
+            </div>
+        </div>
+        <!-- End of Carousell -->
+        <br>
+        <!-- Categories -->
+        <h1 class="text-2xl md:text-3xl leading-normal mb-4 ml-10">Categories</h1>
+        <div class="flex overflow-x-auto space-x-2 p-4 justify-center">
+            <button class="flex flex-col items-center p-2 bg-red-600 text-white rounded-xl flex-shrink-0 w-32 sm:w-36 md:w-40 lg:w-44 xl:w-48 text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl" onclick="window.location.href='/category/fashion'">
+                <img src="https://img.icons8.com/?size=100&id=110247&format=png&color=FFFFFF" alt="Fashion Icon" class="h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 lg:h-14 lg:w-14 xl:h-16 xl:w-16 mb-1">
+                Fashion
+            </button>
+            <button class="flex flex-col items-center p-2 bg-red-600 text-white rounded-xl flex-shrink-0 w-32 sm:w-36 md:w-40 lg:w-44 xl:w-48 text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl" onclick="window.location.href='/category/electronics'">
+                <img src="https://img.icons8.com/?size=100&id=11409&format=png&color=FFFFFF" alt="Electronics Icon" class="h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 lg:h-14 lg:w-14 xl:h-16 xl:w-16 mb-1">
+                Electronics
+            </button>
+            <button class="flex flex-col items-center p-2 bg-red-600 text-white rounded-xl flex-shrink-0 w-32 sm:w-36 md:w-40 lg:w-44 xl:w-48 text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl" onclick="window.location.href='/category/lifestyle'">
+                <img src="https://img.icons8.com/?size=100&id=9783&format=png&color=FFFFFF" alt="Lifestyle Icon" class="h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 lg:h-14 lg:w-14 xl:h-16 xl:w-16 mb-1">
+                Lifestyle
+            </button>
+            <button class="flex flex-col items-center p-2 bg-red-600 text-white rounded-xl flex-shrink-0 w-32 sm:w-36 md:w-40 lg:w-44 xl:w-48 text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl" onclick="window.location.href='/category/recreation'">
+                <img src="https://img.icons8.com/?size=100&id=11630&format=png&color=FFFFFF" alt="Recreation Icon" class="h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 lg:h-14 lg:w-14 xl:h-16 xl:w-16 mb-1">
+                Recreation
+            </button>
+            <button class="flex flex-col items-center p-2 bg-red-600 text-white rounded-xl flex-shrink-0 w-32 sm:w-36 md:w-40 lg:w-44 xl:w-48 text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl" onclick="window.location.href='/category/collectibles'">
+                <img src="https://img.icons8.com/?size=100&id=63372&format=png&color=FFFFFF" alt="Collectibles Icon" class="h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 lg:h-14 lg:w-14 xl:h-16 xl:w-16 mb-1">
+                Collectibles
+            </button>
+            <button class="flex flex-col items-center p-2 bg-red-600 text-white rounded-xl flex-shrink-0 w-32 sm:w-36 md:w-40 lg:w-44 xl:w-48 text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl" onclick="window.location.href='/category/resources'">
+                <img src="https://img.icons8.com/?size=100&id=9492&format=png&color=FFFFFF" alt="Resources Icon" class="h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 lg:h-14 lg:w-14 xl:h-16 xl:w-16 mb-1">
+                Resources
+            </button>
+            <button class="flex flex-col items-center p-2 bg-red-600 text-white rounded-xl flex-shrink-0 w-32 sm:w-36 md:w-40 lg:w-44 xl:w-48 text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl" onclick="window.location.href='/category/others'">
+                <img src="https://img.icons8.com/?size=100&id=114595&format=png&color=FFFFFF" alt="Others Icon" class="h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 lg:h-14 lg:w-14 xl:h-16 xl:w-16 mb-1">
+                Others
+            </button>
+        </div>
+        <!-- End of Categories -->
+
+        <!-- Start of Listings -->
+        <h1 class="text-2xl md:text-3xl leading-normal mb-4 mt-24 ml-10">Newly Listed</h1>
+        <div id="listings-section" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 px-4 py-6">
+            <% if (product && product.length > 0) { %>
+                <% product.forEach((listing, index) => { %>
+                    <div class="flex flex-col items-center py-4 item" data-transaction-type="<%= listing.transaction_type %>">
+                        <div class="w-full h-auto">
+                            <img src="<%= listing.image %>" class="w-full h-64 object-cover rounded-lg">
+                            <p class="pt-3 pb-1 font-bold text-lg sm:text-xl md:text-2xl"><%= listing.product_name %></p>
+                            <p class="pb-1 text-lg sm:text-xl">$<%= listing.price %></p>
+                            <div class="flex space-x-1 mt-2">
+                                <div id="listings-<%= index %>-first" class="px-4 py-1 rounded-full text-white" style="background-color: #DA1212;">
+                                </div>
+                                <div id="listings-<%= index %>-second" class="px-4 py-1 rounded-full text-white hidden" style="background-color: #DA1212;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <% }) %>
+            <% } else { %>
+                <p class="text-center col-span-full">No listings available.</p>
+            <% } %>
+        </div>
+        <br>
+
+        <!-- End of Listings -->
+    </div>
+
+
+    <!-- Footer -->
+    <%- include('footer') %>
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript">
+        $(".logoutBtn").click(function () {
+            alert("Logged out");
+        });
+        
+        //Javascript for carousell
+        var swiper = new Swiper('.swiper-container', {
+            slidesPerView: 1,
+            spaceBetween: 10,
+            loop: true,
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true,
+            },
+            navigation: {
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev',
+            },
+        });
+
+         document.addEventListener('DOMContentLoaded', function() {
+        // For transaction type
+        switchTransactionType('listings');
+        switchTransactionType('favourites');
+    });
+
+        // For the transaction type
+        function switchTransactionType(field) {
+            const section = document.getElementById(`${field}-section`);
+            const sectionItems = section.querySelectorAll('.item');
+
+            sectionItems.forEach((item, index) => {
+                const transactionType = item.dataset.transactionType.split(',').map(t => t.trim()); // Split by comma and trim whitespace
+                const firstBubble = document.getElementById(`${field}-${index}-first`);
+                const secondBubble = document.getElementById(`${field}-${index}-second`);
+                
+                if (firstBubble) {
+                    if (transactionType.length === 1) {
+                        firstBubble.innerHTML = `<p>${transactionType[0]}</p>`;
+                        firstBubble.classList.remove('hidden');
+                        secondBubble.classList.add('hidden');
+                    } else if (transactionType.length === 2) {
+                        firstBubble.innerHTML = `<p>${transactionType[0]}</p>`;
+                        secondBubble.innerHTML = `<p>${transactionType[1]}</p>`;
+                        firstBubble.classList.remove('hidden');
+                        secondBubble.classList.remove('hidden');
+                    }
+                }
+            });
+        }
+
+    </script>
+    
+</body>
+</html>

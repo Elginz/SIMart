@@ -1,0 +1,83 @@
+<!-- views/register.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <script src="https://cdn.tailwindcss.com"></script>
+        <title>Register</title>
+    </head>
+    <body class="flex items-center justify-center min-h-screen bg-amber-50 bg-cover">
+        <div class="bg-gray-50 rounded-lg shadow-lg p-8 max-w-lg w-full mx-auto">
+            <div class="text-center text-gray-800">
+                <h1 class="text-3xl font-bold leading-normal mb-8">Sign up</h1>
+            </div>
+                <% if (typeof error !== 'undefined') { %>
+                    <div class ="text-center mb-4">
+                        <p class="text-red-500 font-bold"><%= error %></p>
+                    </div>
+                <% } %>
+                <form action="/register" method="POST" class="space-y-4">
+                    <div>
+                        <label for="email" class="block mb-2">SIM Email Address</label>
+                        <input type="text" id="email" name="email" placeholder="Enter your SIM Email Address" required class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-black">
+                    </div>
+                    <div>
+                        <label for="password" class="block mb-2">Password</label>
+                        <input type="password" id="password" name="password" placeholder="Enter your password" required class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-black">
+                    </div>
+                    <div>
+                        <label for="name" class="block mb-2">Name</label>
+                        <input type="text" id="name" name="name" placeholder="What's Your Name?" required class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-black">
+                    </div>
+                    <div>
+                        <label for="school" class="block mb-2">Course</label>
+                        <select id="course" name="course" required class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-black">
+                            <option value="" disabled selected>Select your course</option>
+                            <% courses.forEach(course => { %>
+                                <option value="<%= course.course_name %>"><%= course.course_name %></option>
+                            <% }) %>
+                        </select>
+        
+                    </div>
+                    <div>
+                        <label for="description" class="block mb-2">Describe Yourself</label>
+                        <textarea id="description" name="description" placeholder="Tell us a little about yourself" required rows="4" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-black"></textarea>
+                    </div>        
+                            <div>
+                        <button type="submit" class="w-full px-4 py-2 bg-red-600 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:bg-indigo-700">Register Now</button>
+                    </div>
+                </form>
+        
+                <div class="text-center mt-2">
+                <p class="mt-4 text-gray-600">Already have an account? <a href="/login" class="text-indigo-500 hover:underline">Login here</a></p>
+                </div>
+            </div>
+        </div>
+        
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+        <script>
+
+            //Password test
+            document.getElementById('registerForm').addEventListener('submit', function(event) {
+                const password = document.getElementById('password').value;
+                // Regular expression to validate password
+                const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*_])[A-Za-z\d!@#$%^&*_]{6,}$/;
+
+                // Check if password meets the required criteria
+                if (!passwordRegex.test(password)) {
+                    event.preventDefault(); // Prevent form submission
+                    alert("Password must:\n\
+                    - Include at least one lowercase letter (a-z)\n\
+                    - Include at least one uppercase letter (A-Z)\n\
+                    - Contain at least one digit (0-9)\n\
+                    - Have at least one special character ( ! @ # $ % ^ & * _ )\n\
+                    - Be at least 6 characters long."); // Display password requirements
+                } else {
+                    return null; // Allow form submission if password is valid
+                }
+            });
+        </script>
+        </body> 
+</html>

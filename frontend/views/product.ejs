@@ -1,0 +1,139 @@
+<!-- views/product.ejs -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="/main.css" rel="stylesheet">
+    <title>Products</title>
+</head>
+<body>
+<div class="flex flex-col min-h-screen bg-amber-50 bg-cover">
+    <!-- Navigation bar -->
+        <nav class="flex items-center justify-between p-3 w-full" style="background-color: #041562;">
+            <div class="flex items-center space-x-4">
+                <a href="/">
+                    <img src="/images/logo.png" class="h-14 w-auto" alt="Logo">
+                </a>
+            </div>
+            <div class="flex items-center justify-center space-x-4">
+                <a href="/fashion" class="p-4 text-white text-xl">Fashion</a>
+                <a href="/electronics" class="p-4 text-white text-xl">Electronics</a>
+                <a href="/lifestyle" class="p-4 text-white text-xl">Lifestyle</a>
+                <a href="/recreation" class="p-4 text-white text-xl">Recreation</a>
+                <a href="/collectibles" class="p-4 text-white text-xl">Collectibles</a>
+                <a href="/resources" class="p-4 text-white text-xl">Resources</a>
+                <a href="/others" class="pl-4 pr-3 py-4 text-white text-xl">Others</a>
+                <a href="/profile?section=listings" class="py-3"><img src="https://img.icons8.com/?size=100&id=85050&format=png&color=FFFFFF" alt="Profile Icon" class="h-10 w-10"></a>
+                <a href="/profile?section=favourites" class="py-3"><img src="https://img.icons8.com/?size=100&id=85038&format=png&color=FFFFFF" alt="Favourites Icon" class="h-10 w-10"></a>
+                <button class="px-4 py-2 mr-5 w-20 text-white rounded" onclick="window.location.href='/listProduct'" style="background-color: #DA1212">List</button> 
+            </div>
+        </nav>
+        <!-- End of Navigation bar -->
+        <!-- Footer -->
+        <footer class="mt-auto w-full text-white py-4 flex flex-col items-center" style="background-color: #0d4aa6;">
+            <div class="w-full flex justify-between items-center px-10">
+                <h1 class="text-2xl md:text-3xl"> SMart</h1>
+                <div class="flex space-x-4 pr-12">
+                    <a href="/" class="text-white text-xl">About us</a>
+                    <a href="/" class="text-white text-xl">Contact us</a>
+                </div>
+            </div>
+            <div class="w-full flex justify-between px-10 mt-4">
+                <div class="flex space-x-4">
+                    <a href="https://twitter.com" target="_blank">
+                        <img src="https://img.icons8.com/?size=100&id=fJp7hepMryiw&format=png&color=FFFFFF" alt="Twitter Icon" class="h-10 w-10">
+                    </a>
+                    <a href="https://instagram.com" target="_blank">
+                        <img src="https://img.icons8.com/?size=100&id=32292&format=png&color=FFFFFF" alt="Instagram Icon" class="h-10 w-10">
+                    </a>
+                    <a href="https://facebook.com" target="_blank">
+                        <img src="https://img.icons8.com/?size=100&id=118467&format=png&color=FFFFFF" alt="Facebook Icon" class="h-10 w-10">
+                    </a>
+                    <a href="https://linkedin.com" target="_blank">
+                        <img src="https://img.icons8.com/?size=100&id=8808&format=png&color=FFFFFF" alt="LinkedIn Icon" class="h-10 w-10">
+                    </a>
+                </div>
+            </div>
+            <br>
+            <p class="text-xs">&copy; 2024 SMart. All rights reserved</p>
+    
+        </footer>
+        <!-- End of footer -->
+
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    function deleteArticle(id) {
+        fetch(`/author/delete-article/${id}`, { method: 'DELETE' })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.reload();
+                } else {
+                    alert('Error deleting article');
+                }
+            });
+    }
+
+    function publishArticle(id) {
+        fetch(`/author/publish-article/${id}`, { method: 'POST' })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.reload();
+                } else {
+                    alert('Error publishing article');
+                }
+            });
+    }
+
+    $(".logoutBtn").click(function () {
+        alert("Logged Out");
+    });
+
+    // Javascript for favourites icon
+    document.addEventListener('DOMContentLoaded', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const section = urlParams.get('section') || 'listings'; // Default to 'listings' if no section is specified
+        switchSection(section);
+    });
+
+    function switchSection(id) {
+        const elements = document.querySelectorAll('.cursor-pointer');
+        elements.forEach(el => {
+            el.classList.remove('red', 'underline');
+            el.classList.add('text-black');
+        });
+
+        const selectedElement = document.getElementById(id);
+        selectedElement.classList.remove('text-black');
+        selectedElement.classList.add('red', 'underline');
+
+        const sections = {
+            listings: "listings-section",
+            reviews: "reviews-section",
+            favourites: "favourites-section"
+        };
+
+        for (const section in sections) {
+            document.getElementById(sections[section]).classList.add('hidden');
+        }
+
+        switch(id) {
+            case 'listings':
+                document.getElementById(sections.listings).classList.remove('hidden');
+                break;
+            case 'reviews':
+                document.getElementById(sections.reviews).classList.remove('hidden');
+                break;
+            case 'favourites':
+                document.getElementById(sections.favourites).classList.remove('hidden');
+                break;
+        }
+    }
+
+</script>
+</body>
+</html>
