@@ -1,7 +1,7 @@
 {
   "name": "y",
   "version": "1.0.0",
-  "description": "A template for the mid-term assignment",
+  "description": "Agile software projects (SMart)",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -11,7 +11,7 @@
     "clean-db-win": "del database.db",
     "start": "node index.js"
   },
-  "author": "Simon Katan",
+  "author": "Team 58",
   "license": "ISC",
   "dependencies": {
     "connect-sqlite3": "^0.9.15",
