@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build-db": "cat backend/db_schema.sql | sqlite3 backend/database.db",
+    "build-db": "cat db_schema.sql | sqlite3 database.db",
     "clean-db": "rm backend/database.db",
     "build-db-win": "sqlite3 backend/database.db < backend/db_schema.sql",
     "clean-db-win": "del backend/database.db",
@@ -30,5 +30,3 @@
   },
   "devDependencies": {}
 }
-
-
