@@ -118,41 +118,69 @@ app.post("/login", (req, res) => {
 // Display Register page
 app.get("/register", (req, res) => {
     const query = "SELECT course_name FROM courses";
+    
     global.db.all(query, [], (err, rows) => {
+        // Define courses as empty array if there's an error
+        const courses = err ? [] : rows;
+
         if (err) {
             return res.status(500).send(err.message);
         }
-        res.render("register.ejs", { courses: rows });
+
+        res.render("register.ejs", { courses, error: null });
     });
 });
 
-
 // Handle registration
-app.post("/register", (req, res) => {
+app.post("/register", async (req, res) => {
     const { name, password, email, course, description } = req.body;
-    // Back end email validation
     const emailDomain = '@mymail.sim.edu.sg';
+
+    // Query for courses to include in the view
+    const query = "SELECT course_name FROM courses";
+    const courses = await new Promise((resolve, reject) => {
+        global.db.all(query, [], (err, rows) => err ? reject(err) : resolve(rows));
+    });
+
+    // Back end email validation
     if (!email.endsWith(emailDomain)) {
-        return res.render("register.ejs", { error: 'Please use a SIM email address with ' + emailDomain });
+        return res.render("register.ejs", { courses, error: `Please use a SIM email address with ${emailDomain}` });
     }
-    // Check if email already exists
-    const checkEmailQuery = "SELECT * FROM users WHERE email = ?";
-    global.db.get(checkEmailQuery, [email], function (err, row) {
-        if (err) {
-            return res.status(500).send(err.message);
-        }
+
+    // Check if all fields are provided
+    if (!name || !password || !email || !course || !description) {
+        return res.render("register.ejs", { courses, error: 'All fields are required.' });
+    }
+
+    try {
+        // Check if email already exists
+        const checkEmailQuery = "SELECT * FROM users WHERE email = ?";
+        const row = await new Promise((resolve, reject) => {
+            global.db.get(checkEmailQuery, [email], (err, row) => err ? reject(err) : resolve(row));
+        });
+
         if (row) {
-            return res.render("register.ejs", { error: 'Email is already in use.' });
-        } else {
-            // If email is not in use
-            const Userquery = "INSERT INTO users (name, password, email, course, description, rating) VALUES (?, ?, ?, ?, ?, 0)";
-            global.db.run(Userquery, [name, password, email, course, description], function (err) {
-                if (err) {
-                    return res.status(500).send(err.message);
-                }
-                res.redirect('/login');
+            return res.render("register.ejs", { courses, error: 'Email is already in use.' });
+        }
+
+        // Hash the password
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        // Insert new user into the database
+        const Userquery = "INSERT INTO users (name, password, email, course, description, rating) VALUES (?, ?, ?, ?, ?, 0)";
+        await new Promise((resolve, reject) => {
+            global.db.run(Userquery, [name, hashedPassword, email, course, description], function (err) {
+                if (err) reject(err);
+                else resolve();
             });
-    }})});
+        });
+
+        res.redirect('/login');
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
+});
+
 
 app.use('/', indexRoute);
 
