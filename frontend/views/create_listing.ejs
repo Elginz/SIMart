@@ -204,41 +204,72 @@
             });
         });
 
-        function previewImages(event) {
-            const input = event.target;
+        document.addEventListener('DOMContentLoaded', () => {
+            const input = document.getElementById('images');
             const previewContainer = document.getElementById('image-previews');
-            const existingPreviews = previewContainer.querySelectorAll('.image-preview');    
-            const files = input.files;
+            const fileMap = new Map(); // Map to track files by their object URL
 
-            if (files.length + existingPreviews.length > 4) {
+        function previewImages(event) {
+            const files = Array.from(event.target.files);
+            const existingPreviews = previewContainer.querySelectorAll('.image-preview').length;
+
+            // Check if adding new files exceeds the maximum allowed
+            if (existingPreviews + files.length > 4) {
                 alert('You can upload a maximum of 4 images.');
                 return;
             }
 
-            Array.from(files).forEach(file => {
+            files.forEach(file => {
                 const reader = new FileReader();
-                reader.onload = function () {
-                    const result = reader.result;
-                    const preview = document.createElement('div');
-                    preview.classList.add('image-preview');
-                    const img = document.createElement('img');
-                    img.src = result;
-                    preview.appendChild(img);
 
-                    const removeBtn = document.createElement('button');
-                    removeBtn.classList.add('remove-btn');
-                    removeBtn.innerHTML = '&times;';
-                    removeBtn.onclick = function () {
-                        previewContainer.removeChild(preview);
-                        input.value = ''; // Reset the input value to allow re-adding the same file
-                    };
-                    preview.appendChild(removeBtn);
+            reader.onload = function () {
+                const result = reader.result;
+                const fileURL = URL.createObjectURL(file);
 
-                    previewContainer.appendChild(preview);
+                // Skip if file already exists in the map
+                if (fileMap.has(fileURL)) {
+                    return;
+                }
+
+                fileMap.set(fileURL, file);
+
+                // Create preview element
+                const preview = document.createElement('div');
+                preview.classList.add('image-preview');
+
+                // Create image element
+                const img = document.createElement('img');
+                img.src = result;
+                preview.appendChild(img);
+
+                // Create remove button
+                const removeBtn = document.createElement('button');
+                removeBtn.classList.add('remove-btn');
+                removeBtn.innerHTML = '&times;';
+                removeBtn.onclick = function () {
+                    previewContainer.removeChild(preview);
+                    fileMap.delete(fileURL); // Remove from the map
+
+                    // Reset input value only if all previews are removed
+                    if (previewContainer.querySelectorAll('.image-preview').length === 0) {
+                        input.value = ''; // Reset the input value
+                    }
                 };
-                reader.readAsDataURL(file);
-            });
-        }
+                preview.appendChild(removeBtn);
+
+                // Append preview to container
+                previewContainer.appendChild(preview);
+            };
+
+            reader.readAsDataURL(file);
+        });
+    }
+
+    // Add the event listener to the file input
+    input.addEventListener('change', previewImages);
+});
+
+
     </script>
 </body>
 </html>
