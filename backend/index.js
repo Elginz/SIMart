@@ -163,13 +163,10 @@ app.post("/register", async (req, res) => {
             return res.render("register.ejs", { courses, error: 'Email is already in use.' });
         }
 
-        // Hash the password
-        const hashedPassword = await bcrypt.hash(password, 10);
-
-        // Insert new user into the database
+        // Insert new user into the database without hashing the password
         const Userquery = "INSERT INTO users (name, password, email, course, description, rating) VALUES (?, ?, ?, ?, ?, 0)";
         await new Promise((resolve, reject) => {
-            global.db.run(Userquery, [name, hashedPassword, email, course, description], function (err) {
+            global.db.run(Userquery, [name, password, email, course, description], function (err) {
                 if (err) reject(err);
                 else resolve();
             });
