@@ -7,8 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build-db": "cat db_schema.sql | sqlite3 database.db",
     "clean-db": "rm backend/database.db",
-    "build-db-win": "sqlite3 backend/database.db < backend/db_schema.sql",
-    "clean-db-win": "del backend/database.db",
+    "build-db-win": "sqlite3 database.db < db_schema.sql",
+    "clean-db-win": "del database.db",
     "start": "node index.js"
   },
   "author": "Team 58",
