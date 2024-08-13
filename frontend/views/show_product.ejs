@@ -9,29 +9,46 @@
 </head>
 <body class="bg-amber-50">
 
-    <div id="blur-container" class="flex flex-col min-h-screen">
+    <div id="blur-container">
         <!-- Navigation bar -->
         <%- include('navbar') %>
 
-        <div class="flex flex-1 p-8">
-            <div class="flex flex-col md:flex-row md:space-x-10 w-full">
-                <div class="flex-1">
-                    <img src="data:<%= images[0].image_type %>;base64,<%= images[0].image.toString('base64') %>" alt="<%= product.name %>" class="w-[80%] h-auto rounded-lg shadow-lg">
+        <div class="flex pl-12 py-8">
+            <div class="flex flex-col w-[50%]">
+                <div>
                     <% if (images && images.length > 0) { %>
-                        <div class="product-thumbnails mt-4 flex space-x-2">
-                            <% images.forEach(function(image) { %>
-                                <img src="data:<%= image.image_type %>;base64,<%= image.image.toString('base64') %>" alt="Thumbnail" class="w-20 h-20 rounded-lg border">
-                            <% }); %>
-                        </div>
+                        <img id="main-image" src="data:<%= images[0].image_type %>;base64,<%= images[0].image.toString('base64') %>" class="w-[95%] h-[550px] object-cover rounded-lg shadow-lg" alt="Main Product Image">
                     <% } %>
                 </div>
-                <div class="flex-1">
-                    <h1 class="text-4xl font-bold mb-4"><%= product.product_name %></h1>
-                    <p class="text-lg text-gray-700 mb-4"><%= product.condition %></p>
-                    <p class="text-base text-gray-600 mb-8"><%= product.content_description %></p>
-                    <button id="offer-button" class="bg-red-600 text-white py-2 px-4 rounded-lg text-lg shadow-lg hover:bg-red-700 transition duration-200" onclick="disableButton()">Make an Offer</button>
+                <div class="flex">
+                    <% images.forEach((image, index) => { %>
+                        <img 
+                            src="data:<%= image.image_type %>;base64,<%= image.image.toString('base64') %>" 
+                            class="w-[100px] h-[100px] m-1.5 object-cover cursor-pointer thumbnail" 
+                            alt="Product Image <%= index %>"
+                            data-image-type="<%= image.image_type %>"
+                            data-image-base64="<%= image.image.toString('base64') %>">
+                    <% }); %>
+                </div>
+            </div>
+            <div>
+                <h1 class="text-4xl font-bold mb-4"><%= product.product_name %></h1>
+                <div class="flex space-x-1 my-3" id="bubble" data-transaction-type="<%= product.transaction_type %>">
+                    <div id="transaction-type-first" class="px-4 py-1 rounded-full text-white" style="background-color: #DA1212;"></div>
+                    <div id="transaction-type-second" class="px-4 py-1 rounded-full text-white hidden" style="background-color: #DA1212;"></div>
                 </div>
                 
+                <p class="text-lg text-gray-700 mb-4">$<%= product.price %></p>
+                <p class="text-lg text-gray-700 mb-4"><%= product.condition %></p>
+                <div class="flex space-x-3">
+                    <a href="mailto:<%= user.email %>" class="flex items-center">
+                        <img src="https://img.icons8.com/?size=100&id=2848&format=png&color=da1212" alt="Email Icon" class="w-8 h-8">
+                    </a>
+                    <img src="https://img.icons8.com/?size=100&id=85038&format=png&color=da1212" alt="Favourites Icon" id="favourite" class="w-10 h-10 cursor-pointer" onclick="addToFavourites()">
+                </div>
+                <h2 class="text-3xl font-bold mt-8 mb-4">Description</h2>
+                <p class="text-base text-gray-600 mb-8"><%= product.content_description %></p>
+                <button id="offer-button" class="bg-red-600 text-white py-2 px-4 rounded-lg text-lg shadow-lg hover:bg-red-700 transition duration-200" onclick="disableButton()">Make an Offer</button>
             </div>
         </div>
 
@@ -39,23 +56,51 @@
         <%- include('footer') %>
     </div>
 
-    <div class="fixed inset-0 flex items-center justify-center z-50 hidden" id="leave-review-box">
-        <div class="bg-[#041562] p-6 rounded-lg shadow-lg w-[62%] h-[77%] flex flex-col items-center">
-            <a href="/" class="flex justify-end w-full" onclick="closeReview()">
-                <img src="https://img.icons8.com/?size=100&id=8112&format=png&color=da1212" alt="close button" class="w-10 mr-5" onclick="closeReview()">
-            </a>
-            <span class="text-2xl font-semibold text-white">Leave a review for your experience with the User</span>
-            <div class="flex space-x-2 my-5" id="rating-section">
-                <% for (let i = 1; i <= 5; i++) { %>
-                    <img src="https://img.icons8.com/?size=100&id=7856&format=png&color=FFFFFF" alt="star <%= i %>" id="star-<%= i %>" class="w-20" onclick="changeColor('<%= i %>')">
-                <% } %>
+    <div id="scroll-lock" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden"></div>
+
+    <form action="/product/<%= product.id %>" method="POST" class="">
+        <div class="fixed inset-0 flex items-center justify-center z-50 hidden" id="leave-review-box">
+            <div class="bg-[#041562] p-6 rounded-lg shadow-lg w-[55%] h-[80%] flex flex-col items-center">
+                <a href="/" class="flex justify-end w-full" onclick="closeReview()">
+                    <img src="https://img.icons8.com/?size=100&id=8112&format=png&color=da1212" alt="close button" class="w-10 mr-5" onclick="closeReview()">
+                </a>
+                <span class="text-2xl font-semibold text-white">Leave a review for your experience with the User</span>
+                <div class="flex space-x-2 my-5" id="rating-section">
+                    <% for (let i = 1; i <= 5; i++) { %>
+                        <img src="https://img.icons8.com/?size=100&id=7856&format=png&color=FFFFFF" alt="star <%= i %>" id="star-<%= i %>" class="w-20" onclick="changeColor('<%= i %>')">
+                    <% } %>
+                </div>
+                <input type="hidden" id="rating-input" name="rating" value="">
+                <textarea id="review-text" name="review" class="p-2 my-5 w-[90%] h-[45%] overflow-auto" placeholder="Write your review here..."></textarea>
+                <button type="submit" class="py-2 px-4 w-28 rounded-lg text-lg text-white bg-[#DA1212]" onclick="submitReview()">Submit</button>
             </div>
-            <textarea id="review-text" class="p-2 my-5 w-[80%] h-[45%] overflow-auto" placeholder="Write your review here..."></textarea>
-            <button onclick="submitReview()" class="py-2 px-4 w-28 rounded-lg text-lg text-white bg-[#DA1212]">Submit</button>
         </div>
-    </div>
+    </form>
 
     <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            transactionTypeBubble();
+
+            const thumbnails = document.querySelectorAll('.thumbnail');
+            thumbnails.forEach(thumbnail => {
+                thumbnail.addEventListener('click', function() {
+                    const imageType = this.getAttribute('data-image-type');
+                    const imageBase64 = this.getAttribute('data-image-base64');
+                    document.getElementById('main-image').src = `data:${imageType};base64,${imageBase64}`;
+                });
+            });
+
+            // Convert `isFavourite` to a JavaScript boolean
+            const isFavourite = <%= JSON.stringify(isFavourite) %>;
+
+            const heartIcon = document.getElementById('favourite');
+            if (isFavourite) {
+                heartIcon.src = "https://img.icons8.com/?size=100&id=85339&format=png&color=da1212"; // Filled heart
+            } else {
+                heartIcon.src = "https://img.icons8.com/?size=100&id=85038&format=png&color=da1212"; // Empty heart
+            }
+        })
+
         function disableButton() {
             const button = document.getElementById('offer-button');
             if(button.innerText === 'Make an Offer') {
@@ -71,6 +116,11 @@
 
                 const reviewBox = document.getElementById('leave-review-box');
                 reviewBox.classList.remove('hidden');
+
+                // Show the scroll lock overlay
+                const scrollLock = document.getElementById('scroll-lock');
+                scrollLock.classList.remove('hidden');
+                document.body.style.overflow = 'hidden'; // Prevent scrolling
             }
         }
 
@@ -92,6 +142,89 @@
                         // Set unfilled star image
                         star.src = "https://img.icons8.com/?size=100&id=7856&format=png&color=FFFFFF";
                     }
+                }
+            }
+            // Set the value of the hidden rating input
+            document.getElementById('rating-input').value = index;
+        }
+
+        function addToFavourites() {
+            const heart = document.getElementById('favourite');
+            const isFavourite = heart.src.includes('85038'); // Check if the heart is empty
+
+            const productId = '<%= product.id %>'; // Pass the product ID
+            const userId = '<%= userId %>'; // Pass the user ID
+
+            console.log(productId);
+            console.log(userId);
+
+            if(isFavourite) {
+                // Send an AJAX request to add the product to favourites
+                fetch("/product/favourites/add", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ productId, userId })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log('Product added to favourites.');
+                        heart.src = "https://img.icons8.com/?size=100&id=85339&format=png&color=da1212";
+                    } else {
+                        console.log(data.message);
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            } else {
+                // If the heart is filled, remove the product from favourites
+                removeFromFavourites();
+            }
+        }
+
+        function removeFromFavourites() {
+            const heart = document.getElementById('favourite');
+            const productId = '<%= product.id %>'; // Pass the product ID
+            const userId = '<%= userId %>'; // Pass the user ID
+
+            // Send an AJAX request to remove the product from favourites
+            fetch("/product/favourites/remove", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ productId, userId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log('Product removed from favourites.');
+                    heart.src = "https://img.icons8.com/?size=100&id=85038&format=png&color=da1212"; // Empty heart
+                } else {
+                    console.log(data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        // For the transaction type
+        function transactionTypeBubble() {
+            const bubble = document.getElementById("bubble");
+            const transactionType = bubble.dataset.transactionType.split(',').map(t => t.trim()); // Split by comma and trim whitespace
+            const firstBubble = document.getElementById("transaction-type-first");
+            const secondBubble = document.getElementById("transaction-type-second");
+            
+            if (firstBubble) {
+                if (transactionType.length === 1) {
+                    firstBubble.innerHTML = `<p>${transactionType[0]}</p>`;
+                    firstBubble.classList.remove('hidden');
+                    secondBubble.classList.add('hidden');
+                } else if (transactionType.length === 2) {
+                    firstBubble.innerHTML = `<p>${transactionType[0]}</p>`;
+                    secondBubble.innerHTML = `<p>${transactionType[1]}</p>`;
+                    firstBubble.classList.remove('hidden');
+                    secondBubble.classList.remove('hidden');
                 }
             }
         }
