@@ -169,6 +169,15 @@
                             Heavily Used
                         </label>
                     </div>
+                    <span id="condition-error" class="text-red-600 text-sm hidden">Please pick one.</span>
+                </div>
+                <div class="form-group mb-4">
+                    <label for="price" class="block text-gray-700 font-bold">Price:</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">$</span>
+                        <input type="text" name="price" id="price" class="pl-6 w-full border border-gray-300 rounded py-2 px-3" pattern="^\d+(\.\d{1,2})?$" title="Please enter a valid price (e.g., 10 or 10.99)" required>
+                    </div>
+                    <span id="price-error" class="text-red-600 text-sm hidden">Please enter a valid price.</span>
                 </div>
                 <div class="form-group mb-4">
                     <label for="description" class="block text-gray-700 font-bold">Description:</label>
@@ -183,8 +192,12 @@
     <%- include('footer') %>
 
     <script>
+        const previewContainer = document.getElementById('image-previews');
+        const fileMap = new Map(); // Map to track files by their object URL
+
         document.addEventListener('DOMContentLoaded', () => {
             const transactionOptions = document.querySelectorAll('.transaction-options .bubble-option');
+            const priceInput = document.getElementById('price');
             const conditionOptions = document.querySelectorAll('.condition-options .bubble-option');
     
             transactionOptions.forEach(option => {
@@ -192,9 +205,34 @@
                     transactionOptions.forEach(opt => opt.classList.remove('selected'));
                     option.classList.add('selected');
                     option.querySelector('input[type="radio"]').checked = true;
+
+                    // Check the selected transaction type
+                    const transactionValue = option.querySelector('input[type="radio"]').value;
+
+                    if (transactionValue === 'Trade' || transactionValue === 'Free') {
+                        // Set price to 0 and disable the input
+                        priceInput.value = '0';
+                        priceInput.setAttribute('disabled', 'disabled');
+                    } else {
+                        // Enable the input for the price
+                        priceInput.removeAttribute('disabled');
+                        priceInput.value = ''; // Clear the input for user to enter price
+                    }
                 });
             });
-    
+
+            // Existing code to handle the price input pattern validation
+            priceInput.addEventListener('input', function (event) {
+                const input = event.target;
+                const priceError = document.getElementById('price-error');
+
+                if (input.validity.patternMismatch) {
+                    priceError.classList.remove('hidden');
+                } else {
+                    priceError.classList.add('hidden');
+                }
+            });
+
             conditionOptions.forEach(option => {
                 option.addEventListener('click', () => {
                     conditionOptions.forEach(opt => opt.classList.remove('selected'));
@@ -202,12 +240,8 @@
                     option.querySelector('input[type="radio"]').checked = true;
                 });
             });
-        });
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const input = document.getElementById('images');
-            const previewContainer = document.getElementById('image-previews');
-            const fileMap = new Map(); // Map to track files by their object URL
+        });
 
         function previewImages(event) {
             const files = Array.from(event.target.files);
@@ -222,53 +256,47 @@
             files.forEach(file => {
                 const reader = new FileReader();
 
-            reader.onload = function () {
-                const result = reader.result;
-                const fileURL = URL.createObjectURL(file);
+                reader.onload = function () {
+                    const result = reader.result;
+                    const fileURL = URL.createObjectURL(file);
 
-                // Skip if file already exists in the map
-                if (fileMap.has(fileURL)) {
-                    return;
-                }
-
-                fileMap.set(fileURL, file);
-
-                // Create preview element
-                const preview = document.createElement('div');
-                preview.classList.add('image-preview');
-
-                // Create image element
-                const img = document.createElement('img');
-                img.src = result;
-                preview.appendChild(img);
-
-                // Create remove button
-                const removeBtn = document.createElement('button');
-                removeBtn.classList.add('remove-btn');
-                removeBtn.innerHTML = '&times;';
-                removeBtn.onclick = function () {
-                    previewContainer.removeChild(preview);
-                    fileMap.delete(fileURL); // Remove from the map
-
-                    // Reset input value only if all previews are removed
-                    if (previewContainer.querySelectorAll('.image-preview').length === 0) {
-                        input.value = ''; // Reset the input value
+                    // Skip if file already exists in the map
+                    if (fileMap.has(fileURL)) {
+                        return;
                     }
+
+                    fileMap.set(fileURL, file);
+
+                    // Create preview element
+                    const preview = document.createElement('div');
+                    preview.classList.add('image-preview');
+
+                    // Create image element
+                    const img = document.createElement('img');
+                    img.src = result;
+                    preview.appendChild(img);
+
+                    // Create remove button
+                    const removeBtn = document.createElement('button');
+                    removeBtn.classList.add('remove-btn');
+                    removeBtn.innerHTML = '&times;';
+                    removeBtn.onclick = function () {
+                        previewContainer.removeChild(preview);
+                        fileMap.delete(fileURL); // Remove from the map
+
+                        // Reset input value only if all previews are removed
+                        if (previewContainer.querySelectorAll('.image-preview').length === 0) {
+                            input.value = ''; // Reset the input value
+                        }
+                    };
+                    preview.appendChild(removeBtn);
+
+                    // Append preview to container
+                    previewContainer.appendChild(preview);
                 };
-                preview.appendChild(removeBtn);
-
-                // Append preview to container
-                previewContainer.appendChild(preview);
-            };
-
-            reader.readAsDataURL(file);
-        });
-    }
-
-    // Add the event listener to the file input
-    input.addEventListener('change', previewImages);
-});
-
+                reader.readAsDataURL(file);
+            });
+        }
 
     </script>
 </body>
