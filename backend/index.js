@@ -13,6 +13,11 @@ const indexRoute = require('./routes/indexRoute.js');
 const app = express();
 const port = 3000;
 
+// Testing to use CORS
+const cors = require('cors');
+app.use(cors());
+
+
 //Setting up middleware
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set('view engine', 'ejs'); // set the app to use ejs for rendering
@@ -20,6 +25,7 @@ app.set('views', __dirname + '/../frontend/views');
 app.use(express.static(__dirname + '/../frontend/public')); // set location of static files
 //parse routes for cookie parser
 app.use(cookieParser());
+app.use(express.json());
 app.use(session({
     //ensure session is called first
     secret: "secretKey",
