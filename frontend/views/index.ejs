@@ -95,7 +95,7 @@
         <div id="listings-section" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 px-4 py-6">
             <% if (product && product.length > 0) { %>
                 <% product.forEach((listing) => { %>
-                    <a href="/product/<%= listing.id %>" class="flex flex-col items-center py-4 item">
+                    <a href="/product/<%= listing.id %>" class="flex flex-col items-center py-4 item" data-transaction-type="<%= listing.transaction_type %>">
                         <div class="w-full h-auto">
                             <img src="<%= listing.image %>" class="w-full h-64 object-cover rounded-lg">
                             <p class="pt-3 pb-1 font-bold text-lg sm:text-xl md:text-2xl"><%= listing.product_name %></p>
@@ -141,36 +141,35 @@
             },
         });
 
-        document.addEventListener('DOMContentLoaded', function() {
-            // For transaction type
-            switchTransactionType('listings');
-            switchTransactionType('favourites');
-        });
+    document.addEventListener('DOMContentLoaded', function() {
+        switchTransactionType('listings');
+        switchTransactionType('favourites');
+    });
 
-        // For the transaction type
-        function switchTransactionType(field) {
-            const section = document.getElementById(`${field}-section`);
-            const sectionItems = section.querySelectorAll('.item');
+    function switchTransactionType(field) {
+        const section = document.getElementById(`${field}-section`);
+        const sectionItems = section.querySelectorAll('.item');
 
-            sectionItems.forEach((item, index) => {
-                const transactionType = item.dataset.transactionType.split(',').map(t => t.trim()); // Split by comma and trim whitespace
-                const firstBubble = document.getElementById(`${field}-${index}-first`);
-                const secondBubble = document.getElementById(`${field}-${index}-second`);
-                
-                if (firstBubble) {
-                    if (transactionType.length === 1) {
-                        firstBubble.innerHTML = `<p>${transactionType[0]}</p>`;
-                        firstBubble.classList.remove('hidden');
-                        secondBubble.classList.add('hidden');
-                    } else if (transactionType.length === 2) {
-                        firstBubble.innerHTML = `<p>${transactionType[0]}</p>`;
-                        secondBubble.innerHTML = `<p>${transactionType[1]}</p>`;
-                        firstBubble.classList.remove('hidden');
-                        secondBubble.classList.remove('hidden');
-                    }
+        sectionItems.forEach((item) => {
+            const transactionType = item.dataset.transactionType.split(',').map(t => t.trim());
+            const itemId = item.href.split('/').pop(); // Extract product ID from the href attribute
+            const firstBubble = document.getElementById(`${field}-${itemId}-first`);
+            const secondBubble = document.getElementById(`${field}-${itemId}-second`);
+
+            if (firstBubble) {
+                if (transactionType.length === 1) {
+                    firstBubble.innerHTML = `<p>${transactionType[0]}</p>`;
+                    firstBubble.classList.remove('hidden');
+                    secondBubble.classList.add('hidden');
+                } else if (transactionType.length === 2) {
+                    firstBubble.innerHTML = `<p>${transactionType[0]}</p>`;
+                    secondBubble.innerHTML = `<p>${transactionType[1]}</p>`;
+                    firstBubble.classList.remove('hidden');
+                    secondBubble.classList.remove('hidden');
                 }
-            });
-        }
+            }
+        });
+    }
     </script>
     
 </body>
