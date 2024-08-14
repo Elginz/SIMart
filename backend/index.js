@@ -50,35 +50,96 @@ global.db = new sqlite3.Database('./database.db',function(err){
 }); 
 
 //Home page to login/register
+// app.get("/", (req, res) => {
+//     if (!req.session.isAuthenticated) {
+//         return res.redirect('/login');
+//     }
+//     const { product_name, transaction_type} = req.query;
+//     let query = "SELECT * FROM product WHERE 1=1";
+//     const params = [];
+//     if (product_name) {
+//         query += " AND product_name LIKE ?";
+//         params.push(`%${product_name}%`);
+//     }
+//     if (transaction_type) {
+//         query += " AND transaction_type = ?";
+//         params.push(transaction_type);
+//     }
+//     query += " ORDER BY created_at";
+//     global.db.all(query, params, (err, products) => {
+//         if (err) {
+//             return res.status(500).send(err.message);
+//         } else {
+//             res.render("index.ejs", {
+//                 product: products,
+//                 user: req.session.user,
+//                 product_name: product_name,
+//                 transaction_type: transaction_type
+//             });
+//         }
+//     });
+// });
+
+
 app.get("/", (req, res) => {
     if (!req.session.isAuthenticated) {
         return res.redirect('/login');
     }
-    const { product_name, transaction_type} = req.query;
+    const { product_name, transaction_type } = req.query;
     let query = "SELECT * FROM product WHERE 1=1";
     const params = [];
+    
     if (product_name) {
         query += " AND product_name LIKE ?";
         params.push(`%${product_name}%`);
     }
+    
     if (transaction_type) {
         query += " AND transaction_type = ?";
         params.push(transaction_type);
     }
+    
     query += " ORDER BY created_at";
+    
     global.db.all(query, params, (err, products) => {
         if (err) {
             return res.status(500).send(err.message);
-        } else {
-            res.render("index.ejs", {
+        }
+        
+        // After getting products, fetch the images for each product
+        let productImages = {};
+        let processed = 0; // Track how many products we've processed
+        if (products.length === 0) {
+            return res.render("index.ejs", {
                 product: products,
                 user: req.session.user,
                 product_name: product_name,
-                transaction_type: transaction_type
+                transaction_type: transaction_type,
+                images: productImages
             });
         }
+        products.forEach((product) => {
+            global.db.all("SELECT * FROM product_images WHERE product_id = ?", [product.id], (err, images) => {
+                if (err) {
+                    return res.status(500).send(err.message);
+                }
+                productImages[product.id] = images;
+                processed++;
+                if (processed === products.length) {
+                    // When all products have been processed, render the page
+                    res.render("index.ejs", {
+                        product: products,
+                        user: req.session.user,
+                        product_name: product_name,
+                        transaction_type: transaction_type,
+                        images: productImages
+                    });
+                }
+            });
+        });
     });
 });
+
 
 
 // Display login page
