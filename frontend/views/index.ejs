@@ -94,21 +94,35 @@
         <h1 class="text-2xl md:text-3xl leading-normal mb-4 mt-24 ml-10">Newly Listed</h1>
         <div id="listings-section" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 px-4 py-6">
             <% if (product && product.length > 0) { %>
-                <% product.forEach((listing) => { %>
-                    <a href="/product/<%= listing.id %>" class="flex flex-col items-center py-4 item" data-transaction-type="<%= listing.transaction_type %>">
-                        <div class="w-full h-auto">
-                            <img src="<%= listing.image %>" class="w-full h-64 object-cover rounded-lg">
-                            <p class="pt-3 pb-1 font-bold text-lg sm:text-xl md:text-2xl"><%= listing.product_name %></p>
-                            <p class="pb-1 text-lg sm:text-xl">$<%= listing.price %></p>
-                            <div class="flex space-x-1 mt-2">
-                                <div id="listings-<%= listing.id %>-first" class="px-4 py-1 rounded-full text-white" style="background-color: #DA1212;">
-                                </div>
-                                <div id="listings-<%= listing.id %>-second" class="px-4 py-1 rounded-full text-white hidden" style="background-color: #DA1212;">
-                                </div>
-                            </div>
+            <% product.forEach((listing) => { %>
+                <a href="/product/<%= listing.id %>" class="flex flex-col items-center py-4 item" data-transaction-type="<%= listing.transaction_type %>">
+                    <div class="w-full h-auto">
+                        <div class="flex">
+                            <% if (images[listing.id] && images[listing.id].length > 0) { %>
+                                <% images[listing.id].forEach((image, index) => { %>
+                                    <img 
+                                        src="data:<%= image.image_type %>;base64,<%= image.image.toString('base64') %>" 
+                                        class="w-[100px] h-[100px] m-1.5 object-cover cursor-pointer thumbnail" 
+                                        alt="Product Image <%= index %>"
+                                        data-image-type="<%= image.image_type %>"
+                                        data-image-base64="<%= image.image.toString('base64') %>">
+                                <% }); %>
+                            <% } else { %>
+                                <p>No images available.</p>
+                            <% } %>
                         </div>
-                    </a>
-                <% }) %>
+                        <!-- THIS IS WHAT THE SIZE OF THE IMAGES ABOVE SHOULD BE, IT SHOULD BE ADJUSTED TO FIT THE SIZE OF THIS -->
+                        <img src="<%= listing.image %>" class="w-full h-64 object-cover rounded-lg">
+                        <p class="pt-3 pb-1 font-bold text-lg sm:text-xl md:text-2xl"><%= listing.product_name %></p>
+                        <p class="pb-1 text-lg sm:text-xl">$<%= listing.price %></p>
+                        <div class="flex space-x-1 mt-2">
+                            <div id="listings-<%= listing.id %>-first" class="px-4 py-1 rounded-full text-white" style="background-color: #DA1212;"></div>
+                            <div id="listings-<%= listing.id %>-second" class="px-4 py-1 rounded-full text-white hidden" style="background-color: #DA1212;"></div>
+                        </div>
+                    </div>
+                </a>
+            <% }) %>
+
             <% } else { %>
                 <p class="text-center col-span-full">No listings available.</p>
             <% } %>
