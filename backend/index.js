@@ -15,7 +15,11 @@ const port = 3000;
 
 // Testing to use CORS
 const cors = require('cors');
-app.use(cors());
+app.use(cors({
+    origin: 'https://s-mart-jme0meogk-team58-projects.vercel.app', // frontend URL
+    credentials: true //  cookies to be sent and received
+  }));
+  
 
 
 //Setting up middleware
@@ -23,6 +27,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.set('view engine', 'ejs'); // set the app to use ejs for rendering
 app.set('views', __dirname + '/../frontend/views');
 app.use(express.static(__dirname + '/../frontend/public')); // set location of static files
+app.use('/uploads', express.static('uploads'));
 //parse routes for cookie parser
 app.use(cookieParser());
 app.use(express.json());
@@ -37,6 +42,20 @@ app.use(session({
     }
 }));
 
+// Testing to use session across domains
+// app.use(session({
+//     secret: "secretKey",
+//     saveUninitialized: false,
+//     resave: false,
+//     store: new SQLiteStore,
+//     cookie: {
+//       maxAge: 10000 * 60 * 10, // 10 minutes
+//       sameSite: 'none', // Important for cross-site cookies
+//       secure: true // Make sure this is true if you're using HTTPS
+//     }
+//   }));
+  
+
 // Set up SQLite
 // Items in the global namespace are accessible throught out the node application
 global.db = new sqlite3.Database('./database.db',function(err){
@@ -50,37 +69,6 @@ global.db = new sqlite3.Database('./database.db',function(err){
 }); 
 
 //Home page to login/register
-// app.get("/", (req, res) => {
-//     if (!req.session.isAuthenticated) {
-//         return res.redirect('/login');
-//     }
-//     const { product_name, transaction_type} = req.query;
-//     let query = "SELECT * FROM product WHERE 1=1";
-//     const params = [];
-//     if (product_name) {
-//         query += " AND product_name LIKE ?";
-//         params.push(`%${product_name}%`);
-//     }
-//     if (transaction_type) {
-//         query += " AND transaction_type = ?";
-//         params.push(transaction_type);
-//     }
-//     query += " ORDER BY created_at";
-//     global.db.all(query, params, (err, products) => {
-//         if (err) {
-//             return res.status(500).send(err.message);
-//         } else {
-//             res.render("index.ejs", {
-//                 product: products,
-//                 user: req.session.user,
-//                 product_name: product_name,
-//                 transaction_type: transaction_type
-//             });
-//         }
-//     });
-// });
-
-
 app.get("/", (req, res) => {
     if (!req.session.isAuthenticated) {
         return res.redirect('/login');
@@ -252,28 +240,3 @@ app.use('/', indexRoute);
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)
 })
-
-//JORDAN's EDIT
-// const express = require("express");
-// const app = express();
-// const path = require("path");
-// const bodyParser = require("body-parser");
-// const indexRoute = require("./routes/indexRoute");
-
-// // Set up the middleware
-// app.use(bodyParser.urlencoded({ extended: false }));
-// app.use(bodyParser.json());
-// app.use(express.static(path.join(__dirname, "public")));
-
-// // Set the view engine
-// app.set("view engine", "ejs");
-// app.set("views", path.join(__dirname, "views"));
-
-// // Use the router
-// app.use("/", indexRoute);
-
-// // Start the server
-// const PORT = process.env.PORT || 3000;
-// app.listen(PORT, () => {
-//     console.log(`Server is running on http://localhost:${PORT}`);
-// });
