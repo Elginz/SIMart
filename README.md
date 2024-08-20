@@ -1,5 +1,7 @@
 <h1 align="center">TEAM 58</h1>
 
+[Live SMart website](https://smart-k1xu.onrender.com/) It'll take awhile to load
+
 <h3 align="center">Step by step basis (Will make sense for those actually working on it)</h3>
 
 Currently the files and routes have been placed within **frontend** and **backend** the older files were moved into **older_files**
