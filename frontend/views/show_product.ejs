@@ -6,6 +6,31 @@
     <title><%= product.product_name %></title>
     <link rel="stylesheet" href="/styles/style.css">
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Ensure thumbnails are aligned at the bottom */
+        .thumbnail-container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+        }
+
+        /* Style for main image and thumbnails */
+        .main-image-container img {
+            transition: transform 0.3s ease;
+        }
+
+        .main-image-container img:hover {
+            transform: scale(1.05);
+        }
+
+        .thumbnail {
+            transition: opacity 0.3s ease;
+        }
+
+        .thumbnail:hover {
+            opacity: 0.7;
+        }
+    </style>
 </head>
 <body class="bg-amber-50">
 
@@ -15,27 +40,32 @@
 
         <div class="flex pl-12 py-8">
             <div class="flex flex-col w-[50%]">
-                <div>
-                    <% if (images && images.length > 0) { %>
-                        <img id="main-image" src="data:<%= images[0].image_type %>;base64,<%= images[0].image.toString('base64') %>" class="w-[95%] h-[550px] object-cover rounded-lg shadow-lg" alt="Main Product Image">
-                    <% } %>
-                </div>
-                <div class="flex">
-                    <% images.forEach((image, index) => { %>
-                        <img 
-                            src="data:<%= image.image_type %>;base64,<%= image.image.toString('base64') %>" 
-                            class="w-[100px] h-[100px] m-1.5 object-cover cursor-pointer thumbnail" 
-                            alt="Product Image <%= index %>"
-                            data-image-type="<%= image.image_type %>"
-                            data-image-base64="<%= image.image.toString('base64') %>">
-                    <% }); %>
+                <div class="flex flex-col-reverse items-center">
+                    <div class="thumbnail-container flex flex-wrap justify-center mt-4">
+                        <% images.forEach((image, index) => { %>
+                            <img 
+                                src="data:<%= image.image_type %>;base64,<%= image.image %>" 
+                                class="w-[100px] h-[100px] m-1.5 object-cover cursor-pointer thumbnail" 
+                                alt="Product Image <%= index %>"
+                                data-image-type="<%= image.image_type %>"
+                                data-image-base64="<%= image.image %>">
+                        <% }); %>
+                    </div>                                   
+                    <div class="main-image-container">
+                        <% if (images && images.length > 0) { %>
+                            <img id="main-image" src="data:<%= images[0].image_type %>;base64,<%= images[0].image.toString('base64') %>" class="w-[95%] h-[550px] object-cover rounded-lg shadow-lg mb-2" alt="Main Product Image">
+                        <% } %>
+                    </div>
                 </div>
             </div>
             <div>
                 <h1 class="text-4xl font-bold mb-4"><%= product.product_name %></h1>
                 <div class="flex space-x-1 my-3" id="bubble" data-transaction-type="<%= product.transaction_type %>">
-                    <div id="transaction-type-first" class="px-4 py-1 rounded-full text-white" style="background-color: #DA1212;"></div>
-                    <div id="transaction-type-second" class="px-4 py-1 rounded-full text-white hidden" style="background-color: #DA1212;"></div>
+                    <% product.transaction_type.split(',').forEach(function(type) { %>
+                        <div class="px-4 py-1 rounded-full text-white" style="background-color: #DA1212;">
+                            <%= type.trim() %>
+                        </div>
+                    <% }); %>
                 </div>
                 
                 <p class="text-lg text-gray-700 mb-4">$<%= product.price %></p>
@@ -79,8 +109,6 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            transactionTypeBubble();
-
             const thumbnails = document.querySelectorAll('.thumbnail');
             thumbnails.forEach(thumbnail => {
                 thumbnail.addEventListener('click', function() {
@@ -91,7 +119,7 @@
             });
 
             // Convert `isFavourite` to a JavaScript boolean
-            const isFavourite = <%= JSON.stringify(isFavourite) %>;
+            const isFavourite = JSON.parse('<%= JSON.stringify(isFavourite) %>');
 
             const heartIcon = document.getElementById('favourite');
             if (isFavourite) {
@@ -99,7 +127,28 @@
             } else {
                 heartIcon.src = "https://img.icons8.com/?size=100&id=85038&format=png&color=da1212"; // Empty heart
             }
-        })
+
+            // Handle the transaction type bubbles
+            const transactionTypeBubble = () => {
+                const bubble = document.getElementById("bubble");
+                const transactionType = bubble.dataset.transactionType.split(',').map(t => t.trim()); // Split by comma and trim whitespace
+                
+                if (transactionType.length > 0) {
+                    const bubbleContainer = document.getElementById("bubble");
+                    bubbleContainer.innerHTML = ''; // Clear any existing bubbles
+
+                    transactionType.forEach((type) => {
+                        const bubbleElement = document.createElement('div');
+                        bubbleElement.classList.add('px-4', 'py-1', 'rounded-full', 'text-white');
+                        bubbleElement.style.backgroundColor = '#DA1212';
+                        bubbleElement.textContent = type;
+                        bubbleContainer.appendChild(bubbleElement);
+                    });
+                }
+            };
+
+            transactionTypeBubble();
+        });
 
         function disableButton() {
             const button = document.getElementById('offer-button');
@@ -155,9 +204,6 @@
             const productId = '<%= product.id %>'; // Pass the product ID
             const userId = '<%= userId %>'; // Pass the user ID
 
-            console.log(productId);
-            console.log(userId);
-
             if(isFavourite) {
                 // Send an AJAX request to add the product to favourites
                 fetch("/product/favourites/add", {
@@ -170,7 +216,6 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        console.log('Product added to favourites.');
                         heart.src = "https://img.icons8.com/?size=100&id=85339&format=png&color=da1212";
                     } else {
                         console.log(data.message);
@@ -199,34 +244,12 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    console.log('Product removed from favourites.');
                     heart.src = "https://img.icons8.com/?size=100&id=85038&format=png&color=da1212"; // Empty heart
                 } else {
                     console.log(data.message);
                 }
             })
             .catch(error => console.error('Error:', error));
-        }
-
-        // For the transaction type
-        function transactionTypeBubble() {
-            const bubble = document.getElementById("bubble");
-            const transactionType = bubble.dataset.transactionType.split(',').map(t => t.trim()); // Split by comma and trim whitespace
-            const firstBubble = document.getElementById("transaction-type-first");
-            const secondBubble = document.getElementById("transaction-type-second");
-            
-            if (firstBubble) {
-                if (transactionType.length === 1) {
-                    firstBubble.innerHTML = `<p>${transactionType[0]}</p>`;
-                    firstBubble.classList.remove('hidden');
-                    secondBubble.classList.add('hidden');
-                } else if (transactionType.length === 2) {
-                    firstBubble.innerHTML = `<p>${transactionType[0]}</p>`;
-                    secondBubble.innerHTML = `<p>${transactionType[1]}</p>`;
-                    firstBubble.classList.remove('hidden');
-                    secondBubble.classList.remove('hidden');
-                }
-            }
         }
     </script>
 </body>
