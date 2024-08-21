@@ -7,13 +7,15 @@ Live website: [SMart](https://smart-k1xu.onrender.com/) [Do note it may take up 
 
 Currently the files and routes have been placed within **frontend** and **backend** the older files were moved into **older_files**
 
-*There is no node module inside the files as its too big, so add node modules (npm i) into both backend and frontend repositories.*
+*There is no node module inside the files as it is too big, add node modules (npm i) into both backend and frontend repositories.*
 
 <h4 align="center">cd into backend before building and starting the code. </h4>
 
 
 **Issues (potential)**
-- Insertion of several default values in db_schema.sql is commented for now as it creates some issue. So create a profile to login. **Try debugging this.**
-- You may notice an error in building the code. Most of the error comes from the db. Run the following command in the terminal to view sql db issue. It manually executes schema file 
+- You may notice an error in building the code. Most of the error comes from the db. Run the following command in the terminal to view sql db issue. It manually executes schema file
+
+- LIVE SITE: The free server on render uses ephemeral storage for the filesystem. As such any changes made during runtime will not be preserved while deployed and the SQLite database might be reset 
+
 
 *sqlite3 backend/database.db < backend/db_schema.sql*
