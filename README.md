@@ -1,6 +1,6 @@
 <h1 align="center">TEAM 58</h1>
 
-🛑**LIVE WEBSITE (Do note it may take up to 1 minute to load):** [SMart](https://smart-k1xu.onrender.com/) 🔴
+🛑<span style="font-size: 1.5em;">**LIVE WEBSITE (Do note it may take up to 1 minute to load):**</span> [SMart](https://smart-k1xu.onrender.com/) 🔴
 
 
 <h3 align="center">Step by step basis (Will make sense for those working on it)</h3>
