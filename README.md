@@ -3,11 +3,11 @@
 **LIVE WEBSITE (Do note it may take up to 1 minute to load):**   [SMart](https://smart-k1xu.onrender.com/) 
 
 
-<h3 align="center">Step by step basis (Will make sense for those actually working on it)</h3>
+<h3 align="center">Step by step basis (Will make sense for those working on it)</h3>
 
-Currently the files and routes have been placed within **frontend** and **backend** the older files were moved into **older_files**
+- Currently the files and routes have been placed within **frontend** and **backend** the older files were moved into **older_files**
 
-*There is no node module inside the files as it is too big, add node modules (npm i) into both backend and frontend repositories.*
+- *There is no node module inside the files as it is too big, add node modules (npm i) into both backend and frontend repositories.*
 
 <h4 align="center">cd into backend before building and starting the code. </h4>
 
