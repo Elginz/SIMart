@@ -20,6 +20,9 @@
             color: white;
             border-color: #DA1212;
         }
+        .bubble-option input[type="checkbox"] {
+            display: none;
+        }
         .bubble-option input[type="radio"] {
             display: none;
         }
@@ -132,15 +135,15 @@
                     <label class="block text-gray-700 font-bold">Transaction:</label>
                     <div class="transaction-options flex flex-wrap gap-4">
                         <label class="bubble-option">
-                            <input type="radio" id="Sell" name="transaction" value="Sell" required>
+                            <input type="checkbox" id="Sell" name="transaction" value="Sell">
                             For Sale
                         </label>
                         <label class="bubble-option">
-                            <input type="radio" id="Trade" name="transaction" value="Trade">
+                            <input type="checkbox" id="Trade" name="transaction" value="Trade">
                             For Trade
                         </label>
                         <label class="bubble-option">
-                            <input type="radio" id="Free" name="transaction" value="Free">
+                            <input type="checkbox" id="Free" name="transaction" value="Free">
                             For Free
                         </label>
                     </div>
@@ -196,43 +199,53 @@
         const fileMap = new Map(); // Map to track files by their object URL
 
         document.addEventListener('DOMContentLoaded', () => {
-            const transactionOptions = document.querySelectorAll('.transaction-options .bubble-option');
+            const transactionOptions = document.querySelectorAll('.transaction-options .bubble-option input[type="checkbox"]');
             const priceInput = document.getElementById('price');
-            const conditionOptions = document.querySelectorAll('.condition-options .bubble-option');
-    
+
             transactionOptions.forEach(option => {
-                option.addEventListener('click', () => {
-                    transactionOptions.forEach(opt => opt.classList.remove('selected'));
-                    option.classList.add('selected');
-                    option.querySelector('input[type="radio"]').checked = true;
+                option.addEventListener('change', () => {
+                    const selectedOptions = Array.from(transactionOptions).filter(opt => opt.checked);
+                    const transactionValues = selectedOptions.map(opt => opt.value);
 
-                    // Check the selected transaction type
-                    const transactionValue = option.querySelector('input[type="radio"]').value;
+                    // If "Sell" and "Free" are both selected, uncheck "Free"
+                    if (transactionValues.includes('Sell') && transactionValues.includes('Free')) {
+                        const freeOption = selectedOptions.find(opt => opt.value === 'Free');
+                        freeOption.checked = false;
+                        freeOption.parentElement.classList.remove('selected');
+                        transactionValues.splice(transactionValues.indexOf('Free'), 1);
+                    }
 
-                    if (transactionValue === 'Trade' || transactionValue === 'Free') {
-                        // Set price to 0 and disable the input
+                    // Handle the price input based on transaction types
+                    if (transactionValues.includes('Free') && !transactionValues.includes('Sell')) {
                         priceInput.value = '0';
                         priceInput.setAttribute('disabled', 'disabled');
                     } else {
-                        // Enable the input for the price
                         priceInput.removeAttribute('disabled');
-                        priceInput.value = ''; // Clear the input for user to enter price
+                        priceInput.value = '';
                     }
+
+                    // Update the visual state of the bubbles
+                    transactionOptions.forEach(opt => {
+                        if (opt.checked) {
+                            opt.parentElement.classList.add('selected');
+                        } else {
+                            opt.parentElement.classList.remove('selected');
+                        }
+                    });
                 });
             });
 
             // Existing code to handle the price input pattern validation
             priceInput.addEventListener('input', function (event) {
-                const input = event.target;
                 const priceError = document.getElementById('price-error');
-
-                if (input.validity.patternMismatch) {
+                if (event.target.validity.patternMismatch) {
                     priceError.classList.remove('hidden');
                 } else {
                     priceError.classList.add('hidden');
                 }
             });
 
+            const conditionOptions = document.querySelectorAll('.condition-options .bubble-option');
             conditionOptions.forEach(option => {
                 option.addEventListener('click', () => {
                     conditionOptions.forEach(opt => opt.classList.remove('selected'));
@@ -240,64 +253,96 @@
                     option.querySelector('input[type="radio"]').checked = true;
                 });
             });
-
         });
 
-        function previewImages(event) {
-            const files = Array.from(event.target.files);
-            const existingPreviews = previewContainer.querySelectorAll('.image-preview').length;
+        document.addEventListener('DOMContentLoaded', () => {
+            const imagesArray = []; // Array to store the files
+            const previewContainer = document.getElementById('image-previews');
+            const fileInput = document.getElementById('images');
+            const form = document.querySelector('form'); // Select the form element
 
-            // Check if adding new files exceeds the maximum allowed
-            if (existingPreviews + files.length > 4) {
-                alert('You can upload a maximum of 4 images.');
-                return;
+            function previewImages(event) {
+                const files = Array.from(event.target.files);
+
+                // Check if adding new files exceeds the maximum allowed
+                if (imagesArray.length + files.length > 4) {
+                    alert('You can upload a maximum of 4 images.');
+                    return;
+                }
+
+                files.forEach(file => {
+                    // Create a unique identifier for the file using its name and last modified time
+                    const fileIdentifier = `${file.name}-${file.lastModified}`;
+
+                    // Check if the file is already in the array by its unique identifier
+                    if (!imagesArray.some(existingFile => existingFile.identifier === fileIdentifier)) {
+                        // Add new file and its identifier to the array
+                        imagesArray.push({ file, identifier: fileIdentifier });
+
+                        const fileURL = URL.createObjectURL(file); // Generate a URL for the file
+
+                        // Create preview element
+                        const preview = document.createElement('div');
+                        preview.classList.add('image-preview');
+
+                        // Create image element
+                        const img = document.createElement('img');
+                        img.src = fileURL;
+                        preview.appendChild(img);
+
+                        // Create remove button
+                        const removeBtn = document.createElement('button');
+                        removeBtn.classList.add('remove-btn');
+                        removeBtn.innerHTML = '&times;';
+                        removeBtn.onclick = function () {
+                            // Remove the file from the array by its identifier
+                            const index = imagesArray.findIndex(existingFile => existingFile.identifier === fileIdentifier);
+                            if (index > -1) {
+                                imagesArray.splice(index, 1);
+                            }
+                            previewContainer.removeChild(preview); // Remove the preview
+
+                            // Update the file input's files
+                            updateFileInput();
+                        };
+                        preview.appendChild(removeBtn);
+
+                        // Append preview to container
+                        previewContainer.appendChild(preview);
+                    }
+                });
+
+                // Update the file input's files
+                updateFileInput();
             }
 
-            files.forEach(file => {
-                const reader = new FileReader();
+            function updateFileInput() {
+                const dataTransfer = new DataTransfer(); // Create a new DataTransfer object
 
-                reader.onload = function () {
-                    const result = reader.result;
-                    const fileURL = URL.createObjectURL(file);
+                // Add all files from the array to the DataTransfer object
+                imagesArray.forEach(item => {
+                    dataTransfer.items.add(item.file);
+                });
 
-                    // Skip if file already exists in the map
-                    if (fileMap.has(fileURL)) {
-                        return;
-                    }
+                // Set the files to the file input element
+                fileInput.files = dataTransfer.files;
+            }
 
-                    fileMap.set(fileURL, file);
+            // Attach the event listener to the file input
+            fileInput.addEventListener('change', previewImages);
 
-                    // Create preview element
-                    const preview = document.createElement('div');
-                    preview.classList.add('image-preview');
+            // Handle form submission
+            form.addEventListener('submit', (event) => {
+                // Prevent default submission to ensure all files are included
+                event.preventDefault();
 
-                    // Create image element
-                    const img = document.createElement('img');
-                    img.src = result;
-                    preview.appendChild(img);
+                // Ensure the files are set properly in the input element
+                updateFileInput();
 
-                    // Create remove button
-                    const removeBtn = document.createElement('button');
-                    removeBtn.classList.add('remove-btn');
-                    removeBtn.innerHTML = '&times;';
-                    removeBtn.onclick = function () {
-                        previewContainer.removeChild(preview);
-                        fileMap.delete(fileURL); // Remove from the map
-
-                        // Reset input value only if all previews are removed
-                        if (previewContainer.querySelectorAll('.image-preview').length === 0) {
-                            input.value = ''; // Reset the input value
-                        }
-                    };
-                    preview.appendChild(removeBtn);
-
-                    // Append preview to container
-                    previewContainer.appendChild(preview);
-                };
-                reader.readAsDataURL(file);
+                // Now submit the form
+                form.submit();
             });
-        }
-
+        });
     </script>
 </body>
 </html>
