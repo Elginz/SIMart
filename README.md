@@ -1,6 +1,6 @@
 <h1 align="center">TEAM 58</h1>
 
-[Live SMart website](https://smart-k1xu.onrender.com/) It'll take awhile to load
+[Live SMart website](https://smart-k1xu.onrender.com/) It'll take awhile to load [3 minutes]
 
 <h3 align="center">Step by step basis (Will make sense for those actually working on it)</h3>
 
