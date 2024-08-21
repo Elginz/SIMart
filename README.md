@@ -1,10 +1,7 @@
 <h1 align="center">TEAM 58</h1>
 
-🛑**LIVE WEBSITE (Do note it may take up to 1 minute to load):** [SMart](https://smart-k1xu.onrender.com/) 🔴
-
-
 <h3 align="center">🔴🚨 Live SMart website: <a href="https://smart-k1xu.onrender.com/">SMart</a> 🚨🔴</h3>
-
+<h5 align="center"><em>Do note that it can take up to 1 minute to load</em> </h5>
 
 <h3 align="center">Step by step basis (Will make sense for those working on it)</h3>
 
