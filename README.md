@@ -2,7 +2,8 @@
 
 🛑**LIVE WEBSITE (Do note it may take up to 1 minute to load):** [SMart](https://smart-k1xu.onrender.com/) 🔴
 
-<h3 align="center">🔴🚨 Live SMart website: [SMart](https://smart-k1xu.onrender.com/) 🚨🔴</h3>
+
+<h3 align="center">🔴🚨 Live SMart website: <a href="https://smart-k1xu.onrender.com/">SMart</a> 🚨🔴</h3>
 
 
 <h3 align="center">Step by step basis (Will make sense for those working on it)</h3>
