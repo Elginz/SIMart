@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS product (
     price FLOAT NOT NULL,
     category TEXT NOT NULL CHECK(category IN ('Fashion', 'Electronics', 'Lifestyle', 'Recreation', 'Collectibles', 'Resources', 'Others')),
     transaction_type TEXT NOT NULL,  -- Changed to TEXT to allow storing multiple types
-    condition TEXT NOT NULL CHECK(condition IN ('Brand new', 'Like new', 'Lightly used', 'Moderately used', 'Heavily used')),
+    condition TEXT NOT NULL CHECK(condition IN ('Brand new', 'Like new', 'Lightly used', 'Well used', 'Heavily used')),
     created_at DATETIME NOT NULL,
     availability BOOLEAN DEFAULT true,
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
