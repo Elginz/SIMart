@@ -50,7 +50,7 @@ router.get('/', (req, res) => {;
                     return res.status(500).send(err.message);
                 } else {
                     // Query to get all listings created by the user
-                    const listingsQuery = "SELECT * FROM product WHERE user_id = ?";
+                    const listingsQuery = "SELECT * FROM product WHERE user_id = ? AND offer_status = 'not made'";
                     global.db.all(listingsQuery, [user.user_id], (err, listings) => {
                         if (err) {
                             return res.status(500).send(err.message);
