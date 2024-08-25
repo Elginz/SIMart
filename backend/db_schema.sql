@@ -38,6 +38,7 @@ CREATE TABLE IF NOT EXISTS product (
     condition TEXT NOT NULL CHECK(condition IN ('Brand new', 'Like new', 'Lightly used', 'Well used', 'Heavily used')),
     created_at DATETIME NOT NULL,
     availability BOOLEAN DEFAULT true,
+    offer_status TEXT DEFAULT 'not made' CHECK(offer_status IN ('not made', 'made', 'in progress', 'completed')),
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 
