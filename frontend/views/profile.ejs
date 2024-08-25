@@ -207,7 +207,7 @@
         <!-- Favourites section -->
         <div id="favourites-section" class="grid grid-cols-4 gap-2 pl-24 pr-20 pt-4 hidden">
             <% favourites.forEach((favourite, index) => { %>
-            <div class="flex justify-center py-6 border-none rounded-lg" data-transaction-type="<%= favourite.transaction_type %>">
+            <div class="flex justify-center py-6 hover:shadow-xl border-none rounded-lg" data-transaction-type="<%= favourite.transaction_type %>">
                 <div class="w-full h-auto">
                     <img src="/images/bracelet.jpg" class="w-80 h-96 object-cover rounded-lg">
                     <p class="pt-3 pb-1 font-bold text-2xl"><%= favourite.product_name %></p>
