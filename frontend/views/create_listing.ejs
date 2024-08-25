@@ -106,7 +106,7 @@
     <!-- Navigation bar -->
     <%- include('navbar') %>
 
-    <form action="/product/new" method="POST" enctype="multipart/form-data" class="flex flex-col flex-grow">
+    <form action="<%= product ? '/product/edit/' + product.id : '/product/new' %>" method="POST" enctype="multipart/form-data" class="flex flex-col flex-grow">
         <div class="flex flex-col md:flex-row flex-grow p-4">
             <div class="md:w-1/2 p-2">
                 <h2 class="text-xl md:text-2xl mb-4">Upload Images</h2>
@@ -122,53 +122,53 @@
                 <div class="form-group mb-4">
                     <label for="category" class="block text-gray-700 font-bold">Category:</label>
                     <select name="category" id="category" class="w-full border border-gray-300 rounded py-2 px-3" required>
-                        <option value="Fashion">Fashion</option>
-                        <option value="Electronics">Electronics</option>
-                        <option value="Lifestyle">Lifestyle</option>
-                        <option value="Recreation">Recreation</option>
-                        <option value="Collectibles">Collectibles</option>
-                        <option value="Resources">Resources</option>
-                        <option value="Others">Others</option>
+                        <option value="Fashion" <%= product && product.category === 'Fashion' ? 'selected' : '' %>>Fashion</option>
+                        <option value="Electronics" <%= product && product.category === 'Electronics' ? 'selected' : '' %>>Electronics</option>
+                        <option value="Lifestyle" <%= product && product.category === 'Lifestyle' ? 'selected' : '' %>>Lifestyle</option>
+                        <option value="Recreation" <%= product && product.category === 'Recreation' ? 'selected' : '' %>>Recreation</option>
+                        <option value="Collectibles" <%= product && product.category === 'Collectibles' ? 'selected' : '' %>>Collectibles</option>
+                        <option value="Resources" <%= product && product.category === 'Resources' ? 'selected' : '' %>>Resources</option>
+                        <option value="Others" <%= product && product.category === 'Others' ? 'selected' : '' %>>Others</option>
                     </select>
                 </div>
                 <div class="form-group mb-4">
                     <label class="block text-gray-700 font-bold">Transaction:</label>
                     <div class="transaction-options flex flex-wrap gap-4">
-                        <label class="bubble-option">
-                            <input type="checkbox" id="Sell" name="transaction" value="Sell">
+                        <label class="bubble-option <%= product && product.transaction_type.includes('Sell') ? 'selected' : '' %>">
+                            <input type="checkbox" id="Sell" name="transaction" value="Sell" <%= product && product.transaction_type.includes('Sell') ? 'checked' : '' %>>
                             For Sale
                         </label>
-                        <label class="bubble-option">
-                            <input type="checkbox" id="Trade" name="transaction" value="Trade">
+                        <label class="bubble-option <%= product && product.transaction_type.includes('Trade') ? 'selected' : '' %>">
+                            <input type="checkbox" id="Trade" name="transaction" value="Trade" <%= product && product.transaction_type.includes('Trade') ? 'checked' : '' %>>
                             For Trade
                         </label>
-                        <label class="bubble-option">
-                            <input type="checkbox" id="Free" name="transaction" value="Free">
+                        <label class="bubble-option <%= product && product.transaction_type.includes('Free') ? 'selected' : '' %>">
+                            <input type="checkbox" id="Free" name="transaction" value="Free" <%= product && product.transaction_type.includes('Free') ? 'checked' : '' %>>
                             For Free
                         </label>
                     </div>
                 </div>
                 <div class="form-group mb-4">
                     <label for="name" class="block text-gray-700 font-bold">Product Name:</label>
-                    <input type="text" name="name" id="name" class="w-full border border-gray-300 rounded py-2 px-3" required>
+                    <input type="text" name="name" id="name" class="w-full border border-gray-300 rounded py-2 px-3" value="<%= product ? product.product_name : '' %>" required>
                 </div>
                 <div class="form-group mb-4">
                     <label class="block text-gray-700 font-bold">Condition:</label>
                     <div class="condition-options flex flex-wrap gap-4">
-                        <label class="bubble-option">
-                            <input type="radio" id="brand_new" name="condition" value="Brand new" required>
+                        <label class="bubble-option <%= product && product.condition === 'Brand new' ? 'selected' : '' %>">
+                            <input type="radio" id="brand_new" name="condition" value="Brand new" <%= product && product.condition === 'Brand new' ? 'checked' : '' %> required>
                             Brand New
                         </label>
-                        <label class="bubble-option">
-                            <input type="radio" id="lightly_used" name="condition" value="Lightly used">
+                        <label class="bubble-option <%= product && product.condition === 'Lightly used' ? 'selected' : '' %>">
+                            <input type="radio" id="lightly_used" name="condition" value="Lightly used" <%= product && product.condition === 'Lightly used' ? 'checked' : '' %>>
                             Lightly Used
                         </label>
-                        <label class="bubble-option">
-                            <input type="radio" id="well_used" name="condition" value="Well used">
+                        <label class="bubble-option <%= product && product.condition === 'Well used' ? 'selected' : '' %>">
+                            <input type="radio" id="well_used" name="condition" value="Well used" <%= product && product.condition === 'Well used' ? 'checked' : '' %>>
                             Well Used
                         </label>
-                        <label class="bubble-option">
-                            <input type="radio" id="heavily_used" name="condition" value="Heavily used">
+                        <label class="bubble-option <%= product && product.condition === 'Heavily used' ? 'selected' : '' %>">
+                            <input type="radio" id="heavily_used" name="condition" value="Heavily used" <%= product && product.condition === 'Heavily used' ? 'checked' : '' %>>
                             Heavily Used
                         </label>
                     </div>
@@ -178,15 +178,21 @@
                     <label for="price" class="block text-gray-700 font-bold">Price:</label>
                     <div class="relative">
                         <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">$</span>
-                        <input type="text" name="price" id="price" class="pl-6 w-full border border-gray-300 rounded py-2 px-3" pattern="^\d+(\.\d{1,2})?$" title="Please enter a valid price (e.g., 10 or 10.99)" required>
+                        <input type="text" name="price" id="price" class="pl-6 w-full border border-gray-300 rounded py-2 px-3" value="<%= product ? product.price : '' %>" pattern="^\d+(\.\d{1,2})?$" title="Please enter a valid price (e.g., 10 or 10.99)" required>
                     </div>
                     <span id="price-error" class="text-red-600 text-sm hidden">Please enter a valid price.</span>
                 </div>
                 <div class="form-group mb-4">
                     <label for="description" class="block text-gray-700 font-bold">Description:</label>
-                    <textarea name="description" id="description" class="w-full border border-gray-300 rounded py-2 px-3" rows="4" required></textarea>
+                    <textarea name="description" id="description" class="w-full border border-gray-300 rounded py-2 px-3" rows="4" required><%= product ? product.content_description : '' %></textarea>
                 </div>
-                <button type="submit" class="submit-button bg-red-600 text-white py-2 px-4 rounded">Add Product</button>
+                <% if (product) { %>
+                    <!-- Show "Edit Product" button if editing -->
+                    <button type="submit" class="submit-button bg-green-600 text-white py-2 px-4 rounded">Save Changes</button>
+                <% } else { %>
+                    <!-- Show "Add Product" button if creating -->
+                    <button type="submit" class="submit-button bg-red-600 text-white py-2 px-4 rounded">Add Product</button>
+                <% } %>
             </div>
         </div>
     </form>
@@ -217,6 +223,9 @@
 
                     // Handle the price input based on transaction types
                     if (transactionValues.includes('Free') && !transactionValues.includes('Sell')) {
+                        priceInput.value = '0';
+                        priceInput.setAttribute('disabled', 'disabled');
+                    } else if (transactionValues.length === 1 && transactionValues.includes('Trade')) {
                         priceInput.value = '0';
                         priceInput.setAttribute('disabled', 'disabled');
                     } else {
