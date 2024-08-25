@@ -7,20 +7,22 @@
     <link rel="stylesheet" href="/styles/style.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Ensure thumbnails are aligned at the bottom */
-        .thumbnail-container {
-            display: flex;
-            justify-content: center;
-            align-items: flex-end;
+        #name-display { 
+            text-transform: capitalize; 
+            transition: color 0.3s ease;
+        }
+
+        #name-display:hover {
+            color: #DA1212;
+        }
+
+        #product-name { 
+            text-transform: capitalize; 
         }
 
         /* Style for main image and thumbnails */
         .main-image-container img {
             transition: transform 0.3s ease;
-        }
-
-        .main-image-container img:hover {
-            transform: scale(1.05);
         }
 
         .thumbnail {
@@ -40,27 +42,25 @@
 
         <div class="flex pl-12 py-8">
             <div class="flex flex-col w-[50%]">
-                <div class="flex flex-col-reverse items-center">
-                    <div class="thumbnail-container flex flex-wrap justify-center mt-4">
-                        <% images.forEach((image, index) => { %>
-                            <img 
-                                src="data:<%= image.image_type %>;base64,<%= image.image %>" 
-                                class="w-[100px] h-[100px] m-1.5 object-cover cursor-pointer thumbnail" 
-                                alt="Product Image <%= index %>"
-                                data-image-type="<%= image.image_type %>"
-                                data-image-base64="<%= image.image %>">
-                        <% }); %>
-                    </div>                                   
-                    <div class="main-image-container">
-                        <% if (images && images.length > 0) { %>
-                            <img id="main-image" src="data:<%= images[0].image_type %>;base64,<%= images[0].image.toString('base64') %>" class="w-[95%] h-[550px] object-cover rounded-lg shadow-lg mb-2" alt="Main Product Image">
-                        <% } %>
-                    </div>
+                <div class="main-image-container">
+                    <% if (images && images.length > 0) { %>
+                        <img id="main-image" src="data:<%= images[0].image_type %>;base64,<%= images[0].image.toString('base64') %>" class="w-[95%] h-[550px] object-cover rounded-lg shadow-lg mb-2" alt="Main Product Image">
+                    <% } %>
+                </div>   
+                <div class="thumbnail-container flex flex-wrap items-end mt-4">
+                    <% images.forEach((image, index) => { %>
+                        <img 
+                            src="data:<%= image.image_type %>;base64,<%= image.image %>" 
+                            class="w-[100px] h-[100px] m-1.5 object-cover cursor-pointer thumbnail" 
+                            alt="Product Image <%= index %>"
+                            data-image-type="<%= image.image_type %>"
+                            data-image-base64="<%= image.image %>">
+                    <% }); %>
                 </div>
             </div>
             <div>
-                <h1 class="text-4xl font-bold mb-4"><%= product.product_name %></h1>
-                <div class="flex space-x-1 my-3" id="bubble" data-transaction-type="<%= product.transaction_type %>">
+                <h1 id="product-name" class="text-4xl font-bold mb-4"><%= product.product_name %></h1>
+                <div class="flex space-x-1 my-3">
                     <% product.transaction_type.split(',').forEach(function(type) { %>
                         <div class="px-4 py-1 rounded-full text-white" style="background-color: #DA1212;">
                             <%= type.trim() %>
@@ -69,16 +69,53 @@
                 </div>
                 
                 <p class="text-lg text-gray-700 mb-4">$<%= product.price %></p>
+                <h2 class="text-2xl font-bold mb-2">Condition:</h2>
                 <p class="text-lg text-gray-700 mb-4"><%= product.condition %></p>
+
                 <div class="flex space-x-3">
                     <a href="mailto:<%= user.email %>" class="flex items-center">
                         <img src="https://img.icons8.com/?size=100&id=2848&format=png&color=da1212" alt="Email Icon" class="w-8 h-8">
                     </a>
                     <img src="https://img.icons8.com/?size=100&id=85038&format=png&color=da1212" alt="Favourites Icon" id="favourite" class="w-10 h-10 cursor-pointer" onclick="addToFavourites()">
                 </div>
-                <h2 class="text-3xl font-bold mt-8 mb-4">Description</h2>
+
+                <% if (sessionUserId !== product.user_id) { %>
+                    <h2 class="text-2xl font-semibold mb-2">Uploaded By:</h2>
+                    <a href="/profile/<%= user.user_id %>">
+                        <div class="flex items-center space-x-2">
+                            <img src="<%= user.image ? `data:${user.image_type};base64,${user.image.toString('base64')}` : 'https://img.icons8.com/?size=100&id=23265&format=png&color=da1212' %>" alt="<%= user.name %>'s profile picture" class="w-12 h-12 object-cover rounded-full">
+                            <span id="name-display" class="text-lg"><%= user.name %></span>
+                        </div>
+                    </a>
+                <% } %>
+
+                <h2 class="text-2xl font-bold mt-8 mb-4">Description</h2>
                 <p class="text-base text-gray-600 mb-8"><%= product.content_description %></p>
-                <button id="offer-button" class="bg-red-600 text-white py-2 px-4 rounded-lg text-lg shadow-lg hover:bg-red-700 transition duration-200" onclick="disableButton()">Make an Offer</button>
+
+                <% if (sessionUserId !== product.user_id) { %>
+                    <% if (product.offer_status === 'completed') { %>
+                        <button id="buyer-complete-offer-button" disabled class="bg-red-600 text-white py-2 px-4 rounded-lg text-lg shadow-lg hover:bg-red-700 transition duration-200 opacity-50 cursor-not-allowed">Offer Completed</button>
+                    <% } else if (product.offer_status === 'made') { %>
+                        <button id="make-offer-button" disabled class="bg-red-600 text-white py-2 px-4 rounded-lg text-lg shadow-lg hover:bg-red-700 transition duration-200 opacity-50 cursor-not-allowed">Offer Made</button>
+                    <% } else if (product.offer_status === 'in progress') { %>
+                        <button id="buyer-complete-offer-button" class="bg-red-600 text-white py-2 px-4 rounded-lg text-lg shadow-lg hover:bg-red-700 transition duration-200">Complete Offer</button>
+                    <% } else { %>
+                        <a id="offer-link" href="mailto:<%= user.email %>" class="flex items-center">
+                            <button id="make-offer-button" class="bg-red-600 text-white py-2 px-4 rounded-lg text-lg shadow-lg hover:bg-red-700 transition duration-200" onclick="setEmailDetails()">Make an Offer</button>
+                        </a>
+                    <% } %>
+                <% } else { %>
+                    <a href="/product/edit/<%= product.id %>" class="flex items-center">
+                        <button id="edit-button" class="bg-red-600 text-white py-2 px-4 mb-4 rounded-lg text-lg shadow-lg hover:bg-red-700 transition duration-200">Edit Listing</button>
+                    </a>
+                    <% if (product.offer_status === 'completed') { %>
+                        <button id="seller-complete-offer-button" disabled class="bg-red-600 text-white py-2 px-4 rounded-lg text-lg shadow-lg hover:bg-red-700 transition duration-200 opacity-50 cursor-not-allowed">Offer Completed</button>
+                    <% } else if (product.offer_status === 'made') { %>
+                        <button id="seller-complete-offer-button" class="bg-red-600 text-white py-2 px-4 rounded-lg text-lg shadow-lg hover:bg-red-700 transition duration-200">Complete Offer</button>
+                    <% } else if (product.offer_status === 'in progress') { %>
+                        <button id="seller-complete-offer-button" disabled class="bg-red-600 text-white py-2 px-4 rounded-lg text-lg shadow-lg hover:bg-red-700 transition duration-200 opacity-50 cursor-not-allowed">Complete Offer</button>
+                    <% } %>
+                <% } %>
             </div>
         </div>
 
@@ -128,49 +165,118 @@
                 heartIcon.src = "https://img.icons8.com/?size=100&id=85038&format=png&color=da1212"; // Empty heart
             }
 
-            // Handle the transaction type bubbles
-            const transactionTypeBubble = () => {
-                const bubble = document.getElementById("bubble");
-                const transactionType = bubble.dataset.transactionType.split(',').map(t => t.trim()); // Split by comma and trim whitespace
-                
-                if (transactionType.length > 0) {
-                    const bubbleContainer = document.getElementById("bubble");
-                    bubbleContainer.innerHTML = ''; // Clear any existing bubbles
-
-                    transactionType.forEach((type) => {
-                        const bubbleElement = document.createElement('div');
-                        bubbleElement.classList.add('px-4', 'py-1', 'rounded-full', 'text-white');
-                        bubbleElement.style.backgroundColor = '#DA1212';
-                        bubbleElement.textContent = type;
-                        bubbleContainer.appendChild(bubbleElement);
-                    });
-                }
-            };
-
-            transactionTypeBubble();
+            transactionProcess();
         });
 
-        function disableButton() {
-            const button = document.getElementById('offer-button');
-            if(button.innerText === 'Make an Offer') {
-                // Disable the button
-                button.classList.add('opacity-50', 'cursor-not-allowed');
-                setTimeout(function() {
-                    button.classList.remove('opacity-50', 'cursor-not-allowed');
-                    button.innerText = 'Complete Offer';
-                }, 5000); // Change the duration (5000 ms = 5 seconds) as needed
-            } else if (button.innerText === 'Complete Offer') {
-                const body = document.getElementById('blur-container');
-                body.classList.add('blur-sm');
+        function transactionProcess() {
+            const makeOfferButton = document.getElementById("make-offer-button");
+            const sellerCompleteOfferButton = document.getElementById("seller-complete-offer-button");
+            const buyerCompleteOfferButton = document.getElementById("buyer-complete-offer-button");
 
-                const reviewBox = document.getElementById('leave-review-box');
-                reviewBox.classList.remove('hidden');
+            if (makeOfferButton) {
+                makeOfferButton.addEventListener("click", function() {
+                    const productId = '<%= product.id %>'; // Pass the product ID
 
-                // Show the scroll lock overlay
-                const scrollLock = document.getElementById('scroll-lock');
-                scrollLock.classList.remove('hidden');
-                document.body.style.overflow = 'hidden'; // Prevent scrolling
+                    fetch('/product/make-offer', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ productId: productId })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Change button text
+                            makeOfferButton.innerText = 'Offer made';
+                            makeOfferButton.disabled = true;
+                            makeOfferButton.classList.add('opacity-50', 'cursor-not-allowed');
+                        } else {
+                            alert('Failed to make an offer.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('An error occurred.');
+                    });
+                });
             }
+
+            if (sellerCompleteOfferButton) {
+                sellerCompleteOfferButton.addEventListener("click", function() {
+                    const productId = '<%= product.id %>'; // Pass the product ID
+
+                    fetch('/product/offer-in-progress', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ productId: productId })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            sellerCompleteOfferButton.innerText = 'Offer Completed';
+                            sellerCompleteOfferButton.disabled = true;
+                            sellerCompleteOfferButton.classList.add('opacity-50', 'cursor-not-allowed');
+                        } else {
+                            alert('Failed to complete the offer.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('An error occurred.');
+                    });
+                });
+            }
+
+            if (buyerCompleteOfferButton) {
+                buyerCompleteOfferButton.addEventListener("click", function() {
+                    const productId = '<%= product.id %>'; // Pass the product ID
+
+                    fetch('/product/complete-offer', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ productId: productId })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            buyerCompleteOfferButton.innerText = 'Offer Completed';
+                            buyerCompleteOfferButton.disabled = true;
+                            buyerCompleteOfferButton.classList.add('opacity-50', 'cursor-not-allowed');
+
+                            const body = document.getElementById('blur-container');
+                            body.classList.add('blur-sm');
+
+                            const reviewBox = document.getElementById('leave-review-box');
+                            reviewBox.classList.remove('hidden');
+
+                            // Show the scroll lock overlay
+                            const scrollLock = document.getElementById('scroll-lock');
+                            scrollLock.classList.remove('hidden');
+                            document.body.style.overflow = 'hidden'; // Prevent scrolling
+                        } else {
+                            alert('Failed to complete the offer.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('An error occurred.');
+                    });
+                });
+            }
+        }
+
+        function setEmailDetails() {
+            const userEmail = "<%= user.email %>"; // Get the user's email from the server-side variable
+            const productName = "<%= product.product_name %>";
+            const subject = encodeURIComponent(`Offer on your product "${productName}"`);
+            const body = encodeURIComponent("Hi,\n\nI would like to make an offer on your product.\n\nThank you!");
+            const link = `mailto:${userEmail}?subject=${subject}&body=${body}`;
+            document.getElementById('offer-link').setAttribute('href', link);
         }
 
         function closeReview() {
@@ -202,7 +308,7 @@
             const isFavourite = heart.src.includes('85038'); // Check if the heart is empty
 
             const productId = '<%= product.id %>'; // Pass the product ID
-            const userId = '<%= userId %>'; // Pass the user ID
+            const userId = '<%= sessionUserId %>'; // Pass the user ID
 
             if(isFavourite) {
                 // Send an AJAX request to add the product to favourites
@@ -231,7 +337,7 @@
         function removeFromFavourites() {
             const heart = document.getElementById('favourite');
             const productId = '<%= product.id %>'; // Pass the product ID
-            const userId = '<%= userId %>'; // Pass the user ID
+            const userId = '<%= sessionUserId %>'; // Pass the user ID
 
             // Send an AJAX request to remove the product from favourites
             fetch("/product/favourites/remove", {
