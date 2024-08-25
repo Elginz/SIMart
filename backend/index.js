@@ -74,7 +74,7 @@ app.get("/", (req, res) => {
         return res.redirect('/login');
     }
     const { product_name, transaction_type } = req.query;
-    let query = "SELECT * FROM product WHERE 1=1";
+    let query = "SELECT * FROM product WHERE 1=1 AND offer_status = 'not made'";
     const params = [];
     
     if (product_name) {
