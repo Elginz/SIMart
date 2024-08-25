@@ -13,7 +13,7 @@ router.get('/:category', (req, res) => {
     const category = req.params.category;
 
     // Query to get all listings with the specified category
-    const listingsQuery = "SELECT * FROM product WHERE LOWER(category) = ?";
+    const listingsQuery = "SELECT * FROM product WHERE LOWER(category) = ? AND offer_status = 'not made'";
     global.db.all(listingsQuery, [category], (err, listings) => {
         if (err) {
             return res.status(500).send(err.message);
