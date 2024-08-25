@@ -31,6 +31,9 @@
             position: relative;
             margin-top: 2%;
         }
+        #product-name { 
+            text-transform: capitalize; 
+        }
         .item {
             border: none;
             border-radius: 8px;
@@ -122,25 +125,27 @@
         <div id="listings-section" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 px-4 py-6">
             <% if (product && product.length > 0) { %>
             <% product.forEach((listing) => { %>
-                <a href="/product/<%= listing.id %>" class="flex flex-col items-center hover:shadow-xl py-4 item" data-transaction-type="<%= listing.transaction_type %>">
+                <a href="/product/<%= listing.id %>" class="flex flex-col items-center hover:shadow-xl p-6 item" data-transaction-type="<%= listing.transaction_type %>">
                     <div class="w-full h-auto">
                         <% if (images[listing.id] && images[listing.id].length > 0) { %>
-                            <% images[listing.id].forEach((image, index) => { %>
+                            <% const image = images[listing.id][0]; %>
                                 <img 
                                     src="data:<%= image.image_type %>;base64,<%= image.image.toString('base64') %>" 
-                                    class="w-full h-64 m-1.5 object-cover cursor-pointer thumbnail" 
-                                    alt="Product Image <%= index %>"
+                                    class="w-80 h-96 object-cover rounded-lg cursor-pointer thumbnail" 
+                                    alt="Product Image"
                                     data-image-type="<%= image.image_type %>"
                                     data-image-base64="<%= image.image.toString('base64') %>">
-                            <% }); %>
-                    <% } else { %>
+                        <% } else { %>
                             <p>No image available.</p>
                         <% } %>
-                        <p class="pt-3 pb-1 font-bold text-lg sm:text-xl md:text-2xl"><%= listing.product_name %></p>
+                        <p id="product-name" class="pt-3 pb-1 font-bold text-lg sm:text-xl md:text-2xl"><%= listing.product_name %></p>
                         <p class="pb-1 text-lg sm:text-xl">$<%= listing.price %></p>
-                        <div class="flex space-x-1 mt-2">
-                            <div id="listings-<%= listing.id %>-first" class="px-4 py-1 rounded-full text-white" style="background-color: #DA1212;"></div>
-                            <div id="listings-<%= listing.id %>-second" class="px-4 py-1 rounded-full text-white hidden" style="background-color: #DA1212;"></div>
+                        <div class="flex space-x-1 my-3">
+                            <% listing.transaction_type.split(',').forEach(function(type) { %>
+                                <div class="px-4 pt-1 pb-1.5 rounded-full text-white" style="background-color: #DA1212;">
+                                    <%= type.trim() %>
+                                </div>
+                            <% }); %>
                         </div>
                     </div>
                 </a>
@@ -178,36 +183,6 @@
                 prevEl: '.swiper-button-prev',
             },
         });
-
-    document.addEventListener('DOMContentLoaded', function() {
-        switchTransactionType('listings');
-        switchTransactionType('favourites');
-    });
-
-    function switchTransactionType(field) {
-        const section = document.getElementById(`${field}-section`);
-        const sectionItems = section.querySelectorAll('.item');
-
-        sectionItems.forEach((item) => {
-            const transactionType = item.dataset.transactionType.split(',').map(t => t.trim());
-            const itemId = item.href.split('/').pop(); // Extract product ID from the href attribute
-            const firstBubble = document.getElementById(`${field}-${itemId}-first`);
-            const secondBubble = document.getElementById(`${field}-${itemId}-second`);
-
-            if (firstBubble) {
-                if (transactionType.length === 1) {
-                    firstBubble.innerHTML = `<p>${transactionType[0]}</p>`;
-                    firstBubble.classList.remove('hidden');
-                    secondBubble.classList.add('hidden');
-                } else if (transactionType.length === 2) {
-                    firstBubble.innerHTML = `<p>${transactionType[0]}</p>`;
-                    secondBubble.innerHTML = `<p>${transactionType[1]}</p>`;
-                    firstBubble.classList.remove('hidden');
-                    secondBubble.classList.remove('hidden');
-                }
-            }
-        });
-    }
     </script>
     
 </body>
