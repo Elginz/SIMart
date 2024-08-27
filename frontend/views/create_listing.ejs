@@ -115,6 +115,15 @@
                     <input type="file" name="images" id="images" accept="image/*" multiple onchange="previewImages(event)">
                 </div>
                 <div class="image-previews" id="image-previews">
+                <!-- <% if (product && imageData && imageData.length > 0) { %>
+                        <% imageData.forEach(function(image) { %>
+                            <div class="image-preview" data-id="<%= image.id %>">
+                                <img src="<%= image.src %>" alt="Uploaded Image">
+                                <button type="button" class="remove-btn" onclick="removeImage('<%= image.id %>')">&times;</button>
+                                <input type="hidden" name="removeImages[]" value="<%= image.id %>">
+                            </div>
+                        <% }) %>
+                    <% } %> -->
                     <!-- Image previews will be inserted here -->
                 </div>
             </div>
@@ -263,6 +272,81 @@
                 });
             });
         });
+
+// function previewImages(event) {
+        //     const files = Array.from(event.target.files);
+        //     const existingPreviews = previewContainer.querySelectorAll('.image-preview').length;
+
+        //     // Check if adding new files exceeds the maximum allowed
+        //     if (existingPreviews + files.length > 4) {
+        //         alert('You can upload a maximum of 4 images.');
+        //         return;
+        //     }
+
+        //     files.forEach(file => {
+        //         const reader = new FileReader();
+
+        //         reader.onload = function () {
+        //             const result = reader.result;
+        //             const fileURL = URL.createObjectURL(file);
+
+        //             // Skip if file already exists in the map
+        //             if (fileMap.has(fileURL)) {
+        //                 return;
+        //             }
+
+        //             fileMap.set(fileURL, file);
+
+        //             // Create preview element
+        //             const preview = document.createElement('div');
+        //             preview.classList.add('image-preview');
+
+        //             // Create image element
+        //             const img = document.createElement('img');
+        //             img.src = result;
+        //             preview.appendChild(img);
+
+        //             // Create remove button
+        //             const removeBtn = document.createElement('button');
+        //             removeBtn.classList.add('remove-btn');
+        //             removeBtn.innerHTML = '&times;';
+        //             removeBtn.onclick = function () {
+        //                 previewContainer.removeChild(preview);
+        //                 fileMap.delete(fileURL); // Remove from the map
+
+        //                 // Reset input value only if all previews are removed
+        //                 if (previewContainer.querySelectorAll('.image-preview').length === 0) {
+        //                     // input.value = ''; // Reset the input value
+        //                     document.getElementById('images').value = ''; // Reset the input value
+        //                 }
+        //             };
+        //             preview.appendChild(removeBtn);
+
+        //             // Append preview to container
+        //             previewContainer.appendChild(preview);
+        //         };
+        //         reader.readAsDataURL(file);
+        //     });
+        // }
+
+        // function removeImage(imageId) {
+        //     const previewContainer = document.getElementById('image-previews');
+        //     const imagePreview = previewContainer.querySelector(`.image-preview[data-id="${imageId}"]`);
+            
+        //     // Remove image from preview container
+        //     if (imagePreview) {
+        //         previewContainer.removeChild(imagePreview);
+        //     }
+
+        //     // Remove image from hidden input
+        //     const hiddenInput = document.querySelector(`input[name="removeImages[]"][value="${imageId}"]`);
+        //     if (hiddenInput) {
+        //         hiddenInput.parentNode.removeChild(hiddenInput);
+        //     }
+
+        //     console.log(`Image with ID ${imageId} removed.`);
+        // }
+
 
         document.addEventListener('DOMContentLoaded', () => {
             const imagesArray = []; // Array to store the files
