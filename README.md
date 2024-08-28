@@ -9,18 +9,14 @@
 
 - Currently the files and routes have been placed within **frontend** and **backend** the older files were moved into **older_files**
 
-- *There is no node module inside the files as it is too big, add node modules (npm i) into both backend and frontend repositories.*
-
 - Download both **backend** and **frontend** into a single repository
 - cd into **backend**
-  Run the following commands 
+  
+- Run the following commands 
   - npm i (Install the node package modules)
   - npm run build-db (Build the database)
   - npm run (To run the program)
     
-<h4 align="center">cd into backend before building and starting the code. </h4>
-
-
 **Issues (potential)**
 - You may notice an error in building the code. Most of the error comes from the db. Run the following command in the terminal to view sql db issue. It manually executes schema file
 
