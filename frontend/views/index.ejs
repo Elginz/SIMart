@@ -1,191 +1,94 @@
-<!-- views/index.ejs -->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Swiper CDN for carousel -->
-    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
-    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
-    <style>
-        .carousel {
-            position: relative;
-            overflow: hidden;
-        }
-        .swiper-container {
-            height: 10%;
-            width: 75%;
-            overflow: hidden;
-        }
-        .swiper-wrapper {
-            aspect-ratio: 8/2.5;
-        }
-        .swiper-button-next,
-        .swiper-button-prev {
-            color: black;
-            position: absolute;
-            transform: translateY(-50%);
-        }
-        .swiper-pagination {
-            position: relative;
-            margin-top: 2%;
-        }
-    </style>
-    <title>Home</title>
-</head>
-<body>
-    <div class="flex flex-col min-h-screen bg-amber-50 bg-cover">
-        <!-- Navigation bar -->
-        <%- include('navbar') %>
-
-        <!-- Search bar -->
-        <div class="bg-gray-200 rounded-lg shadow-lg w-full mx-auto">
-            <form id="filter-form" class="flex space-x-4 justify-center py-4" action="/" method="GET">
-                <input type="text" name="product_name" placeholder="Product Name" class="px-4 py-2 border rounded-md shadow-lg" style="width: 50%;" value="<%= typeof product_name !== 'undefined' ? product_name : '' %>">
-                <select name="transaction_type" class="px-4 py-2 border rounded-md shadow-lg">
-                    <option value="" <%= !transaction_type ? 'selected' : '' %>>All</option>
-                    <option value="Sell" <%= transaction_type === 'Sell' ? 'selected' : '' %>>For Sale</option>
-                    <option value="Trade" <%= transaction_type === 'Trade' ? 'selected' : '' %>>For Trade</option>
-                    <option value="Free" <%= transaction_type === 'Free' ? 'selected' : '' %>>For Free</option>
-                </select>
-                <button type="submit" class="px-4 py-2 text-white hover:scale-110 active:scale-95 rounded-md bg-[#DA1212]" onclick="window.location.href='/Filter'">
-                    <img src="https://img.icons8.com/?size=100&id=82712&format=png&color=FFFFFF" class="w-6 h-6">
-                </button>
-            </form>
+<!-- Navigation bar -->
+<nav class="flex items-center justify-between p-3 w-full bg-[#041562]">
+    <!-- Logo -->
+    <div class="flex items-center space-x-4">
+        <a href="/">
+            <img src="/images/logo.png" class="h-14 w-auto" alt="Logo">
+        </a>
+    </div>    
+    <div class="flex items-center lg:hidden">
+        <button id="menu-button" class="focus:outline-none">
+            <img src="https://img.icons8.com/?size=100&id=8113&format=png&color=FFFFFF" class="h-8 w-8" alt="Menu Icon">
+        </button>
+    </div>
+    <!-- Desktop navigation -->
+    <div id="desktop-menu" class="hidden lg:flex lg:items-center justify-between w-full">
+        <div class="flex justify-center flex-1 space-x-8">
+            <a href="/category/fashion" class="text-white text-xl text-center">Fashion</a>
+            <a href="/category/electronics" class="text-white text-xl text-center">Electronics</a>
+            <a href="/category/lifestyle" class="text-white text-xl text-center">Lifestyle</a>
+            <a href="/category/recreation" class="text-white text-xl text-center">Recreation</a>
+            <a href="/category/collectibles" class="text-white text-xl text-center">Collectibles</a>
+            <a href="/category/resources" class="text-white text-xl text-center">Resources</a>
+            <a href="/category/others" class="text-white text-xl text-center">Others</a>
         </div>
-        <!-- End of search bar -->
-
-        <!-- Carousel -->
-        <div class="flex justify-center mt-6 carousel">
-            <div class="swiper-container">
-                <div class="swiper-wrapper">
-                    <div class="swiper-slide">
-                        <img src="/images/donate1.png" alt="Slide 1" class="w-full">
-                    </div>
-                    <div class="swiper-slide">
-                        <img src="/images/donate2.png" alt="Slide 2" class="w-full">
-                    </div>
-                    <div class="swiper-slide">
-                        <img src="/images/donate3.png" alt="Slide 3" class="w-full">
-                    </div>
-                    <div class="swiper-slide">
-                        <img src="/images/donate4.png" alt="Slide 4" class="w-full">
-                    </div>
-                    <div class="swiper-slide">
-                        <img src="/images/donate5.png" alt="Slide 4" class="w-full">
-                    </div>
-                    <!-- <div class="swiper-slide">
-                        <img src="https://via.placeholder.com/800x300" alt="Slide 4" class="w-full">
-                    </div> -->
-                </div>
-                <!-- Add Pagination -->
-                <div class="swiper-pagination"></div>
-                <!-- Add Navigation -->
-                <div class="swiper-button-next"></div>
-                <div class="swiper-button-prev"></div>
-            </div>
+        <!-- Right-aligned items -->
+        <div class="flex items-center space-x-4">
+            <a href="/profile?section=listings" class="text-center hover:scale-110 active:scale-95"><img src="https://img.icons8.com/?size=100&id=85050&format=png&color=FFFFFF" alt="Profile Icon" class="icon mx-auto"></a>
+            <a href="/profile?section=favourites" class="text-center hover:scale-110 active:scale-95"><img src="https://img.icons8.com/?size=100&id=85038&format=png&color=FFFFFF" alt="Favourites Icon" class="icon mx-auto"></a>
+            <button class="px-4 py-2 mt-2 text-white rounded hover:scale-110 active:scale-95" onclick="window.location.href='/product/new'" style="background-color: #DA1212">List</button>
         </div>
-        <!-- End of Carousel -->
-        <br>
-        <!-- Categories -->
-        <h1 class="text-2xl md:text-3xl leading-normal mb-4 ml-10">Categories</h1>
-        <div class="flex overflow-x-auto space-x-2 p-4 justify-center">
-            <button class="flex flex-col items-center p-2 bg-red-600 hover:scale-105 active:scale-95 text-white rounded-xl flex-shrink-0 w-32 sm:w-36 md:w-40 lg:w-44 xl:w-48 text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl" onclick="window.location.href='/category/fashion'">
-                <img src="https://img.icons8.com/?size=100&id=110247&format=png&color=FFFFFF" alt="Fashion Icon" class="h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 lg:h-14 lg:w-14 xl:h-16 xl:w-16 mb-1">
-                Fashion
-            </button>
-            <button class="flex flex-col items-center p-2 bg-red-600 hover:scale-105 active:scale-95 text-white rounded-xl flex-shrink-0 w-32 sm:w-36 md:w-40 lg:w-44 xl:w-48 text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl" onclick="window.location.href='/category/electronics'">
-                <img src="https://img.icons8.com/?size=100&id=11409&format=png&color=FFFFFF" alt="Electronics Icon" class="h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 lg:h-14 lg:w-14 xl:h-16 xl:w-16 mb-1">
-                Electronics
-            </button>
-            <button class="flex flex-col items-center p-2 bg-red-600 hover:scale-105 active:scale-95 text-white rounded-xl flex-shrink-0 w-32 sm:w-36 md:w-40 lg:w-44 xl:w-48 text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl" onclick="window.location.href='/category/lifestyle'">
-                <img src="https://img.icons8.com/?size=100&id=9783&format=png&color=FFFFFF" alt="Lifestyle Icon" class="h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 lg:h-14 lg:w-14 xl:h-16 xl:w-16 mb-1">
-                Lifestyle
-            </button>
-            <button class="flex flex-col items-center p-2 bg-red-600 hover:scale-105 active:scale-95 text-white rounded-xl flex-shrink-0 w-32 sm:w-36 md:w-40 lg:w-44 xl:w-48 text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl" onclick="window.location.href='/category/recreation'">
-                <img src="https://img.icons8.com/?size=100&id=11630&format=png&color=FFFFFF" alt="Recreation Icon" class="h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 lg:h-14 lg:w-14 xl:h-16 xl:w-16 mb-1">
-                Recreation
-            </button>
-            <button class="flex flex-col items-center p-2 bg-red-600 hover:scale-105 active:scale-95 text-white rounded-xl flex-shrink-0 w-32 sm:w-36 md:w-40 lg:w-44 xl:w-48 text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl" onclick="window.location.href='/category/collectibles'">
-                <img src="https://img.icons8.com/?size=100&id=63372&format=png&color=FFFFFF" alt="Collectibles Icon" class="h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 lg:h-14 lg:w-14 xl:h-16 xl:w-16 mb-1">
-                Collectibles
-            </button>
-            <button class="flex flex-col items-center p-2 bg-red-600 hover:scale-105 active:scale-95 text-white rounded-xl flex-shrink-0 w-32 sm:w-36 md:w-40 lg:w-44 xl:w-48 text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl" onclick="window.location.href='/category/resources'">
-                <img src="https://img.icons8.com/?size=100&id=9492&format=png&color=FFFFFF" alt="Resources Icon" class="h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 lg:h-14 lg:w-14 xl:h-16 xl:w-16 mb-1">
-                Resources
-            </button>
-            <button class="flex flex-col items-center p-2 bg-red-600 hover:scale-105 active:scale-95 text-white rounded-xl flex-shrink-0 w-32 sm:w-36 md:w-40 lg:w-44 xl:w-48 text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl" onclick="window.location.href='/category/others'">
-                <img src="https://img.icons8.com/?size=100&id=114595&format=png&color=FFFFFF" alt="Others Icon" class="h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 lg:h-14 lg:w-14 xl:h-16 xl:w-16 mb-1">
-                Others
-            </button>
-        </div>
-        <!-- End of Categories -->
-
-        <!-- Start of Listings -->
-        <h1 class="text-2xl md:text-3xl leading-normal mb-4 mt-24 ml-10">Newly Listed</h1>
-        <div id="listings-section" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 px-4 py-6">
-            <% if (product && product.length > 0) { %>
-            <% product.forEach((listing) => { %>
-                <a href="/product/<%= listing.id %>" class="flex flex-col items-center hover:shadow-xl active:scale-95 p-6 border-none rounded-lg" data-transaction-type="<%= listing.transaction_type %>">
-                    <div class="w-full h-auto">
-                        <% if (images[listing.id] && images[listing.id].length > 0) { %>
-                            <% const image = images[listing.id][0]; %>
-                                <img 
-                                    src="data:<%= image.image_type %>;base64,<%= image.image.toString('base64') %>" 
-                                    class="w-80 h-96 object-cover rounded-lg cursor-pointer thumbnail" 
-                                    alt="Product Image"
-                                    data-image-type="<%= image.image_type %>"
-                                    data-image-base64="<%= image.image.toString('base64') %>">
-                        <% } else { %>
-                            <p>No image available.</p>
-                        <% } %>
-                        <p class="pt-3 pb-1 font-bold text-lg sm:text-xl md:text-2xl capitalize"><%= listing.product_name %></p>
-                        <p class="pb-1 text-lg sm:text-xl">$<%= listing.price %></p>
-                        <div class="flex space-x-1 my-3">
-                            <% listing.transaction_type.split(',').forEach(function(type) { %>
-                                <div class="px-4 pt-1 pb-1.5 rounded-full text-white" style="background-color: #DA1212;">
-                                    <%= type.trim() %>
-                                </div>
-                            <% }); %>
-                        </div>
-                    </div>
-                </a>
-            <% }) %>
-
-            <% } else { %>
-                <p class="text-center col-span-full">No listings available.</p>
-            <% } %>
-        </div>
-        <br>
-
-        <!-- End of Listings -->
     </div>
 
-    <!-- Footer -->
-    <%- include('footer') %>
-    
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script type="text/javascript">
-        $(".logoutBtn").click(function () {
-            alert("Logged out");
-        });
-        
-        // JavaScript for carousel
-        var swiper = new Swiper('.swiper-container', {
-            slidesPerView: 1,
-            spaceBetween: 10,
-            loop: true,
-            pagination: {
-                el: '.swiper-pagination',
-                clickable: true,
-            },
-            navigation: {
-                nextEl: '.swiper-button-next',
-                prevEl: '.swiper-button-prev',
-            },
-        });
-    </script>
-    
-</body>
-</html>
+    <!-- Tablet navigation (sm) -->
+    <div id="tablet-menu" class="hidden md:flex md:items-center justify-between w-full md:hidden">
+        <div class="flex justify-center flex-1 space-x-4">
+            <a href="/category/fashion" class="text-white text-xl text-center">Fashion</a>
+            <a href="/category/electronics" class="text-white text-xl text-center">Electronics</a>
+            <a href="/category/lifestyle" class="text-white text-xl text-center">Lifestyle</a>
+            <a href="/category/recreation" class="text-white text-xl text-center">Recreation</a>
+            <a href="/category/collectibles" class="text-white text-xl text-center">Collectibles</a>
+            <a href="/category/resources" class="text-white text-xl text-center">Resources</a>
+            <a href="/category/others" class="text-white text-xl text-center">Others</a>
+        </div>
+        <!-- Right-aligned items -->
+        <div class="flex items-center space-x-4">
+            <a href="/profile?section=listings" class="text-center hover:scale-110 active:scale-95"><img src="https://img.icons8.com/?size=100&id=85050&format=png&color=FFFFFF" alt="Profile Icon" class="icon mx-auto"></a>
+            <a href="/profile?section=favourites" class="text-center hover:scale-110 active:scale-95"><img src="https://img.icons8.com/?size=100&id=85038&format=png&color=FFFFFF" alt="Favourites Icon" class="icon mx-auto"></a>
+            <button class="px-4 py-2 mt-2 text-white rounded hover:scale-110 active:scale-95" onclick="window.location.href='/product/new'" style="background-color: #DA1212">List</button>
+        </div>
+    </div>
+</nav>
+
+<!-- Sidebar for smaller screens -->
+<div id="sidebar" class="fixed top-0 right-0 w-64 h-full bg-[#041562] transform translate-x-full transition-transform duration-300 lg:hidden">
+    <div class="flex items-center justify-between p-4 border-b border-gray-600">
+        <a href="/profile?section=listings" class="text-white text-xl hover:scale-110 active:scale-95"><img src="https://img.icons8.com/?size=100&id=85050&format=png&color=FFFFFF" alt="Profile Icon" class="icon mx-auto"></a>
+        <a href="/profile?section=favourites" class="text-white text-xl hover:scale-110 active:scale-95"><img src="https://img.icons8.com/?size=100&id=85038&format=png&color=FFFFFF" alt="Favourites Icon" class="icon mx-auto"></a>
+        <button id="close-button" class="text-white">
+            <img src="https://img.icons8.com/?size=100&id=8113&format=png&color=FFFFFF" class="h-6 w-6" alt="Close Icon">
+        </button>
+    </div>
+    <div class="flex flex-col p-4 space-y-4">
+        <button class="px-4 py-2 mt-2 text-white rounded w-full hover:scale-110 active:scale-95" onclick="window.location.href='/product/new'" style="background-color: #DA1212">List</button> 
+        <a href="/category/fashion" class="text-white text-xl">Fashion</a>
+        <a href="/category/electronics" class="text-white text-xl ">Electronics</a>
+        <a href="/category/lifestyle" class="text-white text-xl">Lifestyle</a>
+        <a href="/category/recreation" class="text-white text-xl">Recreation</a>
+        <a href="/category/collectibles" class="text-white text-xl">Collectibles</a>
+        <a href="/category/resources" class="text-white text-xl">Resources</a>
+        <a href="/category/others" class="text-white text-xl">Others</a>
+    </div>
+</div>
+
+<script>
+    document.getElementById('menu-button').addEventListener('click', function() {
+        const sidebar = document.getElementById('sidebar');
+        sidebar.classList.toggle('translate-x-full');
+    });
+
+    document.getElementById('close-button').addEventListener('click', function() {
+        const sidebar = document.getElementById('sidebar');
+        sidebar.classList.add('translate-x-full');
+    });
+</script>
+
+<style>
+    .icon {
+        height: 40px;
+        width: auto;
+    }
+    #sidebar {
+        z-index: 1000;
+    }
+</style>
