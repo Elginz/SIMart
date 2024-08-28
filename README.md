@@ -5,7 +5,7 @@
 
 <br>
 
-<h3 align="center">Step by step basis (Will make sense for those working on it)</h3>
+<h3 align="center">How to run the code</h3>
 
 - Currently the files and routes have been placed within **frontend** and **backend** the older files were moved into **older_files**
 
