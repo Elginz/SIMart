@@ -11,6 +11,13 @@
 
 - *There is no node module inside the files as it is too big, add node modules (npm i) into both backend and frontend repositories.*
 
+- Download both **backend** and **frontend** into a single repository
+- cd into **backend**
+  Run the following commands 
+  - npm i (Install the node package modules)
+  - npm run build-db (Build the database)
+  - npm run (To run the program)
+    
 <h4 align="center">cd into backend before building and starting the code. </h4>
 
 
