@@ -1,40 +1,68 @@
- <nav class="flex items-center justify-between p-3 w-full bg-[#041562]">
+<!-- Navigation bar -->
+<nav class="flex items-center justify-between p-3 w-full bg-[#041562]">
+    <!-- Logo -->
     <div class="flex items-center space-x-4">
         <a href="/">
             <img src="/images/logo.png" class="h-14 w-auto" alt="Logo">
         </a>
-    </div>
+    </div>    
     <div class="flex items-center lg:hidden">
         <button id="menu-button" class="focus:outline-none">
             <img src="https://img.icons8.com/?size=100&id=8113&format=png&color=FFFFFF" class="h-8 w-8" alt="Menu Icon">
         </button>
     </div>
-    <div id="menu" class="hidden lg:flex lg:items-center lg:justify-center w-full lg:w-auto flex-wrap lg:flex-row flex-col lg:space-x-4">
-        <a href="/category/fashion" class="p-4 text-white text-xl text-center w-full lg:w-auto">Fashion</a>
-        <a href="/category/electronics" class="p-4 text-white text-xl text-center w-full lg:w-auto">Electronics</a>
-        <a href="/category/lifestyle" class="p-4 text-white text-xl text-center w-full lg:w-auto">Lifestyle</a>
-        <a href="/category/recreation" class="p-4 text-white text-xl text-center w-full lg:w-auto">Recreation</a>
-        <a href="/category/collectibles" class="p-4 text-white text-xl text-center w-full lg:w-auto">Collectibles</a>
-        <a href="/category/resources" class="p-4 text-white text-xl text-center w-full lg:w-auto">Resources</a>
-        <a href="/category/others" class="p-4 text-white text-xl text-center w-full lg:w-auto">Others</a>
-        <a href="/profile?section=listings" class="p-4 text-center w-full lg:w-auto"><img src="https://img.icons8.com/?size=100&id=85050&format=png&color=FFFFFF" alt="Profile Icon" class="icon mx-auto"></a>
-        <a href="/profile?section=favourites" class="p-4 text-center w-full lg:w-auto"><img src="https://img.icons8.com/?size=100&id=85038&format=png&color=FFFFFF" alt="Favourites Icon" class="icon mx-auto"></a>
-        <button class="px-4 py-2 mt-2 text-white rounded w-full lg:w-auto lg:mr-5" onclick="window.location.href='/product/new'" style="background-color: #DA1212">List</button> 
+    <!-- Desktop navigation -->
+    <div id="desktop-menu" class="hidden lg:flex lg:items-center justify-between w-full">
+        <div class="flex justify-center flex-1 space-x-8">
+            <a href="/category/fashion" class="text-white text-xl text-center">Fashion</a>
+            <a href="/category/electronics" class="text-white text-xl text-center">Electronics</a>
+            <a href="/category/lifestyle" class="text-white text-xl text-center">Lifestyle</a>
+            <a href="/category/recreation" class="text-white text-xl text-center">Recreation</a>
+            <a href="/category/collectibles" class="text-white text-xl text-center">Collectibles</a>
+            <a href="/category/resources" class="text-white text-xl text-center">Resources</a>
+            <a href="/category/others" class="text-white text-xl text-center">Others</a>
+        </div>
+        <!-- Right-aligned items -->
+        <div class="flex items-center space-x-4">
+            <a href="/profile?section=listings" class="text-center hover:scale-110 active:scale-95"><img src="https://img.icons8.com/?size=100&id=85050&format=png&color=FFFFFF" alt="Profile Icon" class="icon mx-auto"></a>
+            <a href="/profile?section=favourites" class="text-center hover:scale-110 active:scale-95"><img src="https://img.icons8.com/?size=100&id=85038&format=png&color=FFFFFF" alt="Favourites Icon" class="icon mx-auto"></a>
+            <button class="px-4 py-2 mt-2 text-white rounded hover:scale-110 active:scale-95" onclick="window.location.href='/product/new'" style="background-color: #DA1212">List</button>
+        </div>
+    </div>
+
+    <!-- Tablet navigation (sm) -->
+    <div id="tablet-menu" class="hidden md:flex md:items-center justify-between w-full md:hidden">
+        <div class="flex justify-center flex-1 space-x-4">
+            <a href="/category/fashion" class="text-white text-xl text-center">Fashion</a>
+            <a href="/category/electronics" class="text-white text-xl text-center">Electronics</a>
+            <a href="/category/lifestyle" class="text-white text-xl text-center">Lifestyle</a>
+            <a href="/category/recreation" class="text-white text-xl text-center">Recreation</a>
+            <a href="/category/collectibles" class="text-white text-xl text-center">Collectibles</a>
+            <a href="/category/resources" class="text-white text-xl text-center">Resources</a>
+            <a href="/category/others" class="text-white text-xl text-center">Others</a>
+        </div>
+        <!-- Right-aligned items -->
+        <div class="flex items-center space-x-4">
+            <a href="/profile?section=listings" class="text-center hover:scale-110 active:scale-95"><img src="https://img.icons8.com/?size=100&id=85050&format=png&color=FFFFFF" alt="Profile Icon" class="icon mx-auto"></a>
+            <a href="/profile?section=favourites" class="text-center hover:scale-110 active:scale-95"><img src="https://img.icons8.com/?size=100&id=85038&format=png&color=FFFFFF" alt="Favourites Icon" class="icon mx-auto"></a>
+            <button class="px-4 py-2 mt-2 text-white rounded hover:scale-110 active:scale-95" onclick="window.location.href='/product/new'" style="background-color: #DA1212">List</button>
+        </div>
     </div>
 </nav>
 
-<div id="sidebar" class="fixed top-0 right-0 w-64 h-full bg-[#041562] transform translate-x-full transition-transform duration-300">
+<!-- Sidebar for smaller screens -->
+<div id="sidebar" class="fixed top-0 right-0 w-64 h-full bg-[#041562] transform translate-x-full transition-transform duration-300 lg:hidden">
     <div class="flex items-center justify-between p-4 border-b border-gray-600">
-        <a href="/profile?section=listings" class="text-white text-xl"><img src="https://img.icons8.com/?size=100&id=85050&format=png&color=FFFFFF" alt="Profile Icon" class="icon mx-auto"></a>
-        <a href="/profile?section=favourites" class="text-white text-xl"><img src="https://img.icons8.com/?size=100&id=85038&format=png&color=FFFFFF" alt="Favourites Icon" class="icon mx-auto"></a>
+        <a href="/profile?section=listings" class="text-white text-xl hover:scale-110 active:scale-95"><img src="https://img.icons8.com/?size=100&id=85050&format=png&color=FFFFFF" alt="Profile Icon" class="icon mx-auto"></a>
+        <a href="/profile?section=favourites" class="text-white text-xl hover:scale-110 active:scale-95"><img src="https://img.icons8.com/?size=100&id=85038&format=png&color=FFFFFF" alt="Favourites Icon" class="icon mx-auto"></a>
         <button id="close-button" class="text-white">
             <img src="https://img.icons8.com/?size=100&id=8113&format=png&color=FFFFFF" class="h-6 w-6" alt="Close Icon">
         </button>
     </div>
-    <div class="flex flex-col p-4 space-y-4 ">
-        <button class="px-4 py-2 mt-2 text-white rounded w-full" onclick="window.location.href='/product/new'" style="background-color: #DA1212">List</button> 
+    <div class="flex flex-col p-4 space-y-4">
+        <button class="px-4 py-2 mt-2 text-white rounded w-full hover:scale-110 active:scale-95" onclick="window.location.href='/product/new'" style="background-color: #DA1212">List</button> 
         <a href="/category/fashion" class="text-white text-xl">Fashion</a>
-        <a href="/category/electronics" class="text-white text-xl">Electronics</a>
+        <a href="/category/electronics" class="text-white text-xl ">Electronics</a>
         <a href="/category/lifestyle" class="text-white text-xl">Lifestyle</a>
         <a href="/category/recreation" class="text-white text-xl">Recreation</a>
         <a href="/category/collectibles" class="text-white text-xl">Collectibles</a>
@@ -63,20 +91,4 @@
     #sidebar {
         z-index: 1000;
     }
-    @media (max-width: 1024px) {
-        #menu {
-            flex-direction: column;
-            align-items: center;
-        }
-        #menu > a,
-        #menu > button {
-            width: 100%;
-            padding: 10px 0;
-            text-align: center;
-        }
-        .icon {
-            height: 30px;
-        }
-    }
 </style>
-
