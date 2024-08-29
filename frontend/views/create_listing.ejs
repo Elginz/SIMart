@@ -115,16 +115,17 @@
                     <input type="file" name="images" id="images" accept="image/*" multiple onchange="previewImages(event)">
                 </div>
                 <div class="image-previews" id="image-previews">
-                <!-- <% if (product && imageData && imageData.length > 0) { %>
-                        <% imageData.forEach(function(image) { %>
-                            <div class="image-preview" data-id="<%= image.id %>">
-                                <img src="<%= image.src %>" alt="Uploaded Image">
-                                <button type="button" class="remove-btn" onclick="removeImage('<%= image.id %>')">&times;</button>
-                                <input type="hidden" name="removeImages[]" value="<%= image.id %>">
-                            </div>
-                        <% }) %>
-                    <% } %> -->
-                    <!-- Image previews will be inserted here -->
+                    <div class="image-previews" id="image-previews">
+                        <% if (product && imageData && imageData.length > 0) { %>
+                            <% imageData.forEach(function(image) { %>
+                                <div class="image-preview" data-id="<%= image.id %>">
+                                    <img src="<%= image.src %>" alt="Uploaded Image">
+                                    <button type="button" class="remove-btn" onclick="removeExistingImage('<%= image.id %>', this)">&times;</button>
+                                    <input type="hidden" name="existingImages[]" value="<%= image.id %>">
+                                </div>
+                            <% }) %>
+                        <% } %>
+                    </div>                    
                 </div>
             </div>
             <div class="md:w-1/2 p-2">
@@ -273,81 +274,6 @@
             });
         });
 
-// function previewImages(event) {
-        //     const files = Array.from(event.target.files);
-        //     const existingPreviews = previewContainer.querySelectorAll('.image-preview').length;
-
-        //     // Check if adding new files exceeds the maximum allowed
-        //     if (existingPreviews + files.length > 4) {
-        //         alert('You can upload a maximum of 4 images.');
-        //         return;
-        //     }
-
-        //     files.forEach(file => {
-        //         const reader = new FileReader();
-
-        //         reader.onload = function () {
-        //             const result = reader.result;
-        //             const fileURL = URL.createObjectURL(file);
-
-        //             // Skip if file already exists in the map
-        //             if (fileMap.has(fileURL)) {
-        //                 return;
-        //             }
-
-        //             fileMap.set(fileURL, file);
-
-        //             // Create preview element
-        //             const preview = document.createElement('div');
-        //             preview.classList.add('image-preview');
-
-        //             // Create image element
-        //             const img = document.createElement('img');
-        //             img.src = result;
-        //             preview.appendChild(img);
-
-        //             // Create remove button
-        //             const removeBtn = document.createElement('button');
-        //             removeBtn.classList.add('remove-btn');
-        //             removeBtn.innerHTML = '&times;';
-        //             removeBtn.onclick = function () {
-        //                 previewContainer.removeChild(preview);
-        //                 fileMap.delete(fileURL); // Remove from the map
-
-        //                 // Reset input value only if all previews are removed
-        //                 if (previewContainer.querySelectorAll('.image-preview').length === 0) {
-        //                     // input.value = ''; // Reset the input value
-        //                     document.getElementById('images').value = ''; // Reset the input value
-        //                 }
-        //             };
-        //             preview.appendChild(removeBtn);
-
-        //             // Append preview to container
-        //             previewContainer.appendChild(preview);
-        //         };
-        //         reader.readAsDataURL(file);
-        //     });
-        // }
-
-        // function removeImage(imageId) {
-        //     const previewContainer = document.getElementById('image-previews');
-        //     const imagePreview = previewContainer.querySelector(`.image-preview[data-id="${imageId}"]`);
-            
-        //     // Remove image from preview container
-        //     if (imagePreview) {
-        //         previewContainer.removeChild(imagePreview);
-        //     }
-
-        //     // Remove image from hidden input
-        //     const hiddenInput = document.querySelector(`input[name="removeImages[]"][value="${imageId}"]`);
-        //     if (hiddenInput) {
-        //         hiddenInput.parentNode.removeChild(hiddenInput);
-        //     }
-
-        //     console.log(`Image with ID ${imageId} removed.`);
-        // }
-
-
         document.addEventListener('DOMContentLoaded', () => {
             const imagesArray = []; // Array to store the files
             const previewContainer = document.getElementById('image-previews');
@@ -355,59 +281,46 @@
             const form = document.querySelector('form'); // Select the form element
 
             function previewImages(event) {
-                const files = Array.from(event.target.files);
+    const files = Array.from(event.target.files);
 
-                // Check if adding new files exceeds the maximum allowed
-                if (imagesArray.length + files.length > 4) {
-                    alert('You can upload a maximum of 4 images.');
-                    return;
+    if (imagesArray.length + files.length > 4) {
+        alert('You can upload a maximum of 4 images.');
+        return;
+    }
+
+    files.forEach(file => {
+        const fileIdentifier = `${file.name}-${file.lastModified}`;
+        if (!imagesArray.some(existingFile => existingFile.identifier === fileIdentifier)) {
+            imagesArray.push({ file, identifier: fileIdentifier });
+
+            const fileURL = URL.createObjectURL(file);
+            const preview = document.createElement('div');
+            preview.classList.add('image-preview');
+
+            const img = document.createElement('img');
+            img.src = fileURL;
+            preview.appendChild(img);
+
+            const removeBtn = document.createElement('button');
+            removeBtn.classList.add('remove-btn');
+            removeBtn.innerHTML = '&times;';
+            removeBtn.onclick = function () {
+                const index = imagesArray.findIndex(existingFile => existingFile.identifier === fileIdentifier);
+                if (index > -1) {
+                    imagesArray.splice(index, 1);
                 }
-
-                files.forEach(file => {
-                    // Create a unique identifier for the file using its name and last modified time
-                    const fileIdentifier = `${file.name}-${file.lastModified}`;
-
-                    // Check if the file is already in the array by its unique identifier
-                    if (!imagesArray.some(existingFile => existingFile.identifier === fileIdentifier)) {
-                        // Add new file and its identifier to the array
-                        imagesArray.push({ file, identifier: fileIdentifier });
-
-                        const fileURL = URL.createObjectURL(file); // Generate a URL for the file
-
-                        // Create preview element
-                        const preview = document.createElement('div');
-                        preview.classList.add('image-preview');
-
-                        // Create image element
-                        const img = document.createElement('img');
-                        img.src = fileURL;
-                        preview.appendChild(img);
-
-                        // Create remove button
-                        const removeBtn = document.createElement('button');
-                        removeBtn.classList.add('remove-btn');
-                        removeBtn.innerHTML = '&times;';
-                        removeBtn.onclick = function () {
-                            // Remove the file from the array by its identifier
-                            const index = imagesArray.findIndex(existingFile => existingFile.identifier === fileIdentifier);
-                            if (index > -1) {
-                                imagesArray.splice(index, 1);
-                            }
-                            previewContainer.removeChild(preview); // Remove the preview
-
-                            // Update the file input's files
-                            updateFileInput();
-                        };
-                        preview.appendChild(removeBtn);
-
-                        // Append preview to container
-                        previewContainer.appendChild(preview);
-                    }
-                });
-
-                // Update the file input's files
+                previewContainer.removeChild(preview);
                 updateFileInput();
-            }
+            };
+            preview.appendChild(removeBtn);
+
+            previewContainer.appendChild(preview);
+        }
+    });
+
+    updateFileInput();
+}
+
 
             function updateFileInput() {
                 const dataTransfer = new DataTransfer(); // Create a new DataTransfer object
@@ -436,6 +349,22 @@
                 form.submit();
             });
         });
+
+        function removeExistingImage(imageId, buttonElement) {
+    const previewElement = buttonElement.closest('.image-preview');
+    previewElement.remove(); // Remove the preview from the DOM
+
+    // Create a hidden input to store the ID of the removed image
+    const inputElement = document.createElement('input');
+    inputElement.type = 'hidden';
+    inputElement.name = 'removeImages[]';
+    inputElement.value = imageId;
+    
+    // Append the hidden input to the form
+    const form = document.querySelector('form');
+    form.appendChild(inputElement);
+}
+
     </script>
 </body>
 </html>
