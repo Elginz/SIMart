@@ -157,7 +157,6 @@ INSERT OR IGNORE INTO courses (course_name) VALUES
 ('University of Wollongong, Bachelor of Information Technology'),
 ('University of Wollongong, Bachelor of Psychological Science'),
 ('University of Wollongong, Bachelor of Business Information Systems'),
-('University of Wollongong, Double Major : Bachelor of Computer Science (Digital Systems Security and Cyber Security) / (Digital Systems Security and Big Data) / (Big Data and Cyber Security'),
 ('University of Wollongong, Master of Computing (Data Analytics) (Top-up)'),
 ('Grenoble Ecole de Management, MSc Finance and Investment Banking (Top-up)'),
 ('Grenoble Ecole de Management, MSc Finance (Top-up)'),   
