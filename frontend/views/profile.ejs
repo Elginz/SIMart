@@ -1,4 +1,3 @@
-<!-- views/profile.ejs -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -8,7 +7,7 @@
     <title>Profile Page</title>
     <style>
         input,
-        #name-display{ text-transform: capitalize; }
+        #name-display { text-transform: capitalize; }
         
         /* color */
         .red {
@@ -38,7 +37,34 @@
             display: inline-block;
         }
 
-        .profile-pic-edit-icon {
+        .profile-pic-container:hover .profile-pic-edit-icon {
+            visibility: visible;
+        }
+        
+        /* for user course horizontal scroll */
+        .scroll-container {
+        display:flex;
+        overflow-x: auto; 
+        }
+
+        .edit-container {
+            display: flex;
+            justify-content: center;
+            margin-left:10%
+        }
+
+        /* ratings at desktop */
+        .ratings-container{
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Mobile-specific styles */
+        @media (max-width: 767px) {
+            .ratings-container {
+                margin-right: 15%;
+            }
+            .profile-pic-edit-icon {
             position: absolute;
             top: 50%;
             left: 50%;
@@ -55,11 +81,31 @@
             justify-content: center;
         }
 
-        .profile-pic-container:hover .profile-pic-edit-icon {
-            visibility: visible;
         }
+        /* Desktop-specific styles */
+        @media (min-width: 768px) {
+            .ratings-container {
+                margin-right: 0;
+            }
+            .profile-pic-edit-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -71%);
+            visibility: hidden;
+            cursor: pointer;
+            border-radius: 50%;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 5px;
+            width: 100%;
+            height: 70%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+}
 
-      </style>
+    </style>
 </head>
 <body>
 <div class="flex flex-col min-h-screen bg-[#fff9f2] bg-cover">
@@ -67,125 +113,115 @@
     <%- include('navbar') %>
 
     <!-- User's profile -->
-    <div class="flex p-10 w-full">
+    <div class="flex flex-col md:flex-row p-6 md:p-10 w-full">
         <!-- Profile picture -->
-        <div class="flex justify-center w-[45%] py-4">
-            <div class="profile-pic-container">
-                <% if (!user.image) { %>
-                    <!-- Display placeholder if no image is available -->
-                    <img src="https://img.icons8.com/?size=100&id=23265&format=png&color=da1212" alt="Profile Picture" name="image" id="profile-picture" class="w-80 h-80 object-cover rounded-full">
-                <% } else { %>
-                    <img src="data:<%= user.image_type %>;base64,<%= user.image.toString('base64') %>" alt="Profile Picture" name="image" class="w-80 h-80 object-cover rounded-full">
-                <% } %>
-                <!-- File input to upload new image -->
-                <!-- Only available if it's the user's own profile -->
+        <div class="flex justify-center md:justify-center w-full md:w-[40%] py-4"> 
+            <div class="profile-pic-container relative">
+                <img src="<%= user.image ? 'data:' + user.image_type + ';base64,' + user.image.toString('base64') : 'https://img.icons8.com/?size=100&id=23265&format=png&color=da1212' %>" alt="Profile Picture" class="w-32 h-32 md:w-80 md:h-80 object-cover rounded-full">
                 <form id="image-form" action="/profile/update-image" method="post" enctype="multipart/form-data">
                     <input type="file" name="image" id="image-input" accept="image/*" style="display: none;" onchange="document.getElementById('image-form').submit();">
                 </form>
                 <div class="profile-pic-edit-icon" onclick="document.getElementById('image-input').click();">
-                    <img src="https://img.icons8.com/?size=100&id=89802&format=png&color=da1212" alt="Edit Icon" id="image-edit" class="w-16">
+                    <img src="https://img.icons8.com/?size=100&id=89802&format=png&color=da1212" alt="Edit Icon" id="image-edit" class="w-8 md:w-16">
                 </div>
             </div>
         </div>
-        <!-- Profile information -->
-        <div class="flex flex-col justify-start space-y-2 w-[55%] py-4">
 
+        <!-- Profile information -->
+        <div class="flex flex-col justify-start space-y-4 md:space-y-6 w-full md:w-[60%] py-4">
             <!-- User's name -->
-            <form action="/profile/update-name" method="post" class="inline">
+            <form action="/profile/update-name" method="post" class="inline name-container">
                 <div class="flex items-center edit-container">
-                    <div class="font-bold text-5xl">
+                    <div class="font-bold text-2xl md:text-2xl lg:text-4xl">
                         <span id="name-display"><%= user.name %></span>
                         <input type="text" id="name-input" name="name" value="<%= user.name %>" class="bg-transparent p-2 border border-gray-300 rounded focus:outline-none hidden">
                     </div>
                     <div>
-                        <img src="https://img.icons8.com/?size=100&id=89802&format=png&color=da1212" alt="Edit Icon" id="name-edit" class="mx-4 py-2 w-8 edit-button" onclick="toggleEdit('name')">
-                        <button type="submit" id="name-save" class="ml-2 w-20 h-10 text-white object-cover rounded-xl hidden" style="background-color: #DA1212;">Save</button>
+                        <img src="https://img.icons8.com/?size=100&id=89802&format=png&color=da1212" alt="Edit Icon" id="name-edit" class="mx-4 py-2 w-6 md:w-8 edit-button" onclick="toggleEdit('name')">
+                        <button type="submit" id="name-save" class="ml-2 w-16 md:w-20 h-10 text-white object-cover rounded-xl hidden" style="background-color: #DA1212;">Save</button>
                     </div>
                 </div>
             </form>
+            
 
             <!-- User's rating -->
-            <div class="flex items-center space-x-2 text-xl">
+            <div class="flex items-center space-x-2 text-lg md:text-xl lg:text-2xl ratings-container">
                 <span><%= user.rating %>.0</span>
                 <span id="rating-display">
-                    <img src="/images/<%= user.rating %> star.png" alt="<%= user.rating %> star" class="h-8">
+                    <img src="/images/<%= user.rating %> star.png" alt="<%= user.rating %> star" class="h-6 md:h-8 lg:h-10">
                 </span>
             </div>
-
+            
             <!-- User's course -->
             <form action="/profile/update-course" method="post" class="inline">
-                <div class="flex items-center edit-container">
-                    <div class="font-bold text-2xl">
-                        <span id="course-display"><%= user.course %></span>
-                        <select id="course-input" name="course" multiple class="bg-transparent border border-gray-300 rounded hidden">
-                            <% schools.forEach(school => { %>
-                                <option value="<%= school.course_name %>" <%= user.course === school.course_name ? 'selected' : '' %>><%= school.course_name %></option>
-                            <% }) %>
-                        </select>
-                    </div>
-                    <div>
-                        <img src="https://img.icons8.com/?size=100&id=89802&format=png&color=da1212" alt="Edit Icon" id="course-edit" class="mx-4 py-2 w-8 edit-button" onclick="toggleEdit('course')">
-                        <button type="submit" id="course-save" class="ml-2 w-20 h-10 text-white object-cover rounded-xl hidden" style="background-color: #DA1212;">Save</button>
+                <div class="scroll-container">
+                    <div class="flex items-center edit-container">
+                        <div class="font-bold text-md md:text-lg lg:text-xl">
+                            <span id="course-display"><%= user.course %></span>
+                            <select id="course-input" name="course" multiple class="bg-transparent border border-gray-300 rounded hidden">
+                                <% schools.forEach(school => { %>
+                                    <option value="<%= school.course_name %>" <%= user.course === school.course_name ? 'selected' : '' %>><%= school.course_name %></option>
+                                <% }) %>
+                            </select>
+                        </div>
+                        <div>
+                            <img src="https://img.icons8.com/?size=100&id=89802&format=png&color=da1212" alt="Edit Icon" id="course-edit" class="mx-4 py-2 w-8 edit-button" onclick="toggleEdit('course')">
+                            <button type="submit" id="course-save" class="ml-2 w-20 h-10 text-white object-cover rounded-xl hidden" style="background-color: #DA1212;">Save</button>
+                        </div>
                     </div>
                 </div>
             </form>
-
-            <!-- User's email address -->
-            <!-- visible only if the user is not viewing their own profile -->
-            <!-- <a href="mailto:<%= user.email %>" class="flex items-center">
-                <img src="https://img.icons8.com/?size=100&id=2848&format=png&color=da1212" alt="Email Icon" class="w-8 h-8">
-            </a> -->
 
             <!-- User's description -->
             <form action="/profile/update-description" method="post" class="inline">
                 <div class="flex items-center edit-container">
-                    <div class="text-2xl">
+                    <div class="text-lg md:text-xl lg:text-2xl">
                         <span id="description-display"><%= user.description %></span>
-                        <textarea id="description-input" name="description" rows="3" cols="50" value="<%= user.description %>" class="bg-transparent p-2 border border-gray-300 rounded focus:outline-none hidden"><%= user.description %></textarea>
+                        <textarea id="description-input" name="description" rows="3" cols="50" class="bg-transparent p-2 border border-gray-300 rounded focus:outline-none hidden"><%= user.description %></textarea>
                     </div>
                     <div>
-                        <img src="https://img.icons8.com/?size=100&id=89802&format=png&color=da1212" alt="Edit Icon" id="description-edit" class="mx-4 py-2 w-8 edit-button" onclick="toggleEdit('description')">
-                        <button type="submit" id="description-save" class="ml-2 w-20 h-10 text-white object-cover rounded-xl hidden" style="background-color: #DA1212;">Save</button>
+                        <img src="https://img.icons8.com/?size=100&id=89802&format=png&color=da1212" alt="Edit Icon" id="description-edit" class="mx-4 py-2 w-6 md:w-8 edit-button" onclick="toggleEdit('description')">
+                        <button type="submit" id="description-save" class="ml-2 w-16 md:w-20 h-10 text-white object-cover rounded-xl hidden" style="background-color: #DA1212;">Save</button>
                     </div>
                 </div>
             </form>
-
             <!-- Logout button -->
-            <!-- Visible only if the user is viewing their own profile -->
-            <div>
-                <button class="px-4 py-2 text-white text-lg rounded logoutBtn" style="background-color: #DA1212;" onclick="window.location.href='/logout'">Logout</button>
+            <div class="flex justify-center py-4">
+                <button class="px-4 py-2 text-white text-lg rounded hover:scale-110 active:scale-90 logoutBtn" style="background-color: #DA1212;" onclick="window.location.href='/logout'">Logout</button>
             </div>
         </div>
     </div>
 
     <!-- Section names -->
-    <div class="w-full">
-        <div class="flex pl-24 space-x-10 ">
-            <a href="/profile?section=listings" id="listings" class="p-4 cursor-pointer font-bold red underline text-3xl">Listings</a>
-            <a href="/profile?section=reviews" id="reviews" class="p-4 cursor-pointer font-bold red underline text-3xl">Reviews</a>
-            <a href="/profile?section=favourites" id="favourites" class="p-4 cursor-pointer font-bold red underline text-3xl">Favourites</a>
+        <div class="w-full">
+            <div class="flex flex-wrap md:flex-nowrap justify-center space-y-4 md:space-y-0 space-x-0 md:space-x-10 px-2 md:px-0">
+        
+                <a href="/profile?section=listings" id="listings" class="p-2 md:p-4 cursor-pointer font-bold red underline text-lg md:text-xl lg:text-3xl flex items-center justify-center">Listings</a>
+                <a href="/profile?section=reviews" id="reviews" class="p-2 md:p-4 cursor-pointer font-bold red underline text-lg md:text-xl lg:text-3xl flex items-center justify-center">Reviews</a>
+                <a href="/profile?section=favourites" id="favourites" class="p-2 md:p-4 cursor-pointer font-bold red underline text-lg md:text-xl lg:text-3xl flex items-center justify-center">Favourites</a>
+            </div>
         </div>
+                        
         
         <!-- Listings section -->
-        <div id="listings-section" class="grid grid-cols-4 gap-2 pl-24 pr-20 pt-4">
-            <% listings.forEach((listing, index) => { %>
-                <a href="/product/<%= listing.id %>" class="flex justify-center hover:shadow-xl p-6 border-none rounded-lg" data-transaction-type="<%= listing.transaction_type %>">
-                    <div class="w-full h-auto">
-                        <img src="/images/bracelet.jpg" class="w-80 h-96 object-cover rounded-lg">
-                        <p class="pt-3 pb-1 font-bold text-2xl"><%= listing.product_name %></p>
-                        <p class="pb-1 text-xl">$<%= listing.price %></p>
-                        <div class="flex space-x-1 my-3">
-                            <% listing.transaction_type.split(',').forEach(function(type) { %>
-                                <div class="px-4 pt-1 pb-1.5 rounded-full text-white" style="background-color: #DA1212;">
-                                    <%= type.trim() %>
-                                </div>
-                            <% }); %>
+<div id="listings-section" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pl-4 pr-4 pt-4">
+    <% listings.forEach((listing, index) => { %>
+        <a href="/product/<%= listing.id %>" class="flex flex-col items-center hover:shadow-xl active:scale-95 p-6 border-none rounded-lg" data-transaction-type="<%= listing.transaction_type %>">
+            <div class="w-full h-auto">
+                <img src="/images/bracelet.jpg" class="w-80 h-96 object-cover rounded-lg cursor-pointer thumbnail">
+                <p class="pt-3 pb-1 font-bold text-lg sm:text-xl md:text-2xl capitalize"><%= listing.product_name %></p>
+                <p class="pb-1 text-lg sm:text-xl">$<%= listing.price %></p>
+                <div class="flex space-x-1 my-3 text-center">
+                    <% listing.transaction_type.split(',').forEach(function(type) { %>
+                        <div class="px-4 pt-1 pb-1.5 rounded-full text-white" style="background-color: #DA1212;">
+                            <%= type.trim() %>
                         </div>
-                    </div>
-                </a>
-            <% }) %>
-       </div>
-
+                    <% }); %>
+                </div>
+            </div>
+        </a>
+    <% }) %>
+</div>
        <!-- Reviews section -->
        <div id="reviews-section" class="flex flex-col justify-center px-36 hidden">
         <% reviews.forEach((review, index) => { %>
@@ -204,25 +240,26 @@
         <% }) %>
        </div>
 
-        <!-- Favourites section -->
-        <div id="favourites-section" class="grid grid-cols-4 gap-2 pl-24 pr-20 pt-4 hidden">
-            <% favourites.forEach((favourite, index) => { %>
-            <div class="flex justify-center py-6 hover:shadow-xl border-none rounded-lg" data-transaction-type="<%= favourite.transaction_type %>">
-                <div class="w-full h-auto">
-                    <img src="/images/bracelet.jpg" class="w-80 h-96 object-cover rounded-lg">
-                    <p class="pt-3 pb-1 font-bold text-2xl"><%= favourite.product_name %></p>
-                    <p class="pb-1 text-xl">$<%= favourite.price %></p>
-                    <div class="flex space-x-1">
-                        <div id="favourites-<%= index %>-first" class="px-4 py-1 rounded-full text-white" style="background-color: #DA1212;">
-                        </div>
-                        <div id="favourites-<%= index %>-second" class="px-4 py-1 rounded-full text-white hidden" style="background-color: #DA1212;">
-                        </div>
+    <!-- Favourites section -->
+<div id="favourites-section" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-4 hidden">
+    <% favourites.forEach((favourite, index) => { %>
+        <a href="/product/<%= favourite.id %>" class="flex flex-col items-center hover:shadow-xl active:scale-95 p-6 border-none rounded-lg" data-transaction-type="<%= favourite.transaction_type %>">
+            <div class="w-full h-auto">
+                <img src="/images/bracelet.jpg" class="w-80 h-96 object-cover rounded-lg cursor-pointer thumbnail">
+                <p class="pt-3 pb-1 font-bold text-lg sm:text-xl md:text-2xl capitalize"><%= favourite.product_name %></p>
+                <p class="pb-1 text-lg sm:text-xl">$<%= favourite.price %></p>
+                <div class="flex space-x-1 my-3 text-center">
+                <% favourite.transaction_type.split(',').forEach(function(type) { %>
+                    <div class="px-4 pt-1 pb-1.5 rounded-full text-white" style="background-color: #DA1212;">
+                        <%= type.trim() %>
                     </div>
-                </div>
+                <% }); %>
             </div>
-            <% }) %>
-       </div>
-    </div>
+        </div>
+    </a>
+    <% }) %>
+</div>
+
 
      <!-- Footer -->
      <%- include('footer') %>
