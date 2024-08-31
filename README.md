@@ -24,9 +24,9 @@
 
 <h3 align="center"> 🚨This branch is used for Website hosting </h3>
 
-- ⚙️ **Render** is used to host the Frontend repository
+- ⚙️ **Render** is used to host the Backend repository
 
-- 🖥️ **Vercel** is used to host the Backend repository
+- 🖥️ **Vercel** is used to host the Frontend repository
 
 **DO NOTE:**
 - ❗LIVE SITE: The free server on render uses ephemeral storage for the filesystem. As such any changes made during runtime will not be preserved while deployed and the SQLite database might be reset 
