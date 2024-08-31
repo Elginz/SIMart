@@ -5,38 +5,38 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://cdn.tailwindcss.com"></script>
-    <title>Profile Page</title>
-    <style>
-        input,
-        #category-name{ text-transform: capitalize; }
-        
-        #product-name { 
-            text-transform: capitalize; 
-        }
-    </style>
+    <title><%= category %></title>
 </head>
 <body>
 <div class="flex flex-col min-h-screen bg-[#fff9f2] bg-cover">
     <!-- Navigation bar -->
     <%- include('navbar') %>
 
-    <span id="category-name" class="pl-4 sm:pl-8 md:pl-16 pt-16 pb-10 font-bold text-2xl sm:text-3xl md:text-4xl lg:text-5xl"><%= category %></span>
+    <span id="category-name" class="pl-4 sm:pl-8 md:pl-16 pt-16 pb-10 font-bold text-2xl capitalize sm:text-3xl md:text-4xl lg:text-5xl"><%= category %></span>
     <div id="category-section" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 px-4 py-6">
         <% listings.forEach((listing, index) => { %>
-        <div class="flex justify-center py-6 item">
-            <div class="w-full h-auto">
-                <img src="/images/bracelet.jpg" class="w-full h-64 sm:h-80 md:h-96 object-cover rounded-lg">
-                <p id="product-name" class="pt-3 pb-1 font-bold text-lg sm:text-xl md:text-2xl"><%= listing.product_name %></p>
-                <p class="pb-1 text-lg sm:text-xl md:text-2xl">$<%= listing.price %></p>
-                <div class="flex space-x-1 my-3">
-                    <% listing.transaction_type.split(',').forEach(function(type) { %>
-                        <div class="px-4 pt-1 pb-1.5 rounded-full text-white" style="background-color: #DA1212;">
-                            <%= type.trim() %>
-                        </div>
-                    <% }); %>
+            <a href="/product/<%= listing.id %>" class="flex flex-col items-center hover:shadow-xl active:scale-95 p-6 border-none rounded-lg" data-transaction-type="<%= listing.transaction_type %>">
+                <div class="w-full h-auto">
+                    <% if (listingsImages[listing.id] && listingsImages[listing.id].length > 0) { %>
+                        <% const image = listingsImages[listing.id][0]; %>
+                            <img 
+                                src="data:<%= image.image_type %>;base64,<%= image.image.toString('base64') %>" 
+                                class="w-[100%] h-[400px] mt-8 object-cover rounded-lg cursor-pointer thumbnail" 
+                                alt="Product Image"
+                                data-image-type="<%= image.image_type %>"
+                                data-image-base64="<%= image.image.toString('base64') %>">
+                    <% } else { %>
+                        <p>No image available.</p>
+                    <% } %>
+                    <p id="product-name" class="pt-3 pb-1 font-bold text-lg capitalize sm:text-xl md:text-2xl"><%= listing.name %></p>
+                    <p class="pb-1 text-lg sm:text-xl md:text-2xl">$<%= listing.price %></p>
+                    <div class="flex space-x-1 my-3">
+                        <% listing.transaction_type.split(',').forEach(function(type) { %>
+                            <%- renderTransactionType(type) %>
+                        <% }); %>
+                    </div>
                 </div>
-            </div>
-        </div>
+            </a>
         <% }) %>
    </div>
 
