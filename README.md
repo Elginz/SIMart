@@ -7,7 +7,7 @@
 
 <h3 align="center">How to run the code</h3>
 
-- Currently the files and routes have been placed within **frontend** and **backend** the older files were moved into **older_files**
+- The Web application is split into **frontend** and **backend**.
 
 - Download both **backend** and **frontend** into a single repository
 - cd into **backend**
@@ -22,6 +22,16 @@
   - *sqlite3 backend/database.db < backend/db_schema.sql*
 
 
+<h3 align="center"> 🚨This branch is used for Website hosting </h3>
+
+- ⚙️ **Render** is used to host the Frontend repository
+
+- 🖥️ **Vercel** is used to host the Backend repository
+
+**DO NOTE:**
 - ❗LIVE SITE: The free server on render uses ephemeral storage for the filesystem. As such any changes made during runtime will not be preserved while deployed and the SQLite database might be reset 
+  
+- It may take up to 1 minute to load the website.
+
 
 
