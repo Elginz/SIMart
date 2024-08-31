@@ -59,6 +59,7 @@ router.get('/', async (req, res) => {
         const transactions = await getTransactions(sessionUserId);
         const transactionsImages = await getImagesForProducts(transactions);
         const favourites = await getFavourites(user.id);
+        const favouritesImages = await getImagesForProducts(favourites);
 
         res.render("profile.ejs", {
             user: user,
@@ -71,6 +72,7 @@ router.get('/', async (req, res) => {
             transactions: transactions,
             transactionsImages: transactionsImages,
             favourites: favourites,
+            favouritesImages: favouritesImages,
             renderTransactionType: renderTransactionType
         });
 
@@ -101,6 +103,7 @@ router.get('/:id', async (req, res) => {
         const transactions = await getTransactions(user.id);
         const transactionsImages = await getImagesForProducts(transactions);
         const favourites = await getFavourites(user.id);
+        const favouritesImages = await getImagesForProducts(favourites);
 
         res.render("profile.ejs", {
             user: user,
@@ -113,6 +116,7 @@ router.get('/:id', async (req, res) => {
             transactions: transactions,
             transactionsImages: transactionsImages,
             favourites: favourites,
+            favouritesImages: favouritesImages,
             renderTransactionType: renderTransactionType
         });
 
