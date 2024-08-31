@@ -10,6 +10,11 @@ const cookieParser = require('cookie-parser');
 const SQLiteStore = require('connect-sqlite3')(session);
 const sqlite3 = require('sqlite3').verbose();
 const indexRoute = require('./routes/indexRoute.js');
+const { 
+    getImagesForProducts,
+    getAllSchools,
+    renderTransactionType } = require('./routes/queries.js'); // Import the helper function
+
 const app = express();
 const port = 3000;
 
@@ -40,21 +45,7 @@ app.use(session({
     cookie:{
         maxAge: 10000 * 60 * 10  //set for 10 minutes
     }
-}));
-
-// Testing to use session across domains
-// app.use(session({
-//     secret: "secretKey",
-//     saveUninitialized: false,
-//     resave: false,
-//     store: new SQLiteStore,
-//     cookie: {
-//       maxAge: 10000 * 60 * 10, // 10 minutes
-//       sameSite: 'none', // Important for cross-site cookies
-//       secure: true // Make sure this is true if you're using HTTPS
-//     }
-//   }));
-  
+}));  
 
 // Set up SQLite
 // Items in the global namespace are accessible throught out the node application
@@ -69,17 +60,17 @@ global.db = new sqlite3.Database('./database.db',function(err){
 }); 
 
 //Home page to login/register
-app.get("/", (req, res) => {
+app.get("/", async (req, res) => {
     if (!req.session.isAuthenticated) {
         return res.redirect('/login');
     }
-    const { product_name, transaction_type } = req.query;
+    const { name, transaction_type } = req.query;
     let query = "SELECT * FROM product WHERE 1=1 AND offer_status = 'not made'";
     const params = [];
     
-    if (product_name) {
-        query += " AND product_name LIKE ?";
-        params.push(`%${product_name}%`);
+    if (name) {
+        query += " AND name LIKE ?";
+        params.push(`%${name}%`);
     }
     
     if (transaction_type) {
@@ -89,43 +80,27 @@ app.get("/", (req, res) => {
     
     query += " ORDER BY created_at";
     
-    global.db.all(query, params, (err, products) => {
-        if (err) {
-            return res.status(500).send(err.message);
-        }
-        
-        // After getting products, fetch the images for each product
-        let productImages = {};
-        let processed = 0; // Track how many products we've processed
-        if (products.length === 0) {
-            return res.render("index.ejs", {
-                product: products,
-                user: req.session.user,
-                product_name: product_name,
-                transaction_type: transaction_type,
-                images: productImages
-            });
-        }
-        products.forEach((product) => {
-            global.db.all("SELECT * FROM product_images WHERE product_id = ?", [product.id], (err, images) => {
-                if (err) {
-                    return res.status(500).send(err.message);
-                }
-                productImages[product.id] = images;
-                processed++;
-                if (processed === products.length) {
-                    // When all products have been processed, render the page
-                    res.render("index.ejs", {
-                        product: products,
-                        user: req.session.user,
-                        product_name: product_name,
-                        transaction_type: transaction_type,
-                        images: productImages
-                    });
-                }
-            });
+    try {
+        const products = await new Promise((resolve, reject) => {
+            global.db.all(query, params, (err, rows) => err ? reject(err) : resolve(rows));
         });
-    });
+
+        // Fetch images for each product
+        const productImages = await getImagesForProducts(products);
+
+        // Render the page
+        res.render("index.ejs", {
+            product: products,
+            user: req.session.user,
+            name,
+            images: productImages,
+            transaction_type,
+            renderTransactionType
+        });
+    } catch (err) {
+        // Handle any errors that occurred during the database queries
+        res.status(500).send(err.message);
+    }
 });
 
 
@@ -191,11 +166,7 @@ app.post("/register", async (req, res) => {
     const { name, password, email, course, description } = req.body;
     const emailDomain = '@mymail.sim.edu.sg';
 
-    // Query for courses to include in the view
-    const query = "SELECT course_name FROM courses";
-    const courses = await new Promise((resolve, reject) => {
-        global.db.all(query, [], (err, rows) => err ? reject(err) : resolve(rows));
-    });
+    const courses = await getAllSchools();
 
     // Back end email validation
     if (!email.endsWith(emailDomain)) {
