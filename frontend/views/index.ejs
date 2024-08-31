@@ -52,7 +52,7 @@
         <!-- Search bar -->
         <div class="bg-gray-200 rounded-lg shadow-lg w-full mx-auto">
             <form id="filter-form" class="flex space-x-4 justify-center py-4" action="/" method="GET">
-                <input type="text" name="product_name" placeholder="Product Name" class="px-4 py-2 border rounded-md shadow-lg" style="width: 50%;" value="<%= typeof product_name !== 'undefined' ? product_name : '' %>">
+                <input type="text" name="name" placeholder="Product Name" class="px-4 py-2 border rounded-md shadow-lg" style="width: 50%;" value="<%= typeof name !== 'undefined' ? name : '' %>">
                 <select name="transaction_type" class="px-4 py-2 border rounded-md shadow-lg">
                     <option value="" <%= !transaction_type ? 'selected' : '' %>>All</option>
                     <option value="Sell" <%= transaction_type === 'Sell' ? 'selected' : '' %>>For Sale</option>
@@ -141,20 +141,18 @@
                             <% const image = images[listing.id][0]; %>
                                 <img 
                                     src="data:<%= image.image_type %>;base64,<%= image.image.toString('base64') %>" 
-                                    class="w-80 h-96 object-cover rounded-lg cursor-pointer thumbnail" 
+                                    class="w-[100%] h-[400px] object-cover rounded-lg cursor-pointer thumbnail" 
                                     alt="Product Image"
                                     data-image-type="<%= image.image_type %>"
                                     data-image-base64="<%= image.image.toString('base64') %>">
                         <% } else { %>
                             <p>No image available.</p>
                         <% } %>
-                        <p class="pt-3 pb-1 font-bold text-lg sm:text-xl md:text-2xl capitalize"><%= listing.product_name %></p>
+                        <p class="pt-3 pb-1 font-bold text-lg sm:text-xl md:text-2xl capitalize"><%= listing.name %></p>
                         <p class="pb-1 text-lg sm:text-xl">$<%= listing.price %></p>
                         <div class="flex space-x-1 my-3">
                             <% listing.transaction_type.split(',').forEach(function(type) { %>
-                                <div class="px-4 pt-1 pb-1.5 rounded-full text-white" style="background-color: #DA1212;">
-                                    <%= type.trim() %>
-                                </div>
+                                <%- renderTransactionType(type) %>
                             <% }); %>
                         </div>
                     </div>
