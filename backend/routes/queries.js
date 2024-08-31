@@ -114,6 +114,14 @@ const renderTransactionType = (type) => {
     return `<div class="px-4 pt-1 pb-1.5 rounded-full text-white" style="background-color: ${color};">${type.trim()}</div>`;
 };
 
+// Function to retrieve all listings by category
+const getListingsByCategory = (category) => {
+    const query = "SELECT * FROM product WHERE LOWER(category) = ? AND offer_status = 'not made'";
+    return new Promise((resolve, reject) => {
+        global.db.all(query, [category], (err, listings) => err ? reject(err) : resolve(listings));
+    });
+};
+
 // Function to retrieve a product by its ID
 const getProductById = (id) => {
     return new Promise((resolve, reject) => {
@@ -239,6 +247,7 @@ module.exports = {
     getFavourites,
     updateUserAttribute,
     renderTransactionType,
+    getListingsByCategory,
     getProductById,
     getProductImagesById,
     insertProduct,
