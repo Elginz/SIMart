@@ -14,6 +14,8 @@
             border: 2px solid #ccc;
             cursor: pointer;
             transition: all 0.3s;
+            background-color: #FFFFFF;
+            color: black;
         }
         .bubble-option.selected {
             background-color: #DA1212;
@@ -57,6 +59,8 @@
         .image-preview {
             width: 120px;
             height: 90px;
+            gap: 10px;
+            margin-top: 10px;
             border: 2px solid #ccc;
             border-radius: 5px;
             overflow: hidden;
@@ -115,18 +119,16 @@
                     <input type="file" name="images" id="images" accept="image/*" multiple onchange="previewImages(event)">
                 </div>
                 <div class="image-previews" id="image-previews">
-                    <div class="image-previews" id="image-previews">
-                        <% if (product && imageData && imageData.length > 0) { %>
-                            <% imageData.forEach(function(image) { %>
-                                <div class="image-preview" data-id="<%= image.id %>">
-                                    <img src="<%= image.src %>" alt="Uploaded Image">
-                                    <button type="button" class="remove-btn" onclick="removeExistingImage('<%= image.id %>', this)">&times;</button>
-                                    <input type="hidden" name="existingImages[]" value="<%= image.id %>">
-                                </div>
-                            <% }) %>
-                        <% } %>
-                    </div>                    
-                </div>
+                    <% if (product && imageData && imageData.length > 0) { %>
+                        <% imageData.forEach(function(image) { %>
+                            <div class="image-preview" data-id="<%= image.id %>">
+                                <img src="<%= image.src %>" alt="Uploaded Image">
+                                <button type="button" class="remove-btn" onclick="removeExistingImage('<%= image.id %>', this)">&times;</button>
+                                <input type="hidden" name="existingImages[]" value="<%= image.id %>">
+                            </div>
+                        <% }) %>
+                    <% } %>
+                </div>                    
             </div>
             <div class="md:w-1/2 p-2">
                 <div class="form-group mb-4">
@@ -145,22 +147,22 @@
                     <label class="block text-gray-700 font-bold">Transaction:</label>
                     <div class="transaction-options flex flex-wrap gap-4">
                         <label class="bubble-option <%= product && product.transaction_type.includes('Sell') ? 'selected' : '' %>">
-                            <input type="checkbox" id="Sell" name="transaction" value="Sell" <%= product && product.transaction_type.includes('Sell') ? 'checked' : '' %>>
+                            <input type="checkbox" id="Sell" name="transaction_type" value="Sell" <%= product && product.transaction_type.includes('Sell') ? 'checked' : '' %>>
                             For Sale
                         </label>
                         <label class="bubble-option <%= product && product.transaction_type.includes('Trade') ? 'selected' : '' %>">
-                            <input type="checkbox" id="Trade" name="transaction" value="Trade" <%= product && product.transaction_type.includes('Trade') ? 'checked' : '' %>>
+                            <input type="checkbox" id="Trade" name="transaction_type" value="Trade" <%= product && product.transaction_type.includes('Trade') ? 'checked' : '' %>>
                             For Trade
                         </label>
                         <label class="bubble-option <%= product && product.transaction_type.includes('Free') ? 'selected' : '' %>">
-                            <input type="checkbox" id="Free" name="transaction" value="Free" <%= product && product.transaction_type.includes('Free') ? 'checked' : '' %>>
+                            <input type="checkbox" id="Free" name="transaction_type" value="Free" <%= product && product.transaction_type.includes('Free') ? 'checked' : '' %>>
                             For Free
                         </label>
                     </div>
                 </div>
                 <div class="form-group mb-4">
                     <label for="name" class="block text-gray-700 font-bold">Product Name:</label>
-                    <input type="text" name="name" id="name" class="w-full border border-gray-300 rounded py-2 px-3" value="<%= product ? product.product_name : '' %>" required>
+                    <input type="text" name="name" id="name" class="w-full border border-gray-300 rounded py-2 px-3" value="<%= product ? product.name : '' %>" required>
                 </div>
                 <div class="form-group mb-4">
                     <label class="block text-gray-700 font-bold">Condition:</label>
@@ -194,7 +196,7 @@
                 </div>
                 <div class="form-group mb-4">
                     <label for="description" class="block text-gray-700 font-bold">Description:</label>
-                    <textarea name="description" id="description" class="w-full border border-gray-300 rounded py-2 px-3" rows="4" required><%= product ? product.content_description : '' %></textarea>
+                    <textarea name="description" id="description" class="w-full border border-gray-300 rounded py-2 px-3" rows="4" required><%= product ? product.description : '' %></textarea>
                 </div>
                 <% if (product) { %>
                     <!-- Show "Edit Product" button if editing -->
@@ -218,7 +220,27 @@
             const transactionOptions = document.querySelectorAll('.transaction-options .bubble-option input[type="checkbox"]');
             const priceInput = document.getElementById('price');
 
+            // Define colors for each transaction type
+            const colors = {
+                Sell: { default: '#FFFFFF', selected: '#FFA500' },
+                Trade: { default: '#FFFFFF', selected: '#32CD32' },
+                Free: { default: '#FFFFFF', selected: '#9370DB' }
+            };
+
+            // Function to update colors
+            const updateColors = (option, isSelected) => {
+                const type = option.value;
+                const parentLabel = option.parentElement;
+                const color = isSelected ? colors[type].selected : colors[type].default;
+                parentLabel.style.backgroundColor = color;
+                parentLabel.style.borderColor = isSelected ? colors[type].selected : '#ccc'; // Default border color when not selected
+                parentLabel.style.color = isSelected ? 'white' : 'black'; // Text color changes when selected
+            };
+
             transactionOptions.forEach(option => {
+
+                updateColors(option, option.checked);
+
                 option.addEventListener('change', () => {
                     const selectedOptions = Array.from(transactionOptions).filter(opt => opt.checked);
                     const transactionValues = selectedOptions.map(opt => opt.value);
@@ -245,11 +267,7 @@
 
                     // Update the visual state of the bubbles
                     transactionOptions.forEach(opt => {
-                        if (opt.checked) {
-                            opt.parentElement.classList.add('selected');
-                        } else {
-                            opt.parentElement.classList.remove('selected');
-                        }
+                        updateColors(opt, opt.checked);
                     });
                 });
             });
@@ -351,19 +369,19 @@
         });
 
         function removeExistingImage(imageId, buttonElement) {
-    const previewElement = buttonElement.closest('.image-preview');
-    previewElement.remove(); // Remove the preview from the DOM
+            const previewElement = buttonElement.closest('.image-preview');
+            previewElement.remove(); // Remove the preview from the DOM
 
-    // Create a hidden input to store the ID of the removed image
-    const inputElement = document.createElement('input');
-    inputElement.type = 'hidden';
-    inputElement.name = 'removeImages[]';
-    inputElement.value = imageId;
-    
-    // Append the hidden input to the form
-    const form = document.querySelector('form');
-    form.appendChild(inputElement);
-}
+            // Create a hidden input to store the ID of the removed image
+            const inputElement = document.createElement('input');
+            inputElement.type = 'hidden';
+            inputElement.name = 'removeImages[]';
+            inputElement.value = imageId;
+            
+            // Append the hidden input to the form
+            const form = document.querySelector('form');
+            form.appendChild(inputElement);
+        }
 
     </script>
 </body>
