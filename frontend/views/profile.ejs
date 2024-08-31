@@ -316,7 +316,17 @@
             <% favourites.forEach((favourite, index) => { %>
                 <a href="/product/<%= favourite.id %>" class="flex flex-col items-center hover:shadow-xl active:scale-95 p-6 border-none rounded-lg" data-transaction-type="<%= favourite.transaction_type %>">
                     <div class="w-full h-auto">
-                        <img src="/images/bracelet.jpg" class="w-80 h-96 object-cover rounded-lg cursor-pointer thumbnail">
+                        <% if (favouritesImages[favourite.id] && favouritesImages[favourite.id].length > 0) { %>
+                            <% const image = favouritesImages[favourite.id][0]; %>
+                                <img 
+                                    src="data:<%= image.image_type %>;base64,<%= image.image.toString('base64') %>" 
+                                    class="w-[100%] h-[400px] mt-8 object-cover rounded-lg cursor-pointer thumbnail" 
+                                    alt="Product Image"
+                                    data-image-type="<%= image.image_type %>"
+                                    data-image-base64="<%= image.image.toString('base64') %>">
+                        <% } else { %>
+                            <p>No image available.</p>
+                        <% } %>
                         <p class="pt-3 pb-1 font-bold text-lg sm:text-xl md:text-2xl capitalize"><%= favourite.name %></p>
                         <p class="pb-1 text-lg sm:text-xl">$<%= favourite.price %></p>
                         <div class="flex space-x-1 my-3 text-center">
