@@ -1,10 +1,24 @@
-// //  * profile.js
+//  * profile.js
 const express = require("express");
 const router = express.Router();
 const bodyParser = require("body-parser");
 const multer = require("multer");
 const path = require("path");
 const fs = require('fs');
+const {
+    getUserByEmail,
+    getUserById,
+    getAllSchools,
+    getListings,
+    getImagesForProducts,
+    getReviews,
+    getReviewersForReviews,
+    getTransactions,
+    getFavourites,
+    updateUserAttribute,
+    renderTransactionType
+} = require('./queries');
+
 router.use(bodyParser.urlencoded({ extended: true }));
 
 // Configure multer storage
@@ -22,140 +36,138 @@ const upload = multer({
     limits: { fileSize: 10 * 1024 * 1024 } // 10 MB limit
 });
 
-// I will change this part to be for modular
 // Route to handle GET requests to the profile page
-router.get('/', (req, res) => {;
+router.get('/', async (req, res) => {
     if (!req.session.isAuthenticated) {
         return res.redirect('/login');
     }
 
-    // Retrieve the user's email from session
-    const email = req.session.user.email;
+    try {
+        const email = req.session.user.email;
+        const sessionUserId = req.session.user.id;
 
-    // Query to get user details from the database
-    const userQuery = "SELECT * FROM users WHERE email = ?";
-        
-    global.db.get(userQuery, [email], (err, user) => {
-        if (err) {
-            return res.status(500).send(err.message);
-        } 
+        const user = await getUserByEmail(email);
         if (!user) {
             return res.status(404).send("User not found");
         }
-        else {
-             // Query to get all courses from the database
-            const schoolsQuery = "SELECT * FROM courses";
-            global.db.all(schoolsQuery, [], (err, schools) => {
-                if (err) {
-                    return res.status(500).send(err.message);
-                } else {
-                    // Query to get all listings created by the user
-                    const listingsQuery = "SELECT * FROM product WHERE user_id = ? AND offer_status = 'not made'";
-                    global.db.all(listingsQuery, [user.user_id], (err, listings) => {
-                        if (err) {
-                            return res.status(500).send(err.message);
-                        } else {
-                            // Query to get all reviews for the user
-                            const reviewsQuery = "SELECT * FROM reviews WHERE user_id = ?";
-                            global.db.all(reviewsQuery, [user.user_id], (err, reviews) => {
-                                if (err) {
-                                    return res.status(500).send(err.message);
-                                } else {
-                                    // Query to get all favourite products of the user
-                                    const favouritesQuery = `
-                                        SELECT product.id, product.product_name, product.price, product.transaction_type
-                                        FROM favourites
-                                        JOIN product ON favourites.product_id = product.id
-                                        WHERE favourites.user_id = ?
-                                    `;
-                                    global.db.all(favouritesQuery, [user.user_id], (err, favourites) => {
-                                        if (err) {
-                                            return res.status(500).send(err.message);
-                                        } else {
-                                            res.render("profile.ejs", {
-                                                user: user,
-                                                schools: schools,
-                                                listings: listings,
-                                                reviews: reviews,
-                                                favourites: favourites
-                                            });
-                                        }
-                                    });
-                                }
-                            });
-                        }
-                    });
-                }
-            });
-            
-        }
-    });
+
+        const schools = await getAllSchools();
+        const listings = await getListings(user.id);
+        const listingsImages = await getImagesForProducts(listings);
+        const reviews = await getReviews(sessionUserId);
+        const reviewers = await getReviewersForReviews(reviews);
+        const transactions = await getTransactions(sessionUserId);
+        const transactionsImages = await getImagesForProducts(transactions);
+        const favourites = await getFavourites(user.id);
+
+        res.render("profile.ejs", {
+            user: user,
+            sessionUserId: sessionUserId,
+            schools: schools,
+            listings: listings,
+            listingsImages: listingsImages,
+            reviews: reviews,
+            reviewers: reviewers,
+            transactions: transactions,
+            transactionsImages: transactionsImages,
+            favourites: favourites,
+            renderTransactionType: renderTransactionType
+        });
+
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
 });
 
-router.post('/update-image', upload.single('image'), (req, res) => {
+// Route to handle GET requests for a specific user profile
+router.get('/:id', async (req, res) => {
+    if (!req.session.isAuthenticated) {
+        return res.redirect('/login');
+    }
+
+    try {
+        const sessionUserId = req.params.id;
+
+        const user = await getUserById(sessionUserId);
+        if (!user) {
+            return res.status(404).send("User not found");
+        }
+
+        const schools = await getAllSchools();
+        const listings = await getListings(user.id);
+        const listingsImages = await getImagesForProducts(listings);
+        const reviews = await getReviews(user.id);
+        const reviewers = await getReviewersForReviews(reviews);
+        const transactions = await getTransactions(user.id);
+        const transactionsImages = await getImagesForProducts(transactions);
+        const favourites = await getFavourites(user.id);
+
+        res.render("profile.ejs", {
+            user: user,
+            sessionUserId: sessionUserId,
+            schools: schools,
+            listings: listings,
+            listingsImages: listingsImages,
+            reviews: reviews,
+            reviewers: reviewers,
+            transactions: transactions,
+            transactionsImages: transactionsImages,
+            favourites: favourites,
+            renderTransactionType: renderTransactionType
+        });
+
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+});
+
+// Route to handle POST requests for updating the user's image
+router.post('/update-image', upload.single('image'), async (req, res) => {
     if (!req.file) {
         return res.status(400).send('No file uploaded.');
     }
 
-    const email = req.session.user.email;
-
-    // Read file as binary data
+    const sessionUserId = req.session.user.id;
     const image = fs.readFileSync(req.file.path);
     const imageType = req.file.mimetype;
 
-    // Query to update the user's name in the database
-    const updateImageQuery = "UPDATE users SET image = ?, image_type = ? WHERE email = ?";
-    global.db.run(updateImageQuery, [image, imageType, email], (err) => {
-        if (err) {
-            return res.status(500).send(err.message);
+    try {
+        const user = await getUserById(sessionUserId);
+        if (!user) {
+            return res.status(404).send('User not found.');
         }
-        res.redirect('/profile');
-    });
+
+        const updateUserImageQuery = "UPDATE users SET image = ?, image_type = ? WHERE id = ?";
+        global.db.run(updateUserImageQuery, [image, imageType, sessionUserId], (err) => {
+            if (err) {
+                return res.status(500).send(err.message);
+            }
+            res.redirect('/profile');
+        });
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
 });
 
 // Route to handle POST requests for updating the user's name
 router.post('/update-name', (req, res) => {
-    const email = req.session.user.email;
+    const sessionUserId = req.session.user.id;
     const newName = req.body.name;
-
-    // Query to update the user's name in the database
-    const updateNameQuery = "UPDATE users SET name = ? WHERE email = ?";
-    global.db.run(updateNameQuery, [newName, email], (err) => {
-        if (err) {
-            return res.status(500).send(err.message);
-        }
-        res.redirect('/profile');
-    });
+    updateUserAttribute('name', newName, sessionUserId, res);
 });
 
 // Route to handle POST requests for updating the user's course
 router.post('/update-course', (req, res) => {
-    const email = req.session.user.email;
+    const sessionUserId = req.session.user.id;
     const newCourse = req.body.course;
-
-     // Query to update the user's course in the database
-    const updateDescriptionQuery = "UPDATE users SET course = ? WHERE email = ?";
-    global.db.run(updateDescriptionQuery, [newCourse, email], (err) => {
-        if (err) {
-            return res.status(500).send(err.message);
-        }
-        res.redirect('/profile');
-    });
+    updateUserAttribute('course', newCourse, sessionUserId, res);
 });
 
 // Route to handle POST requests for updating the user's description
 router.post('/update-description', (req, res) => {
-    const email = req.session.user.email;
+    const sessionUserId = req.session.user.id;
     const newDescription = req.body.description;
-
-    // Query to update the user's description in the database
-    const updateDescriptionQuery = "UPDATE users SET description = ? WHERE email = ?";
-    global.db.run(updateDescriptionQuery, [newDescription, email], (err) => {
-        if (err) {
-            return res.status(500).send(err.message);
-        }
-        res.redirect('/profile');
-    });
+    updateUserAttribute('description', newDescription, sessionUserId, res);
 });
 
 // Export the router object
