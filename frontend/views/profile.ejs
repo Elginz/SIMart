@@ -91,14 +91,14 @@
             position: absolute;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -71%);
+            transform: translate(-50%, -50%);
             visibility: hidden;
             cursor: pointer;
             border-radius: 50%;
             background-color: rgba(0, 0, 0, 0.5);
             padding: 5px;
             width: 100%;
-            height: 70%;
+            height: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -121,9 +121,11 @@
                 <form id="image-form" action="/profile/update-image" method="post" enctype="multipart/form-data">
                     <input type="file" name="image" id="image-input" accept="image/*" style="display: none;" onchange="document.getElementById('image-form').submit();">
                 </form>
-                <div class="profile-pic-edit-icon" onclick="document.getElementById('image-input').click();">
-                    <img src="https://img.icons8.com/?size=100&id=89802&format=png&color=da1212" alt="Edit Icon" id="image-edit" class="w-8 md:w-16">
-                </div>
+                <% if (sessionUserId === user.id) { %>
+                    <div class="profile-pic-edit-icon" onclick="document.getElementById('image-input').click();">
+                        <img src="https://img.icons8.com/?size=100&id=89802&format=png&color=da1212" alt="Edit Icon" id="image-edit" class="w-8 md:w-16">
+                    </div>
+                <% } %>
             </div>
         </div>
 
@@ -136,10 +138,12 @@
                         <span id="name-display"><%= user.name %></span>
                         <input type="text" id="name-input" name="name" value="<%= user.name %>" class="bg-transparent p-2 border border-gray-300 rounded focus:outline-none hidden">
                     </div>
-                    <div>
-                        <img src="https://img.icons8.com/?size=100&id=89802&format=png&color=da1212" alt="Edit Icon" id="name-edit" class="mx-4 py-2 w-6 md:w-8 edit-button" onclick="toggleEdit('name')">
-                        <button type="submit" id="name-save" class="ml-2 w-16 md:w-20 h-10 text-white object-cover rounded-xl hidden" style="background-color: #DA1212;">Save</button>
-                    </div>
+                    <% if (sessionUserId === user.id) { %>
+                        <div>
+                            <img src="https://img.icons8.com/?size=100&id=89802&format=png&color=da1212" alt="Edit Icon" id="name-edit" class="mx-4 py-2 w-6 md:w-8 edit-button" onclick="toggleEdit('name')">
+                            <button type="submit" id="name-save" class="ml-2 w-16 md:w-20 h-10 text-white object-cover rounded-xl hidden" style="background-color: #DA1212;">Save</button>
+                        </div>
+                    <% } %>
                 </div>
             </form>
             
@@ -164,13 +168,23 @@
                                 <% }) %>
                             </select>
                         </div>
-                        <div>
-                            <img src="https://img.icons8.com/?size=100&id=89802&format=png&color=da1212" alt="Edit Icon" id="course-edit" class="mx-4 py-2 w-8 edit-button" onclick="toggleEdit('course')">
-                            <button type="submit" id="course-save" class="ml-2 w-20 h-10 text-white object-cover rounded-xl hidden" style="background-color: #DA1212;">Save</button>
-                        </div>
+                        <% if (sessionUserId === user.id) { %>
+                            <div>
+                                <img src="https://img.icons8.com/?size=100&id=89802&format=png&color=da1212" alt="Edit Icon" id="course-edit" class="mx-4 py-2 w-8 edit-button" onclick="toggleEdit('course')">
+                                <button type="submit" id="course-save" class="ml-2 w-20 h-10 text-white object-cover rounded-xl hidden" style="background-color: #DA1212;">Save</button>
+                            </div>
+                        <% } %>
                     </div>
                 </div>
             </form>
+
+            <!-- User's email address -->
+            <!-- visible only if the user is not viewing their own profile -->
+            <% if (sessionUserId !== user.id) { %>
+                <a href="mailto:<%= user.email %>" class="flex items-center">
+                    <img src="https://img.icons8.com/?size=100&id=2848&format=png&color=da1212" alt="Email Icon" class="w-8 h-8">
+                </a>
+            <% } %>
 
             <!-- User's description -->
             <form action="/profile/update-description" method="post" class="inline">
@@ -179,90 +193,145 @@
                         <span id="description-display"><%= user.description %></span>
                         <textarea id="description-input" name="description" rows="3" cols="50" class="bg-transparent p-2 border border-gray-300 rounded focus:outline-none hidden"><%= user.description %></textarea>
                     </div>
-                    <div>
-                        <img src="https://img.icons8.com/?size=100&id=89802&format=png&color=da1212" alt="Edit Icon" id="description-edit" class="mx-4 py-2 w-6 md:w-8 edit-button" onclick="toggleEdit('description')">
-                        <button type="submit" id="description-save" class="ml-2 w-16 md:w-20 h-10 text-white object-cover rounded-xl hidden" style="background-color: #DA1212;">Save</button>
-                    </div>
+                    <% if (sessionUserId === user.id) { %>
+                        <div>
+                            <img src="https://img.icons8.com/?size=100&id=89802&format=png&color=da1212" alt="Edit Icon" id="description-edit" class="mx-4 py-2 w-6 md:w-8 edit-button" onclick="toggleEdit('description')">
+                            <button type="submit" id="description-save" class="ml-2 w-16 md:w-20 h-10 text-white object-cover rounded-xl hidden" style="background-color: #DA1212;">Save</button>
+                        </div>
+                    <% } %>
                 </div>
             </form>
+
             <!-- Logout button -->
-            <div class="flex justify-center py-4">
-                <button class="px-4 py-2 text-white text-lg rounded hover:scale-110 active:scale-90 logoutBtn" style="background-color: #DA1212;" onclick="window.location.href='/logout'">Logout</button>
-            </div>
+            <!-- Visible only if the user is viewing their own profile -->
+            <% if (sessionUserId === user.id) { %>
+                <div class="flex justify-center py-4">
+                    <button class="px-4 py-2 text-white text-lg rounded hover:scale-110 active:scale-90 logoutBtn" style="background-color: #DA1212;" onclick="window.location.href='/logout'">Logout</button>
+                </div>
+            <% } %>
         </div>
     </div>
 
     <!-- Section names -->
-        <div class="w-full">
+    <div class="w-full">
+        <% if (sessionUserId === user.id) { %>
             <div class="flex flex-wrap md:flex-nowrap justify-center space-y-4 md:space-y-0 space-x-0 md:space-x-10 px-2 md:px-0">
-        
-                <a href="/profile?section=listings" id="listings" class="p-2 md:p-4 cursor-pointer font-bold red underline text-lg md:text-xl lg:text-3xl flex items-center justify-center">Listings</a>
-                <a href="/profile?section=reviews" id="reviews" class="p-2 md:p-4 cursor-pointer font-bold red underline text-lg md:text-xl lg:text-3xl flex items-center justify-center">Reviews</a>
-                <a href="/profile?section=favourites" id="favourites" class="p-2 md:p-4 cursor-pointer font-bold red underline text-lg md:text-xl lg:text-3xl flex items-center justify-center">Favourites</a>
+                <a href="/profile?section=listings" id="listings" class="p-4 cursor-pointer font-bold red underline text-3xl">Listings</a>
+                <a href="/profile?section=reviews" id="reviews" class="p-4 cursor-pointer font-bold red underline text-3xl">Reviews</a>
+                <a href="/profile?section=transactions" id="transactions" class="p-4 cursor-pointer font-bold red underline text-3xl">Transactions</a>
+                <a href="/profile?section=favourites" id="favourites" class="p-4 cursor-pointer font-bold red underline text-3xl">Favourites</a>
             </div>
-        </div>
-                        
-        
+        <% } else { %>
+            <div class="flex flex-wrap md:flex-nowrap justify-center space-y-4 md:space-y-0 space-x-0 md:space-x-10 px-2 md:px-0">
+                <a href="/profile/<%= sessionUserId %>?section=listings" id="listings" class="p-4 cursor-pointer font-bold red underline text-3xl">Listings</a>
+                <a href="/profile/<%= sessionUserId %>?section=reviews" id="reviews" class="p-4 cursor-pointer font-bold red underline text-3xl">Reviews</a>
+                <a href="/profile/<%= sessionUserId %>?section=transactions" id="transactions" class="p-4 cursor-pointer font-bold red underline text-3xl">Transactions</a>
+            </div>
+        <% } %>
+                    
+    
         <!-- Listings section -->
-<div id="listings-section" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pl-4 pr-4 pt-4">
-    <% listings.forEach((listing, index) => { %>
-        <a href="/product/<%= listing.id %>" class="flex flex-col items-center hover:shadow-xl active:scale-95 p-6 border-none rounded-lg" data-transaction-type="<%= listing.transaction_type %>">
-            <div class="w-full h-auto">
-                <img src="/images/bracelet.jpg" class="w-80 h-96 object-cover rounded-lg cursor-pointer thumbnail">
-                <p class="pt-3 pb-1 font-bold text-lg sm:text-xl md:text-2xl capitalize"><%= listing.product_name %></p>
-                <p class="pb-1 text-lg sm:text-xl">$<%= listing.price %></p>
-                <div class="flex space-x-1 my-3 text-center">
-                    <% listing.transaction_type.split(',').forEach(function(type) { %>
-                        <div class="px-4 pt-1 pb-1.5 rounded-full text-white" style="background-color: #DA1212;">
-                            <%= type.trim() %>
+        <div id="listings-section" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pl-4 pr-4 pt-4">
+            <% listings.forEach((listing, index) => { %>
+                <a href="/product/<%= listing.id %>" class="flex flex-col items-center hover:shadow-xl active:scale-95 p-6 border-none rounded-lg" data-transaction-type="<%= listing.transaction_type %>">
+                    <div class="w-full h-auto">
+                        <% if (listingsImages[listing.id] && listingsImages[listing.id].length > 0) { %>
+                            <% const image = listingsImages[listing.id][0]; %>
+                                <img 
+                                    src="data:<%= image.image_type %>;base64,<%= image.image.toString('base64') %>" 
+                                    class="w-[100%] h-[400px] mt-8 object-cover rounded-lg cursor-pointer thumbnail" 
+                                    alt="Product Image"
+                                    data-image-type="<%= image.image_type %>"
+                                    data-image-base64="<%= image.image.toString('base64') %>">
+                        <% } else { %>
+                            <p>No image available.</p>
+                        <% } %>
+                        <p class="pt-3 pb-1 font-bold text-lg sm:text-xl md:text-2xl capitalize"><%= listing.name %></p>
+                        <p class="pb-1 text-lg sm:text-xl">$<%= listing.price %></p>
+                        <div class="flex space-x-1 my-3 text-center">
+                            <% listing.transaction_type.split(',').forEach(function(type) { %>
+                                <%- renderTransactionType(type) %>
+                            <% }); %>
                         </div>
-                    <% }); %>
+                    </div>
+                </a>
+            <% }) %>
+        </div>
+
+        <!-- Reviews section -->
+        <div id="reviews-section" class="flex flex-col justify-center px-36 hidden">
+            <% reviews.forEach((review, index) => { %>
+                <% if (reviewers[review.id]) { %>
+                    <% const reviewer = reviewers[review.id] %>
+                    <div class="flex pl-12 pr-10 py-7 my-2 rounded-xl" style="background-color: #D9D9D9;">
+                        <div>
+                            <img src="<%= reviewer.image ? 'data:' + reviewer.image_type + ';base64,' + reviewer.image.toString('base64') : 'https://img.icons8.com/?size=100&id=23265&format=png&color=da1212' %>" alt="Profile Picture" class="w-[87px] h-20 object-cover rounded-full">
+                        </div>
+                        <div class="flex flex-col px-7 space-y-2">
+                            <p class="font-bold text-xl capitalize"><%=reviewer.name %></p>
+                            <span id="review-rating">
+                                <img src="/images/<%= review.stars_given %> star.png" alt="<%= review.stars_given %> star" class="h-6">
+                            </span>
+                            <p class="text-lg capitalize"><%= review.content %></p>
+                        </div>
+                    </div>
+                <% } %>
+            <% }) %>
+        </div>
+
+        <!-- Transactions section -->
+       <div id="transactions-section" class="flex flex-col justify-center px-36 hidden">
+        <% transactions.forEach((transaction, index) => { %>
+            <a href="/product/<%= transaction.id %>" data-transaction-type="<%= transaction.transaction_type %>">
+                <div class="flex pl-12 pr-10 py-7 my-2 rounded-xl" style="background-color: #D9D9D9;">
+                    <div>
+                        <% if (transactionsImages[transaction.id] && transactionsImages[transaction.id].length > 0) { %>
+                            <% const image = transactionsImages[transaction.id][0]; %>
+                            <img 
+                            src="data:<%= image.image_type %>;base64,<%= image.image.toString('base64') %>" 
+                            class="w-20 h-20 object-cover rounded-lg" 
+                            alt="Product Image"
+                            data-image-type="<%= image.image_type %>"
+                            data-image-base64="<%= image.image.toString('base64') %>">
+                        <% } %>
+                    </div>
+                    <div class="flex flex-col px-7 pt-2 space-y-2 w-[85%]">
+                        <p class="font-bold text-xl"><%= transaction.name %></p>
+                        <div class="flex space-x-1">
+                            <% transaction.transaction_type.split(',').forEach(function(type) { %>
+                                <%- renderTransactionType(type) %>
+                            <% }); %>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-end">
+                        <p class="font-bold text-xl capitalize"><%= transaction.offer_status %></p>
+                    </div>
                 </div>
-            </div>
-        </a>
-    <% }) %>
-</div>
-       <!-- Reviews section -->
-       <div id="reviews-section" class="flex flex-col justify-center px-36 hidden">
-        <% reviews.forEach((review, index) => { %>
-            <div class="flex pl-12 pr-10 py-7 my-2 rounded-xl" style="background-color: #D9D9D9;">
-                <div>
-                    <img src="/images/chihiro.jpeg" alt="Profile Picture" class="w-24 h-20 object-cover rounded-full">
-                </div>
-                <div class="flex flex-col px-7 space-y-2">
-                    <p class="font-bold text-xl"><%= review.commenterName %></p>
-                    <span id="review-rating">
-                        <img src="/images/<%= review.stars_given %> star.png" alt="<%= review.stars_given %> star" class="h-6">
-                    </span>
-                    <p class="text-lg"><%= review.commentContent %></p>
-                </div>
-            </div>
+            </a>
         <% }) %>
        </div>
 
-    <!-- Favourites section -->
-<div id="favourites-section" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-4 hidden">
-    <% favourites.forEach((favourite, index) => { %>
-        <a href="/product/<%= favourite.id %>" class="flex flex-col items-center hover:shadow-xl active:scale-95 p-6 border-none rounded-lg" data-transaction-type="<%= favourite.transaction_type %>">
-            <div class="w-full h-auto">
-                <img src="/images/bracelet.jpg" class="w-80 h-96 object-cover rounded-lg cursor-pointer thumbnail">
-                <p class="pt-3 pb-1 font-bold text-lg sm:text-xl md:text-2xl capitalize"><%= favourite.product_name %></p>
-                <p class="pb-1 text-lg sm:text-xl">$<%= favourite.price %></p>
-                <div class="flex space-x-1 my-3 text-center">
-                <% favourite.transaction_type.split(',').forEach(function(type) { %>
-                    <div class="px-4 pt-1 pb-1.5 rounded-full text-white" style="background-color: #DA1212;">
-                        <%= type.trim() %>
+        <!-- Favourites section -->
+        <div id="favourites-section" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-4 hidden">
+            <% favourites.forEach((favourite, index) => { %>
+                <a href="/product/<%= favourite.id %>" class="flex flex-col items-center hover:shadow-xl active:scale-95 p-6 border-none rounded-lg" data-transaction-type="<%= favourite.transaction_type %>">
+                    <div class="w-full h-auto">
+                        <img src="/images/bracelet.jpg" class="w-80 h-96 object-cover rounded-lg cursor-pointer thumbnail">
+                        <p class="pt-3 pb-1 font-bold text-lg sm:text-xl md:text-2xl capitalize"><%= favourite.name %></p>
+                        <p class="pb-1 text-lg sm:text-xl">$<%= favourite.price %></p>
+                        <div class="flex space-x-1 my-3 text-center">
+                            <% favourite.transaction_type.split(',').forEach(function(type) { %>
+                                <%- renderTransactionType(type) %>
+                            <% }); %>
+                        </div>
                     </div>
-                <% }); %>
-            </div>
+                </a>
+            <% }) %>
         </div>
-    </a>
-    <% }) %>
-</div>
+    </div>
 
-
-     <!-- Footer -->
-     <%- include('footer') %>
+    <!-- Footer -->
+    <%- include('footer') %>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -294,6 +363,7 @@
         const sections = {
             listings: "listings-section",
             reviews: "reviews-section",
+            transactions: "transactions-section",
             favourites: "favourites-section"
         };
 
@@ -307,6 +377,9 @@
                 break;
             case 'reviews':
                 document.getElementById(sections.reviews).classList.remove('hidden');
+                break;
+            case 'transactions':
+                document.getElementById(sections.transactions).classList.remove('hidden');
                 break;
             case 'favourites':
                 document.getElementById(sections.favourites).classList.remove('hidden');
