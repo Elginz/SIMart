@@ -1,29 +1,36 @@
-// //  * category.js
+//  * category.js
 const express = require("express");
 const router = express.Router();
 const bodyParser = require("body-parser");
+const { 
+    renderTransactionType,
+    getListingsByCategory,
+    getImagesForProducts 
+} = require('./queries'); // Import the helper function
+
 router.use(bodyParser.urlencoded({ extended: true }));
 
-router.get('/:category', (req, res) => {
+// Route to handle GET requests by category
+router.get('/:category', async (req, res) => {
     if (!req.session.isAuthenticated) {
         return res.redirect('/login');
     }
 
-    // Retrieve the category from the URL
-    const category = req.params.category;
+    try {
+        const category = req.params.category;
 
-    // Query to get all listings with the specified category
-    const listingsQuery = "SELECT * FROM product WHERE LOWER(category) = ? AND offer_status = 'not made'";
-    global.db.all(listingsQuery, [category], (err, listings) => {
-        if (err) {
-            return res.status(500).send(err.message);
-        } else {
-            res.render("category.ejs", {
-                category: category,
-                listings: listings
-            });
-        }
-    });
+        const listings = await getListingsByCategory(category);
+        const listingsImages = await getImagesForProducts(listings);
+
+        res.render("category.ejs", {
+            category: category,
+            listings: listings,
+            listingsImages: listingsImages,
+            renderTransactionType: renderTransactionType
+        });
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
 });
 
 module.exports = router;
