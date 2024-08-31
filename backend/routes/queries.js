@@ -8,9 +8,9 @@ const getUserByEmail = (email) => {
     });
 }
 
-// Function to retrieve user details by user_id
+// Function to retrieve user details by id
 const getUserById = (id) => {
-    const userQuery = "SELECT * FROM users WHERE user_id = ?";
+    const userQuery = "SELECT * FROM users WHERE id = ?";
     return new Promise((resolve, reject) => {
         global.db.get(userQuery, [id], (err, user) => err ? reject(err) : resolve(user));
     });
@@ -60,7 +60,7 @@ const getReviewersForReviews = (reviews) => {
     const reviewers = {};
     const promises = reviews.map(review => {
         return new Promise((resolve, reject) => {
-            const reviewerQuery = "SELECT * FROM users WHERE user_id = ?";
+            const reviewerQuery = "SELECT * FROM users WHERE id = ?";
             global.db.get(reviewerQuery, [review.reviewer_id], (err, reviewer) => {
                 if (err) return reject(err);
                 reviewers[review.id] = reviewer;
@@ -94,7 +94,7 @@ const getFavourites = (userId) => {
 
 // Utility function to update user attributes
 const updateUserAttribute = (attribute, value, id, res) => {
-    const query = `UPDATE users SET ${attribute} = ? WHERE user_id = ?`;
+    const query = `UPDATE users SET ${attribute} = ? WHERE id = ?`;
     new Promise((resolve, reject) => {
         global.db.run(query, [value, id], (err) => err ? reject(err) : resolve());
     })
@@ -177,6 +177,17 @@ const deleteProduct = (id) => {
 };
 
 // Function to update the offer status of a product
+const updateOfferMadeBy = (productId, userId) => {
+    return new Promise((resolve, reject) => {
+        const query = "UPDATE product SET offer_made_by = ? WHERE id = ?";
+        db.run(query, [userId, productId], (err) => {
+            if (err) return reject(err);
+            resolve();
+        });
+    });
+};
+
+// Function to update the offer status of a product
 const updateOfferStatus = (productId, status) => {
     return new Promise((resolve, reject) => {
         const query = "UPDATE product SET offer_status = ? WHERE id = ?";
@@ -206,7 +217,7 @@ const getReviewsByUserId = (userId) => {
 // Function to update the rating of a user
 const updateUserRating = (userId, rating) => {
     return new Promise((resolve, reject) => {
-        const query = "UPDATE users SET rating = ? WHERE user_id = ?";
+        const query = "UPDATE users SET rating = ? WHERE id = ?";
         db.run(query, [rating, userId], err => err ? reject(err) : resolve());
     });
 };
@@ -254,6 +265,7 @@ module.exports = {
     insertProductImage,
     updateProduct,
     deleteProduct,
+    updateOfferMadeBy,
     updateOfferStatus,
     insertReview,
     getReviewsByUserId,
