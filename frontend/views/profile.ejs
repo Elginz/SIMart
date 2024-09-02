@@ -50,7 +50,7 @@
         .edit-container {
             display: flex;
             justify-content: center;
-            margin-left:10%
+            /* margin-left:10% */
         }
 
         /* ratings at desktop */
@@ -80,12 +80,18 @@
             align-items: center;
             justify-content: center;
         }
-
+        .name-container {
+            display: flex;
+            justify-content: center;
+            margin-left: <%= sessionUserId === user.id ? '50px' : '0' %>;
         }
+        }
+
+
         /* Desktop-specific styles */
         @media (min-width: 768px) {
             .ratings-container {
-                margin-right: 0;
+                margin-right: 5%;
             }
             .profile-pic-edit-icon {
             position: absolute;
@@ -103,6 +109,12 @@
             align-items: center;
             justify-content: center;
         }
+        .name-container {
+            display: flex;
+            justify-content: center;
+            margin-left: <%= sessionUserId === user.id ? '50px' : '0' %>;
+        }
+
 }
 
     </style>
@@ -181,13 +193,16 @@
             <!-- User's email address -->
             <!-- visible only if the user is not viewing their own profile -->
             <% if (sessionUserId !== user.id) { %>
+                <div class = "flex justify-center">
                 <a href="mailto:<%= user.email %>" class="flex items-center">
                     <img src="https://img.icons8.com/?size=100&id=2848&format=png&color=da1212" alt="Email Icon" class="w-8 h-8">
                 </a>
+                </div>
             <% } %>
 
             <!-- User's description -->
             <form action="/profile/update-description" method="post" class="inline">
+                <div class="scroll-container">
                 <div class="flex items-center edit-container">
                     <div class="text-lg md:text-xl lg:text-2xl">
                         <span id="description-display"><%= user.description %></span>
@@ -199,6 +214,7 @@
                             <button type="submit" id="description-save" class="ml-2 w-16 md:w-20 h-10 text-white object-cover rounded-xl hidden" style="background-color: #DA1212;">Save</button>
                         </div>
                     <% } %>
+                </div>
                 </div>
             </form>
 
@@ -212,24 +228,25 @@
         </div>
     </div>
 
+
     <!-- Section names -->
-    <div class="w-full">
+    <div class="w-full overflow-x-auto">
         <% if (sessionUserId === user.id) { %>
-            <div class="flex flex-wrap md:flex-nowrap justify-center space-y-4 md:space-y-0 space-x-0 md:space-x-10 px-2 md:px-0">
-                <a href="/profile?section=listings" id="listings" class="p-4 cursor-pointer font-bold red underline text-3xl">Listings</a>
-                <a href="/profile?section=reviews" id="reviews" class="p-4 cursor-pointer font-bold red underline text-3xl">Reviews</a>
-                <a href="/profile?section=transactions" id="transactions" class="p-4 cursor-pointer font-bold red underline text-3xl">Transactions</a>
-                <a href="/profile?section=favourites" id="favourites" class="p-4 cursor-pointer font-bold red underline text-3xl">Favourites</a>
+            <div class="flex justify-start md:justify-center space-x-4 md:space-x-10 px-2 md:px-0">
+                <a href="/profile?section=listings" id="listings" class="p-4 cursor-pointer font-bold text-red-500 underline text-2xl md:text-3xl">Listings</a>
+                <a href="/profile?section=reviews" id="reviews" class="p-4 cursor-pointer font-bold text-red-500 underline text-2xl md:text-3xl">Reviews</a>
+                <a href="/profile?section=transactions" id="transactions" class="p-4 cursor-pointer font-bold text-red-500 underline text-2xl md:text-3xl">Transactions</a>
+                <a href="/profile?section=favourites" id="favourites" class="p-4 cursor-pointer font-bold text-red-500 underline text-2xl md:text-3xl">Favourites</a>
             </div>
         <% } else { %>
-            <div class="flex flex-wrap md:flex-nowrap justify-center space-y-4 md:space-y-0 space-x-0 md:space-x-10 px-2 md:px-0">
-                <a href="/profile/<%= sessionUserId %>?section=listings" id="listings" class="p-4 cursor-pointer font-bold red underline text-3xl">Listings</a>
-                <a href="/profile/<%= sessionUserId %>?section=reviews" id="reviews" class="p-4 cursor-pointer font-bold red underline text-3xl">Reviews</a>
-                <a href="/profile/<%= sessionUserId %>?section=transactions" id="transactions" class="p-4 cursor-pointer font-bold red underline text-3xl">Transactions</a>
+            <div class="flex justify-start md:justify-center space-x-4 md:space-x-10 px-2 md:px-0">
+                <a href="/profile/<%= sessionUserId %>?section=listings" id="listings" class="p-4 cursor-pointer font-bold text-red-500 underline text-2xl">Listings</a>
+                <a href="/profile/<%= sessionUserId %>?section=reviews" id="reviews" class="p-4 cursor-pointer font-bold text-red-500 underline text-2xl">Reviews</a>
+                <a href="/profile/<%= sessionUserId %>?section=transactions" id="transactions" class="p-4 cursor-pointer font-bold text-red-500 underline text-2xl">Transactions</a>
             </div>
         <% } %>
-                    
-    
+    </div>
+            
         <!-- Listings section -->
         <div id="listings-section" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pl-4 pr-4 pt-4">
             <% listings.forEach((listing, index) => { %>
