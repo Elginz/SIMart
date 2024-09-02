@@ -36,38 +36,45 @@
         <!-- Navigation bar -->
         <%- include('navbar') %>
 
-        <div class="flex pl-12 py-8">
-            <div class="flex flex-col w-[55%]">
+        <div class="flex flex-col md:flex-row pl-4 pr-4 md:pl-12 py-8">
+            <!-- Left Column: Images -->
+            <div class="flex flex-col w-full md:w-[55%] mb-8 md:mb-0">
                 <div class="main-image-container">
                     <% if (images && images.length > 0) { %>
-                        <img id="main-image" src="data:<%= images[0].image_type %>;base64,<%= images[0].image.toString('base64') %>" class="w-[95%] h-[550px] object-cover rounded-lg shadow-lg mb-2" alt="Main Product Image">
+                        <img id="main-image" src="data:<%= images[0].image_type %>;base64,<%= images[0].image.toString('base64') %>" 
+                            class="w-full h-[300px] md:h-[450px] lg:h-[550px] object-cover rounded-lg shadow-lg mb-2" 
+                            alt="Main Product Image">
                     <% } %>
                 </div>   
-                <div class="thumbnail-container flex flex-wrap items-end mt-4">
+                <div class="thumbnail-container flex flex-wrap justify-center md:justify-start mt-4">
                     <% images.forEach((image, index) => { %>
                         <img 
                             src="data:<%= image.image_type %>;base64,<%= image.image %>" 
-                            class="w-[100px] h-[100px] m-1.5 object-cover cursor-pointer thumbnail" 
+                            class="w-[60px] h-[60px] md:w-[80px] md:h-[80px] lg:w-[100px] lg:h-[100px] m-1.5 object-cover cursor-pointer thumbnail" 
                             alt="Product Image <%= index %>"
                             data-image-type="<%= image.image_type %>"
                             data-image-base64="<%= image.image %>">
                     <% }); %>
                 </div>
             </div>
-            <div class="w-[75%] px-6 py-4">
-                <h1 class="text-4xl font-bold mb-4 capitalize"><%= product.name %></h1>
-                <div class="flex space-x-1 my-3">
+
+            <!-- Right Column: Product Details -->
+            <div class="w-full md:w-[75%] md:px-6 py-4">
+                <h1 class="text-2xl md:text-4xl font-bold mb-4 capitalize"><%= product.name %></h1>
+
+                <div class="flex flex-wrap space-x-1 my-3">
                     <% product.transaction_type.split(',').forEach(function(type) { %>
                         <%- renderTransactionType(type) %>
                     <% }); %>
                 </div>
                 
                 <p class="text-lg text-gray-700 mb-4">$<%= product.price %></p>
-                <h2 class="text-2xl font-semibold mb-2">Condition:</h2>
+
+                <h2 class="text-xl md:text-2xl font-semibold mb-2">Condition:</h2>
                 <p class="text-lg text-gray-700 mb-4"><%= product.condition %></p>
 
                 <% if (sessionUserId !== product.user_id) { %>
-                    <div class="flex space-x-3">
+                    <div class="flex space-x-3 mb-4">
                         <a href="mailto:<%= user.email %>" class="flex items-center">
                             <img src="https://img.icons8.com/?size=100&id=2848&format=png&color=da1212" alt="Email Icon" class="w-8 h-8">
                         </a>
@@ -76,16 +83,18 @@
                 <% } %>
 
                 <% if (sessionUserId !== product.user_id) { %>
-                    <h2 class="text-2xl font-semibold mb-4">Uploaded By:</h2>
+                    <h2 class="text-xl md:text-2xl font-semibold mb-4">Uploaded By:</h2>
                     <a href="/profile/<%= user.id %>?section=listings">
                         <div class="flex items-center space-x-2 mb-4">
-                            <img src="<%= user.image ? `data:${user.image_type};base64,${user.image.toString('base64')}` : 'https://img.icons8.com/?size=100&id=23265&format=png&color=da1212' %>" alt="<%= user.name %>'s profile picture" class="w-12 h-12 object-cover rounded-full">
+                            <img src="<%= user.image ? `data:${user.image_type};base64,${user.image.toString('base64')}` : 'https://img.icons8.com/?size=100&id=23265&format=png&color=da1212' %>" 
+                                alt="<%= user.name %>'s profile picture" 
+                                class="w-10 h-10 md:w-12 md:h-12 object-cover rounded-full">
                             <span id="name-display" class="text-lg"><%= user.name %></span>
                         </div>
                     </a>
                 <% } %>
 
-                <h2 class="text-2xl font-semibold mt-4 mb-4">Description</h2>
+                <h2 class="text-xl md:text-2xl font-semibold mt-4 mb-4">Description</h2>
                 <p class="text-base text-gray-600 mb-8"><%= product.description %></p>
 
                 <% if (sessionUserId !== product.user_id) { %>
@@ -129,14 +138,14 @@
 
     <form action="/product/<%= product.id %>" method="POST" class="">
         <div class="fixed inset-0 flex items-center justify-center z-50 hidden" id="leave-review-box">
-            <div class="bg-[#041562] p-6 rounded-lg shadow-lg w-[55%] h-[80%] flex flex-col items-center">
+            <div class="bg-[#041562] p-6 rounded-lg shadow-lg w-[90%] md:w-[55%] h-[80%] flex flex-col items-center">
                 <a href="/" class="flex justify-end w-full" onclick="closeReview()">
-                    <img src="https://img.icons8.com/?size=100&id=8112&format=png&color=da1212" alt="close button" class="w-10 mr-5" onclick="closeReview()">
+                    <img src="https://img.icons8.com/?size=100&id=8112&format=png&color=da1212" alt="close button" class="w-8 md:w-10 mr-2 md:mr-5" onclick="closeReview()">
                 </a>
-                <span class="text-2xl font-semibold text-white">Leave a review for your experience with the User</span>
+                <span class="text-xl md:text-2xl font-semibold text-white text-center">Leave a review for your experience with the User</span>
                 <div class="flex space-x-2 my-5" id="rating-section">
                     <% for (let i = 1; i <= 5; i++) { %>
-                        <img src="https://img.icons8.com/?size=100&id=7856&format=png&color=FFFFFF" alt="star <%= i %>" id="star-<%= i %>" class="w-20" onclick="changeColor('<%= i %>')">
+                        <img src="https://img.icons8.com/?size=100&id=7856&format=png&color=FFFFFF" alt="star <%= i %>" id="star-<%= i %>" class="w-10 md:w-20" onclick="changeColor('<%= i %>')">
                     <% } %>
                 </div>
                 <input type="hidden" id="rating-input" name="rating" value="">
