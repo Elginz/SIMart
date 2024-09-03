@@ -202,7 +202,6 @@
 
             <!-- User's description -->
             <form action="/profile/update-description" method="post" class="inline">
-                <div class="scroll-container">
                 <div class="flex items-center edit-container">
                     <div class="text-lg md:text-xl lg:text-2xl">
                         <span id="description-display"><%= user.description %></span>
@@ -214,7 +213,6 @@
                             <button type="submit" id="description-save" class="ml-2 w-16 md:w-20 h-10 text-white object-cover rounded-xl hidden" style="background-color: #DA1212;">Save</button>
                         </div>
                     <% } %>
-                </div>
                 </div>
             </form>
 
