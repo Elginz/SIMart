@@ -2,7 +2,7 @@
  * index.js
  */
 
-// Set up express, bodyparser and EJS
+// Required modules and middleware 
 const express = require('express');
 const bodyParser = require("body-parser");
 const session = require('express-session');
@@ -14,54 +14,70 @@ const {
     getImagesForProducts,
     getAllSchools,
     renderTransactionType 
-} = require('./routes/queries.js'); // Import the helper function
-
+    //Helper functions
+} = require('./routes/queries.js'); 
+//A new instance for the express app
 const app = express();
 const port = 3000;
 
-// Testing to use CORS
+// for CORS (Cross-origin resource sharing)
 const cors = require('cors');
 app.use(cors({
-    origin: 'https://s-mart-jme0meogk-team58-projects.vercel.app', // frontend URL
-    credentials: true // cookies to be sent and received
+    //to allow request from the frontend URL
+    origin: 'https://s-mart-jme0meogk-team58-projects.vercel.app',
+    //for cookies to be send and to be received with requests
+    credentials: true 
 }));
 
 //Setting up middleware
+//URL-encoded data
 app.use(bodyParser.urlencoded({ extended: true }));
-app.set('view engine', 'ejs'); // set the app to use ejs for rendering
+//view engine to EJS to render HTML templates
+app.set('view engine', 'ejs'); 
+//Set directory for EJS 
 app.set('views', __dirname + '/../frontend/views');
-app.use(express.static(__dirname + '/../frontend/public')); // set location of static files
+// set location of static files
+app.use(express.static(__dirname + '/../frontend/public'));
 app.use('/uploads', express.static('uploads'));
+//For cookies to be attached to the client request
 app.use(cookieParser());
+//pars JSON-encoded request bodies
 app.use(express.json());
 app.use(session({
-    // Ensure session is called first
+    // secret key to sign session IDs
     secret: "secretKey",
-    saveUninitialized: false, // Do not save every session ID as some might be users who do nothing. Only save session ID of users who are logging in.
+    //prevent saving any empty sessions
+    saveUninitialized: false, 
+    //prevent any resaving of unchanged sessions
     resave: false,
+    //store sessions in SQLite database
     store: new SQLiteStore,
     cookie: {
-        maxAge: 1000 * 60 * 10  // set for 10 minutes
+        maxAge: 1000 * 60 * 10  // session cookie set for 10 minutes
     }
 }));  
 
-// Set up SQLite
+// Set up SQLite connection
 // Items in the global namespace are accessible throughout the node application
 global.db = new sqlite3.Database('./database.db', function(err) {
     if (err) {
         console.error(err);
-        process.exit(1); // bail out we can't connect to the DB
+        // error handlign if we can't connect to the DB
+        process.exit(1); 
     } else {
         console.log("Database connected");
-        global.db.run("PRAGMA foreign_keys=ON"); // tell SQLite to pay attention to foreign key constraints
+        //enable foreign key constraints in the SQLite
+        global.db.run("PRAGMA foreign_keys=ON");
     }
 }); 
 
 // Home page to login/register
 app.get("/", async (req, res) => {
+    //redirect to login pafe if user is not authenticated
     if (!req.session.isAuthenticated) {
         return res.redirect('/login');
     }
+    //Query to fetch products from the DB
     const { name, transaction_type } = req.query;
     let query = "SELECT * FROM product WHERE 1=1 AND offer_status = 'not made'";
     const params = [];
@@ -79,6 +95,7 @@ app.get("/", async (req, res) => {
     query += " ORDER BY created_at";
     
     try {
+        //query to fetch products
         const products = await new Promise((resolve, reject) => {
             global.db.all(query, params, (err, rows) => err ? reject(err) : resolve(rows));
         });
@@ -86,13 +103,15 @@ app.get("/", async (req, res) => {
         // Fetch images for each product
         const productImages = await getImagesForProducts(products);
 
-        // Render the page
+        // Render the home page with the fetched data
         res.render("index.ejs", {
             product: products,
+            //pass user data to view
             user: req.session.user,
             name,
             images: productImages,
             transaction_type,
+            //helper function to render transaction types
             renderTransactionType
         });
     } catch (err) {
@@ -113,16 +132,19 @@ app.get("/logout", (req, res) => {
             console.log(err);
             return res.status(500).send('Failed to logout');
         }
-        res.clearCookie('connect.sid'); // Clear the session cookie
-        res.redirect('/'); // Redirect to login page after logout
+        //clear session cookie
+        res.clearCookie('connect.sid'); 
+        // Redirect to login page after logout
+        res.redirect('/'); 
     });
 });
 
-// Handle login
+// For login submissions
 app.post("/login", (req, res) => {
-    const { email, password } = req.body; // Use 'email' instead of 'name'
-
-    const query = "SELECT * FROM users WHERE email = ? AND password = ?"; // Updated query
+    //extract the email and password from the request body
+    const { email, password } = req.body; 
+    //to find user with matching credentials
+    const query = "SELECT * FROM users WHERE email = ? AND password = ?";
 
     console.log('Executing query:', query, 'with parameters:', [email, password]);
 
@@ -139,12 +161,13 @@ app.post("/login", (req, res) => {
             // Redirect to home page after successful login
             res.redirect('/');
         } else {
-            res.render('login.ejs', { error: 'Incorrect email or password.' }); // Updated error message
+            //error message on login failure
+            res.render('login.ejs', { error: 'Incorrect email or password.' }); 
         }
     });
 });
 
-// Display Register page
+// Display Registeration page
 app.get("/register", (req, res) => {
     const query = "SELECT course_name FROM courses";
     
@@ -155,7 +178,7 @@ app.get("/register", (req, res) => {
         if (err) {
             return res.status(500).send(err.message);
         }
-
+    //render registration page with courses data
         res.render("register.ejs", { courses, error: null });
     });
 });
@@ -164,7 +187,7 @@ app.get("/register", (req, res) => {
 app.post("/register", async (req, res) => {
     const { name, password, email, course, description } = req.body;
     const emailDomain = '@mymail.sim.edu.sg';
-
+    //collect all  courses from helper function
     const courses = await getAllSchools();
 
     // Back end email validation
@@ -178,7 +201,7 @@ app.post("/register", async (req, res) => {
     }
 
     try {
-        // Check if email already exists
+        // Check if email already exists inside the database
         const checkEmailQuery = "SELECT * FROM users WHERE email = ?";
         const row = await new Promise((resolve, reject) => {
             global.db.get(checkEmailQuery, [email], (err, row) => err ? reject(err) : resolve(row));
@@ -196,13 +219,13 @@ app.post("/register", async (req, res) => {
                 else resolve();
             });
         });
-
+        //redirect to login page after a successful registration
         res.redirect('/login');
     } catch (error) {
         res.status(500).send(error.message);
     }
 });
-
+//use indexRoute for other routes
 app.use('/', indexRoute);
 
 // Make the web application listen for HTTP requests
