@@ -127,6 +127,10 @@ router.get('/:id', async (req, res) => {
 
 // Route to handle POST requests for updating the user's image
 router.post('/update-image', upload.single('image'), async (req, res) => {
+    if (!req.session.isAuthenticated) {
+        return res.redirect('/login');
+    }
+    
     if (!req.file) {
         return res.status(400).send('No file uploaded.');
     }
@@ -155,6 +159,10 @@ router.post('/update-image', upload.single('image'), async (req, res) => {
 
 // Route to handle POST requests for updating the user's name
 router.post('/update-name', (req, res) => {
+    if (!req.session.isAuthenticated) {
+        return res.redirect('/login');
+    }
+    
     const sessionUserId = req.session.user.id;
     const newName = req.body.name;
     updateUserAttribute('name', newName, sessionUserId, res);
@@ -162,6 +170,10 @@ router.post('/update-name', (req, res) => {
 
 // Route to handle POST requests for updating the user's course
 router.post('/update-course', (req, res) => {
+    if (!req.session.isAuthenticated) {
+        return res.redirect('/login');
+    }
+    
     const sessionUserId = req.session.user.id;
     const newCourse = req.body.course;
     updateUserAttribute('course', newCourse, sessionUserId, res);
@@ -169,6 +181,10 @@ router.post('/update-course', (req, res) => {
 
 // Route to handle POST requests for updating the user's description
 router.post('/update-description', (req, res) => {
+    if (!req.session.isAuthenticated) {
+        return res.redirect('/login');
+    }
+    
     const sessionUserId = req.session.user.id;
     const newDescription = req.body.description;
     updateUserAttribute('description', newDescription, sessionUserId, res);
