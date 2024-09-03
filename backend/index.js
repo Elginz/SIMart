@@ -41,7 +41,7 @@ app.use(session({
     resave: false,
     store: new SQLiteStore,
     cookie: {
-        maxAge: 1000 * 60 * 1  // set for 10 minutes
+        maxAge: 1000 * 60 * 10  // set for 10 minutes
     }
 }));  
 
