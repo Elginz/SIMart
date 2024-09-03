@@ -1,9 +1,12 @@
 // product_page.js
+
+//Import and set up modules
 const express = require("express");
 const router = express.Router();
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
+//import utility functions for database
 const {
     getUserByEmail,
     getUserById,
@@ -24,11 +27,15 @@ const {
     renderTransactionType
 } = require('./queries');
 
+//storage for uploaded images
 const storage = multer.diskStorage({
+    //folder for uploads
     destination: function (req, file, cb) {
-        console.log(`Saving file to uploads/ directory`); // Logging the destination
+        //to log into the destination
+        console.log(`Saving file to uploads/ directory`); 
         cb(null, 'uploads/');
     },
+    //create a unique filename for each uploaded file
     filename: function (req, file, cb) {
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
         const fileName = uniqueSuffix + path.extname(file.originalname);
@@ -36,19 +43,21 @@ const storage = multer.diskStorage({
         cb(null, fileName);
     }
 });
-
+//initialise a multer to handle file uploads. 
 const upload = multer({ 
     storage: storage,
-    limits: { fileSize: 20 * 1024 * 1024 } // 10 MB limit
+    //there is only a 20MB limit per file
+    limits: { fileSize: 20 * 1024 * 1024 } 
 });
 
 // Display form to create a new product
 router.get("/new", (req, res) => {
     let product = null;
-
+    //redirect to login page if user is not authenticated
     if (!req.session.isAuthenticated) {
         return res.redirect('/login');
     } else {
+        //render product lsiting 
         res.render("create_listing.ejs", { product });
     }
 });
@@ -60,14 +69,16 @@ router.post("/new", upload.array("images", 4), async (req, res) => {
     }
     
     try {
+        //product details from the request
         let { name, description, price, category, transaction_type, condition } = req.body;
-
+        //to ensure that the price is defined
         price = price || 0;
+        //to handle transaction types, by joining them into a string
         transaction_type = Array.isArray(transaction_type) ? transaction_type.join(', ') : transaction_type;
-
+        //retrieve user's email from the session
         const email = req.session.user.email;
         const user = await getUserByEmail(email);
-
+        //to insert a new product
         const productId = await insertProduct({
             userId: user.id,
             name,
@@ -78,13 +89,13 @@ router.post("/new", upload.array("images", 4), async (req, res) => {
             condition
         });
 
-        // Insert images
+        // Insert product images 
         for (const file of req.files) {
             const imageData = fs.readFileSync(file.path);
             const imageType = file.mimetype;
             await insertProductImage(productId, imageData, imageType);
         }
-
+        //redirect to a newly created product 
         res.redirect(`/product/${productId}`);
     } catch (err) {
         console.error("Error:", err.message);
@@ -101,6 +112,7 @@ router.post("/make-offer", async (req, res) => {
     const { productId } = req.body;
     const sessionUserId = req.session.user.id;
     try {
+        //update offer details 
         await updateOfferMadeBy(productId, sessionUserId);
         await updateOfferStatus(productId, 'made');
         res.json({ success: true });
@@ -110,7 +122,7 @@ router.post("/make-offer", async (req, res) => {
     }
 });
 
-// Offer in progress
+// Offer status to 'in progress'
 router.post("/offer-in-progress", async (req, res) => {
     if (!req.session.isAuthenticated) {
         return res.redirect('/login');
@@ -126,7 +138,7 @@ router.post("/offer-in-progress", async (req, res) => {
     }
 });
 
-// Complete an offer
+// Complete an offer and make the product unavailable
 router.post("/complete-offer", async (req, res) => {
     if (!req.session.isAuthenticated) {
         return res.redirect('/login');
@@ -153,15 +165,16 @@ router.get("/:id", async (req, res) => {
     }
     
     try {
+        //get product details
         const product = await getProductById(req.params.id);
         if (!product) return res.status(404).send("Product not found");
-
+        //get product images
         const images = await getProductImagesById(req.params.id);
         images.forEach(image => image.image = image.image.toString('base64'));
-
+        //get product's user details
         const user = await getUserById(product.user_id);
         const fav = await getProductFavourites(req.session.user.id, product.id);
-
+        //render product page
         res.render("show_product.ejs", {
             product,
             images,
@@ -170,6 +183,7 @@ router.get("/:id", async (req, res) => {
             sessionUserId: req.session.user.id,
             isFavourite: !!fav
         });
+        //error handling 
     } catch (err) {
         res.status(500).send("Error retrieving product: " + err.message);
     }
@@ -213,12 +227,14 @@ router.get("/edit/:id", async (req, res) => {
     }
     
     try {
+        //retrieve product and product images 
         const product = await getProductById(req.params.id);
         const images = await getProductImagesById(req.params.id);
         const imageData = images.map(img => ({
             id: img.id,
             src: `data:${img.image_type};base64,${img.image.toString('base64')}`
         }));
+        //render an edit form 
         res.render("create_listing.ejs", { product, imageData });
     } catch (err) {
         res.status(500).send(err.message);
@@ -232,11 +248,13 @@ router.post("/edit/:id", upload.array("images", 4), async (req, res) => {
     }
     
     try {
+        //get updated product details from request
         let { name, description, price, category, transaction_type, condition, existingImages } = req.body;
-
+        //ensure that price is defined
         price = price || 0;
+        //to handle multiple transaction types
         transaction_type = Array.isArray(transaction_type) ? transaction_type.join(', ') : transaction_type;
-
+        //update product details
         await updateProduct(req.params.id, { name, description, price, category, transaction_type, condition });
 
         // Handle removed images
@@ -253,7 +271,7 @@ router.post("/edit/:id", upload.array("images", 4), async (req, res) => {
                 await insertProductImage(req.params.id, imageData, imageType);
             }
         }
-
+        //redirect to the edited product page
         res.redirect(`/product/${req.params.id}`);
     } catch (err) {
         console.error("Error:", err.message);
@@ -266,8 +284,8 @@ router.post("/delete/:id", async (req, res) => {
     if (!req.session.isAuthenticated) {
         return res.redirect('/login');
     }
-    
     try {
+        //delete product
         await deleteProduct(req.params.id);
         res.redirect("/");
     } catch (err) {
@@ -280,7 +298,6 @@ router.post("/favourites/add", async (req, res) => {
     if (!req.session.isAuthenticated) {
         return res.redirect('/login');
     }
-    
     try {
         const { productId, userId } = req.body;
         if (!productId || !userId) {
@@ -290,6 +307,7 @@ router.post("/favourites/add", async (req, res) => {
         if (isFav) {
             return res.status(400).json({ success: false, message: 'Product is already in favourites.' });
         }
+        //add product to user's favourites
         await addProductToFavourites(userId, productId);
         res.json({ success: true });
     } catch (err) {
@@ -304,6 +322,7 @@ router.post("/favourites/remove", async (req, res) => {
     }
     try {
         const { productId, userId } = req.body;
+        //remove product from user's favourites
         await removeProductFromFavourites(userId, productId);
         res.json({ success: true });
     } catch (err) {
