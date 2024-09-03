@@ -24,9 +24,11 @@ router.use(bodyParser.urlencoded({ extended: true }));
 // Configure multer storage
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
+        //set the directory for uploads
         cb(null, 'uploads/');
     },
     filename: function (req, file, cb) {
+        //to set the filename with current time and original file extension
         cb(null, Date.now() + path.extname(file.originalname));
     }
 });
@@ -38,6 +40,7 @@ const upload = multer({
 
 // Route to handle GET requests to the profile page
 router.get('/', async (req, res) => {
+    //redirect to login page if user is not authenticated
     if (!req.session.isAuthenticated) {
         return res.redirect('/login');
     }
@@ -45,9 +48,10 @@ router.get('/', async (req, res) => {
     try {
         const email = req.session.user.email;
         const sessionUserId = req.session.user.id;
-
+        //get user details and associated data
         const user = await getUserByEmail(email);
         if (!user) {
+            //error handling
             return res.status(404).send("User not found");
         }
 
@@ -61,6 +65,7 @@ router.get('/', async (req, res) => {
         const favourites = await getFavourites(user.id);
         const favouritesImages = await getImagesForProducts(favourites);
 
+        //render profile page with the retrieved data
         res.render("profile.ejs", {
             user: user,
             sessionUserId: sessionUserId,
@@ -77,21 +82,25 @@ router.get('/', async (req, res) => {
         });
 
     } catch (err) {
+        //error handling
         res.status(500).send(err.message);
     }
 });
 
 // Route to handle GET requests for a specific user profile
 router.get('/:id', async (req, res) => {
+    //redirect to login if the user is not authenticated
     if (!req.session.isAuthenticated) {
         return res.redirect('/login');
     }
 
     try {
+        //retrieve user details and asosciated data by user ID
         const sessionUserId = req.params.id;
 
         const user = await getUserById(sessionUserId);
         if (!user) {
+            //error handling
             return res.status(404).send("User not found");
         }
 
@@ -105,6 +114,7 @@ router.get('/:id', async (req, res) => {
         const favourites = await getFavourites(user.id);
         const favouritesImages = await getImagesForProducts(favourites);
 
+        //render profile page with the retrieved data
         res.render("profile.ejs", {
             user: user,
             sessionUserId: sessionUserId,
@@ -121,17 +131,20 @@ router.get('/:id', async (req, res) => {
         });
 
     } catch (err) {
+        //error handling
         res.status(500).send(err.message);
     }
 });
 
 // Route to handle POST requests for updating the user's image
 router.post('/update-image', upload.single('image'), async (req, res) => {
+    //to redirect to login page if user is not authenticated
     if (!req.session.isAuthenticated) {
         return res.redirect('/login');
     }
     
     if (!req.file) {
+        //error handling if no file added
         return res.status(400).send('No file uploaded.');
     }
 
@@ -144,12 +157,13 @@ router.post('/update-image', upload.single('image'), async (req, res) => {
         if (!user) {
             return res.status(404).send('User not found.');
         }
-
+        //update the user's image 
         const updateUserImageQuery = "UPDATE users SET image = ?, image_type = ? WHERE id = ?";
         global.db.run(updateUserImageQuery, [image, imageType, sessionUserId], (err) => {
             if (err) {
                 return res.status(500).send(err.message);
             }
+            //redire to profile page right after a new update
             res.redirect('/profile');
         });
     } catch (err) {
@@ -159,21 +173,24 @@ router.post('/update-image', upload.single('image'), async (req, res) => {
 
 // Route to handle POST requests for updating the user's name
 router.post('/update-name', (req, res) => {
+    //redirect to login page if user is not authenticated
     if (!req.session.isAuthenticated) {
         return res.redirect('/login');
     }
     
     const sessionUserId = req.session.user.id;
     const newName = req.body.name;
+    //update user's name
     updateUserAttribute('name', newName, sessionUserId, res);
 });
 
 // Route to handle POST requests for updating the user's course
 router.post('/update-course', (req, res) => {
+    //redirect to login page if user is not authenticated
     if (!req.session.isAuthenticated) {
         return res.redirect('/login');
     }
-    
+    //update the user's course
     const sessionUserId = req.session.user.id;
     const newCourse = req.body.course;
     updateUserAttribute('course', newCourse, sessionUserId, res);
@@ -181,10 +198,11 @@ router.post('/update-course', (req, res) => {
 
 // Route to handle POST requests for updating the user's description
 router.post('/update-description', (req, res) => {
+    //redirect to login page if user is not authenticated
     if (!req.session.isAuthenticated) {
         return res.redirect('/login');
     }
-    
+
     const sessionUserId = req.session.user.id;
     const newDescription = req.body.description;
     updateUserAttribute('description', newDescription, sessionUserId, res);
