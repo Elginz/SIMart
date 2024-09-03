@@ -302,37 +302,35 @@
         
         
 
-        <!-- Transactions section -->
-       <div id="transactions-section" class="flex flex-col justify-center px-36 hidden">
-        <% transactions.forEach((transaction, index) => { %>
-            <a href="/product/<%= transaction.id %>" data-transaction-type="<%= transaction.transaction_type %>">
-                <div class="flex pl-12 pr-10 py-7 my-2 rounded-xl" style="background-color: #D9D9D9;">
-                    <div>
-                        <% if (transactionsImages[transaction.id] && transactionsImages[transaction.id].length > 0) { %>
-                            <% const image = transactionsImages[transaction.id][0]; %>
-                            <img 
-                            src="data:<%= image.image_type %>;base64,<%= image.image.toString('base64') %>" 
-                            class="w-20 h-20 object-cover rounded-lg" 
-                            alt="Product Image"
-                            data-image-type="<%= image.image_type %>"
-                            data-image-base64="<%= image.image.toString('base64') %>">
-                        <% } %>
-                    </div>
-                    <div class="flex flex-col px-7 pt-2 space-y-2 w-[85%]">
-                        <p class="font-bold text-xl"><%= transaction.name %></p>
-                        <div class="flex space-x-1">
-                            <% transaction.transaction_type.split(',').forEach(function(type) { %>
-                                <%- renderTransactionType(type) %>
-                            <% }); %>
-                        </div>
-                    </div>
-                    <div class="flex items-center justify-end">
-                        <p class="font-bold text-xl capitalize"><%= transaction.offer_status %></p>
-                    </div>
+<!-- Transactions section -->
+<div id="transactions-section" class="flex flex-col justify-center px-4 sm:px-8 md:px-12 lg:px-24 xl:px-36 py-4">
+    <% transactions.forEach((transaction, index) => { %>
+        <a href="/product/<%= transaction.id %>" data-transaction-type="<%= transaction.transaction_type %>" class="flex flex-col md:flex-row bg-[#D9D9D9] rounded-xl mb-4 p-4">
+            <div class="flex-shrink-0">
+                <% if (transactionsImages[transaction.id] && transactionsImages[transaction.id].length > 0) { %>
+                    <% const image = transactionsImages[transaction.id][0]; %>
+                    <img 
+                        src="data:<%= image.image_type %>;base64,<%= image.image.toString('base64') %>" 
+                        class="w-20 h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 object-cover rounded-lg" 
+                        alt="Product Image"
+                        data-image-type="<%= image.image_type %>"
+                        data-image-base64="<%= image.image.toString('base64') %>">
+                <% } %>
+            </div>
+            <div class="flex flex-col px-4 space-y-2 flex-grow">
+                <p class="font-bold text-lg md:text-xl lg:text-2xl"><%= transaction.name %></p>
+                <div class="flex space-x-1">
+                    <% transaction.transaction_type.split(',').forEach(function(type) { %>
+                        <%- renderTransactionType(type) %>
+                    <% }); %>
                 </div>
-            </a>
-        <% }) %>
-       </div>
+            </div>
+            <div class="flex items-center justify-end flex-shrink-0">
+                <p class="font-bold text-lg md:text-xl lg:text-2xl capitalize"><%= transaction.offer_status %></p>
+            </div>
+        </a>
+    <% }) %>
+</div>
 
         <!-- Favourites section -->
         <div id="favourites-section" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-4 hidden">
