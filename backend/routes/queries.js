@@ -106,8 +106,8 @@ const updateUserAttribute = (attribute, value, id, res) => {
 const renderTransactionType = (type) => {
     const colors = {
         'Sell': '#FFA500', // Orange
-        'Trade': '#32CD32', // Lime Green
-        'Free': '#9370DB'   // Medium Purple
+        'Trade': '#9370DB', // Medium Purple
+        'Free':  '#32CD32'  // Lime Green
     };
     
     const color = colors[type.trim()] || '#CCCCCC'; // Default color if type is not matched
