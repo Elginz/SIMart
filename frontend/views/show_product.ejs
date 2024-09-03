@@ -170,10 +170,12 @@
             const isFavourite = JSON.parse('<%= JSON.stringify(isFavourite) %>');
 
             const heartIcon = document.getElementById('favourite');
-            if (isFavourite) {
-                heartIcon.src = "https://img.icons8.com/?size=100&id=85339&format=png&color=da1212"; // Filled heart
-            } else {
-                heartIcon.src = "https://img.icons8.com/?size=100&id=85038&format=png&color=da1212"; // Empty heart
+            if (heartIcon) {
+                if (isFavourite) {
+                    heartIcon.src = "https://img.icons8.com/?size=100&id=85339&format=png&color=da1212"; // Filled heart
+                } else {
+                    heartIcon.src = "https://img.icons8.com/?size=100&id=85038&format=png&color=da1212"; // Empty heart
+                }
             }
 
             transactionProcess();
