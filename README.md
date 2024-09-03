@@ -14,6 +14,7 @@
   
 - Run the following commands 
   - npm i (Install the node package modules)
+  - npm i express-session (Install express sessions)
   - npm run build-db (Build the database)
   - npm run (To run the program)
     
