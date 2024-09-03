@@ -55,6 +55,10 @@ router.get("/new", (req, res) => {
 
 // Create a new product
 router.post("/new", upload.array("images", 4), async (req, res) => {
+    if (!req.session.isAuthenticated) {
+        return res.redirect('/login');
+    }
+    
     try {
         let { name, description, price, category, transaction_type, condition } = req.body;
 
@@ -90,6 +94,10 @@ router.post("/new", upload.array("images", 4), async (req, res) => {
 
 // Make an offer
 router.post("/make-offer", async (req, res) => {
+    if (!req.session.isAuthenticated) {
+        return res.redirect('/login');
+    }
+    
     const { productId } = req.body;
     const sessionUserId = req.session.user.id;
     try {
@@ -104,6 +112,10 @@ router.post("/make-offer", async (req, res) => {
 
 // Offer in progress
 router.post("/offer-in-progress", async (req, res) => {
+    if (!req.session.isAuthenticated) {
+        return res.redirect('/login');
+    }
+    
     const { productId } = req.body;
     try {
         await updateOfferStatus(productId, 'in progress');
@@ -116,6 +128,10 @@ router.post("/offer-in-progress", async (req, res) => {
 
 // Complete an offer
 router.post("/complete-offer", async (req, res) => {
+    if (!req.session.isAuthenticated) {
+        return res.redirect('/login');
+    }
+    
     const { productId } = req.body;
     const updateOfferAndAvailability = async () => {
         try {
@@ -132,9 +148,10 @@ router.post("/complete-offer", async (req, res) => {
 
 // Display a single product
 router.get("/:id", async (req, res) => {
-        if (!req.session.isAuthenticated) {
+    if (!req.session.isAuthenticated) {
         return res.redirect('/login');
     }
+    
     try {
         const product = await getProductById(req.params.id);
         if (!product) return res.status(404).send("Product not found");
@@ -160,9 +177,12 @@ router.get("/:id", async (req, res) => {
 
 // Handle adding a review
 router.post("/:id", async (req, res) => {
+    if (!req.session.isAuthenticated) {
+        return res.redirect('/login');
+    }
+    
     const { review, rating } = req.body;
     const productId = req.params.id;
-
     try {
         const product = await getProductById(productId);
 
@@ -188,9 +208,10 @@ router.post("/:id", async (req, res) => {
 
 // Edit a product
 router.get("/edit/:id", async (req, res) => {
-        if (!req.session.isAuthenticated) {
+    if (!req.session.isAuthenticated) {
         return res.redirect('/login');
     }
+    
     try {
         const product = await getProductById(req.params.id);
         const images = await getProductImagesById(req.params.id);
@@ -206,6 +227,10 @@ router.get("/edit/:id", async (req, res) => {
 
 // Update product
 router.post("/edit/:id", upload.array("images", 4), async (req, res) => {
+    if (!req.session.isAuthenticated) {
+        return res.redirect('/login');
+    }
+    
     try {
         let { name, description, price, category, transaction_type, condition, existingImages } = req.body;
 
@@ -238,6 +263,10 @@ router.post("/edit/:id", upload.array("images", 4), async (req, res) => {
 
 // Delete a product
 router.post("/delete/:id", async (req, res) => {
+    if (!req.session.isAuthenticated) {
+        return res.redirect('/login');
+    }
+    
     try {
         await deleteProduct(req.params.id);
         res.redirect("/");
@@ -248,6 +277,10 @@ router.post("/delete/:id", async (req, res) => {
 
 // Add product to favourites
 router.post("/favourites/add", async (req, res) => {
+    if (!req.session.isAuthenticated) {
+        return res.redirect('/login');
+    }
+    
     try {
         const { productId, userId } = req.body;
         if (!productId || !userId) {
@@ -266,6 +299,9 @@ router.post("/favourites/add", async (req, res) => {
 
 // Remove product from favourites
 router.post("/favourites/remove", async (req, res) => {
+    if (!req.session.isAuthenticated) {
+        return res.redirect('/login');
+    }
     try {
         const { productId, userId } = req.body;
         await removeProductFromFavourites(userId, productId);
