@@ -145,22 +145,22 @@
                     <label class="block text-gray-700 font-bold">Transaction:</label>
                     <div class="transaction-options flex flex-wrap gap-4">
                         <label class="bubble-option <%= product && product.transaction_type.includes('Sell') ? 'selected' : '' %>">
-                            <input type="checkbox" id="Sell" name="transaction" value="Sell" <%= product && product.transaction_type.includes('Sell') ? 'checked' : '' %>>
+                            <input type="checkbox" id="Sell" name="transaction_type" value="Sell" <%= product && product.transaction_type.includes('Sell') ? 'checked' : '' %>>
                             For Sale
                         </label>
                         <label class="bubble-option <%= product && product.transaction_type.includes('Trade') ? 'selected' : '' %>">
-                            <input type="checkbox" id="Trade" name="transaction" value="Trade" <%= product && product.transaction_type.includes('Trade') ? 'checked' : '' %>>
+                            <input type="checkbox" id="Trade" name="transaction_type" value="Trade" <%= product && product.transaction_type.includes('Trade') ? 'checked' : '' %>>
                             For Trade
                         </label>
                         <label class="bubble-option <%= product && product.transaction_type.includes('Free') ? 'selected' : '' %>">
-                            <input type="checkbox" id="Free" name="transaction" value="Free" <%= product && product.transaction_type.includes('Free') ? 'checked' : '' %>>
+                            <input type="checkbox" id="Free" name="transaction_type" value="Free" <%= product && product.transaction_type.includes('Free') ? 'checked' : '' %>>
                             For Free
                         </label>
                     </div>
                 </div>
                 <div class="form-group mb-4">
                     <label for="name" class="block text-gray-700 font-bold">Product Name:</label>
-                    <input type="text" name="name" id="name" class="w-full border border-gray-300 rounded py-2 px-3" value="<%= product ? product.product_name : '' %>" required>
+                    <input type="text" name="name" id="name" class="w-full border border-gray-300 rounded py-2 px-3" value="<%= product ? product.name : '' %>" required>
                 </div>
                 <div class="form-group mb-4">
                     <label class="block text-gray-700 font-bold">Condition:</label>
@@ -218,7 +218,27 @@
             const transactionOptions = document.querySelectorAll('.transaction-options .bubble-option input[type="checkbox"]');
             const priceInput = document.getElementById('price');
 
+            // Define colors for each transaction type
+            const colors = {
+                Sell: { default: '#FFFFFF', selected: '#FFA500' },
+                Trade: { default: '#FFFFFF', selected: '#9370DB' },
+                Free: { default: '#FFFFFF', selected: '#32CD32' }
+            };
+
+            // Function to update colors
+            const updateColors = (option, isSelected) => {
+                const type = option.value;
+                const parentLabel = option.parentElement;
+                const color = isSelected ? colors[type].selected : colors[type].default;
+                parentLabel.style.backgroundColor = color;
+                parentLabel.style.borderColor = isSelected ? colors[type].selected : '#ccc'; // Default border color when not selected
+                parentLabel.style.color = isSelected ? 'white' : 'black'; // Text color changes when selected
+            };
+
             transactionOptions.forEach(option => {
+
+                updateColors(option, option.checked);
+
                 option.addEventListener('change', () => {
                     const selectedOptions = Array.from(transactionOptions).filter(opt => opt.checked);
                     const transactionValues = selectedOptions.map(opt => opt.value);
@@ -245,11 +265,7 @@
 
                     // Update the visual state of the bubbles
                     transactionOptions.forEach(opt => {
-                        if (opt.checked) {
-                            opt.parentElement.classList.add('selected');
-                        } else {
-                            opt.parentElement.classList.remove('selected');
-                        }
+                        updateColors(opt, opt.checked);
                     });
                 });
             });
