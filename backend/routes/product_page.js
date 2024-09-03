@@ -132,6 +132,9 @@ router.post("/complete-offer", async (req, res) => {
 
 // Display a single product
 router.get("/:id", async (req, res) => {
+        if (!req.session.isAuthenticated) {
+        return res.redirect('/login');
+    }
     try {
         const product = await getProductById(req.params.id);
         if (!product) return res.status(404).send("Product not found");
@@ -185,6 +188,9 @@ router.post("/:id", async (req, res) => {
 
 // Edit a product
 router.get("/edit/:id", async (req, res) => {
+        if (!req.session.isAuthenticated) {
+        return res.redirect('/login');
+    }
     try {
         const product = await getProductById(req.params.id);
         const images = await getProductImagesById(req.params.id);
