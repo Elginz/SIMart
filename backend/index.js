@@ -1,6 +1,6 @@
 /**
-* index.js
-*/
+ * index.js
+ */
 
 // Set up express, bodyparser and EJS
 const express = require('express');
@@ -13,7 +13,8 @@ const indexRoute = require('./routes/indexRoute.js');
 const { 
     getImagesForProducts,
     getAllSchools,
-    renderTransactionType } = require('./routes/queries.js'); // Import the helper function
+    renderTransactionType 
+} = require('./routes/queries.js'); // Import the helper function
 
 const app = express();
 const port = 3000;
@@ -22,10 +23,8 @@ const port = 3000;
 const cors = require('cors');
 app.use(cors({
     origin: 'https://s-mart-jme0meogk-team58-projects.vercel.app', // frontend URL
-    credentials: true //  cookies to be sent and received
-  }));
-  
-
+    credentials: true // cookies to be sent and received
+}));
 
 //Setting up middleware
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -33,24 +32,23 @@ app.set('view engine', 'ejs'); // set the app to use ejs for rendering
 app.set('views', __dirname + '/../frontend/views');
 app.use(express.static(__dirname + '/../frontend/public')); // set location of static files
 app.use('/uploads', express.static('uploads'));
-//parse routes for cookie parser
 app.use(cookieParser());
 app.use(express.json());
 app.use(session({
-    //ensure session is called first
+    // Ensure session is called first
     secret: "secretKey",
     saveUninitialized: false, // Do not save every session ID as some might be users who do nothing. Only save session ID of users who are logging in.
     resave: false,
     store: new SQLiteStore,
-    cookie:{
-        maxAge: 10000 * 60 * 10  //set for 10 minutes
+    cookie: {
+        maxAge: 1000 * 60 * 1  // set for 10 minutes
     }
 }));  
 
 // Set up SQLite
-// Items in the global namespace are accessible throught out the node application
-global.db = new sqlite3.Database('./database.db',function(err){
-    if(err){
+// Items in the global namespace are accessible throughout the node application
+global.db = new sqlite3.Database('./database.db', function(err) {
+    if (err) {
         console.error(err);
         process.exit(1); // bail out we can't connect to the DB
     } else {
@@ -59,7 +57,7 @@ global.db = new sqlite3.Database('./database.db',function(err){
     }
 }); 
 
-//Home page to login/register
+// Home page to login/register
 app.get("/", async (req, res) => {
     if (!req.session.isAuthenticated) {
         return res.redirect('/login');
@@ -103,8 +101,6 @@ app.get("/", async (req, res) => {
     }
 });
 
-
-
 // Display login page
 app.get("/login", (req, res) => {
     res.render("login.ejs");
@@ -122,7 +118,7 @@ app.get("/logout", (req, res) => {
     });
 });
 
-//Handle login
+// Handle login
 app.post("/login", (req, res) => {
     const { email, password } = req.body; // Use 'email' instead of 'name'
 
@@ -136,8 +132,11 @@ app.post("/login", (req, res) => {
             return res.status(500).send(err.message);
         }
         if (user) {
+            // Authenticate user and set session
             req.session.user = user;
             req.session.isAuthenticated = true;
+
+            // Redirect to home page after successful login
             res.redirect('/');
         } else {
             res.render('login.ejs', { error: 'Incorrect email or password.' }); // Updated error message
@@ -204,10 +203,9 @@ app.post("/register", async (req, res) => {
     }
 });
 
-
 app.use('/', indexRoute);
 
 // Make the web application listen for HTTP requests
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)
-})
+});
