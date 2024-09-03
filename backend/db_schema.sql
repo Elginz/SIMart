@@ -3,9 +3,6 @@ PRAGMA foreign_keys=ON;
 
 BEGIN TRANSACTION;
 
--- ////////////////////////////////////////////////////////
--- THESE ARE THE NEW TABLES USED
-
 -- Courses Table
 CREATE TABLE IF NOT EXISTS courses (
     course_name TEXT PRIMARY KEY
@@ -23,7 +20,6 @@ CREATE TABLE IF NOT EXISTS users (
     rating INTEGER NOT NULL CHECK(rating IN (0, 1, 2, 3, 4, 5)),
     description TEXT NOT NULL,
     FOREIGN KEY (course) REFERENCES courses(course_name) ON DELETE RESTRICT
-    -- profile pic?
 );
 
 -- Product Table
@@ -76,7 +72,7 @@ CREATE TABLE IF NOT EXISTS product_images (
 
 
 -- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+-- Load university courses
 INSERT OR IGNORE INTO courses (course_name) VALUES 
 ('University of London, BSc in Computer Science'),
 ('University of London, BSc in Computer Science (User Experience)'),
