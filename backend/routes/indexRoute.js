@@ -2,6 +2,7 @@
 const express = require("express");
 const router = express.Router();
 
+//Import route handlers from the other modules
 const profileRouter = require("./profile.js");
 const productRoute = require("./product_page.js");
 const categoryRoute = require("./category.js");
@@ -11,5 +12,5 @@ router.use("/profile", profileRouter);
 router.use("/product", productRoute);
 router.use("/category", categoryRoute);
 
-// Export module containing the following so external files can access it
+// export router object so it can be used in other parts of the application
 module.exports = router;
