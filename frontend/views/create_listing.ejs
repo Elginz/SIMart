@@ -7,6 +7,7 @@
     <title>Add a New Product</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        /* Style for transaction and condition bubbles */
         .bubble-option {
             display: inline-block;
             padding: 10px 20px;
@@ -16,17 +17,21 @@
             cursor: pointer;
             transition: all 0.3s;
         }
+        /* Style for transaction and condition bubbles when selected */
         .bubble-option.selected {
             background-color: #DA1212;
             color: white;
             border-color: #DA1212;
         }
+        /* Hide checkbox inputs inside bubble-option */
         .bubble-option input[type="checkbox"] {
             display: none;
         }
+        /* Hide radio inputs inside bubble-option */
         .bubble-option input[type="radio"] {
             display: none;
         }
+         /* Container for file input with dashed border */
         .file-input-container {
             position: relative;
             width: 100%;
@@ -38,10 +43,12 @@
             cursor: pointer;
             background-color: #f7f7f7;
         }
+        /* Plus sign style inside file input container */
         .file-input-container .plus-sign {
             font-size: 2rem;
             color: #999;
         }
+        /* File input is hidden but clickable */
         .file-input-container input[type="file"] {
             position: absolute;
             width: 100%;
@@ -49,12 +56,14 @@
             opacity: 0;
             cursor: pointer;
         }
+        /* Style for image previews container */
         .image-previews {
             display: flex;
             gap: 10px;
             margin-top: 10px;
             flex-wrap: wrap;
         }
+        /* Style for individual image preview */
         .image-preview {
             width: 120px;
             height: 90px;
@@ -64,14 +73,17 @@
             background-color: #f7f7f7;
             position: relative;
         }
+        /* Style for image inside preview */
         .image-preview img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
+        /* Display remove button on hover */
         .image-preview:hover .remove-btn {
             display: block;
         }
+        /* Style for remove button */
         .remove-btn {
             position: absolute;
             top: 5px;
@@ -89,13 +101,17 @@
             font-size: 16px;
             font-weight: bold;
         }
+        /* Responsive adjustments for larger screens */
         @media (min-width: 640px) {
+            /* Increase height of file input container */
             .file-input-container {
                 height: 300px;
             }
+            /* Increase font size of plus sign */
             .file-input-container .plus-sign {
                 font-size: 3rem;
             }
+            /* Increase size of image previews */
             .image-preview {
                 width: 140px;
                 height: 100px;
