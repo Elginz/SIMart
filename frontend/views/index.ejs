@@ -160,6 +160,7 @@
                                     alt="Default Product Image">
                             <% } %>
                             <p class="pt-3 pb-1 font-bold text-lg sm:text-xl md:text-2xl capitalize"><%= listing.product_name %></p>
+                            <p class="pb-1 text-lg sm:text-xl font-bold"><%= listing.name %></p>
                             <p class="pb-1 text-lg sm:text-xl">$<%= listing.price %></p>
                             <div class="flex space-x-1 my-3">
                                 <% listing.transaction_type.split(',').forEach(function(type) { %>
