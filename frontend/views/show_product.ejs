@@ -64,26 +64,37 @@
 
             <!-- Right Column: Product Details -->
             <div class="w-full md:w-[75%] md:px-4 lg:px-4 pt-1 pb-4">
+
+                <!-- Product name -->
                 <h1 class="text-2xl md:text-4xl font-bold mb-4 capitalize"><%= product.name %></h1>
 
+                <!-- Product transaction types -->
                 <div class="flex flex-wrap space-x-1 my-3">
                     <% product.transaction_type.split(',').forEach(function(type) { %>
                         <%- renderTransactionType(type) %>
                     <% }); %>
                 </div>
-                
+
+                <!-- Product price -->
                 <p class="text-lg text-gray-700 mb-4">$<%= product.price %></p>
 
+                <!-- Product condition -->
                 <h2 class="text-xl md:text-2xl font-semibold mb-2">Condition:</h2>
                 <p class="text-lg text-gray-700 mb-4"><%= product.condition %></p>
 
-                <div class="flex space-x-3 mb-4">
-                    <a href="mailto:<%= user.email %>" class="flex items-center">
-                        <img src="https://img.icons8.com/?size=100&id=2848&format=png&color=da1212" alt="Email Icon" class="w-8 h-8">
-                    </a>
-                    <img src="https://img.icons8.com/?size=100&id=85038&format=png&color=da1212" alt="Favourites Icon" id="favourite" class="w-10 h-10 cursor-pointer" onclick="addToFavourites()">
-                </div>
+                <!-- Email and Favourite icons -->
+                <!-- Visible only if the user is not viewing their own product -->
+                <% if (sessionUserId !== product.user_id) { %>
+                    <div class="flex space-x-3 mb-4">
+                        <a href="mailto:<%= user.email %>" class="flex items-center">
+                            <img src="https://img.icons8.com/?size=100&id=2848&format=png&color=da1212" alt="Email Icon" class="w-8 h-8">
+                        </a>
+                        <img src="https://img.icons8.com/?size=100&id=85038&format=png&color=da1212" alt="Favourites Icon" id="favourite" class="w-10 h-10 cursor-pointer" onclick="addToFavourites()">
+                    </div>
+                <% } %>
 
+                <!-- Product lister information -->
+                <!-- Visible only if the user is not viewing their own product -->
                 <% if (sessionUserId !== product.user_id) { %>
                     <h2 class="text-xl md:text-2xl font-semibold mb-4">Uploaded By:</h2>
                     <a href="/profile/<%= user.id %>?section=listings">
@@ -94,11 +105,13 @@
                     </a>
                 <% } %>
 
+                <!-- Product description -->
                 <h2 class="text-2xl font-semibold mt-4 mb-4">Description</h2>
                 <p class="text-base text-gray-600 mb-8"><%= product.description %></p>
 
                 <!-- Seller and Buyer Actions -->
                 <% if (sessionUserId !== product.user_id) { %>
+                    <!-- Buyer buttons based on offer status -->
                     <% if (product.offer_status === 'completed') { %>
                         <button id="buyer-complete-offer-button" disabled class="bg-red-600 text-white py-2 px-4 rounded-lg text-lg shadow-lg hover:bg-red-700 transition duration-200 opacity-50 cursor-not-allowed">Offer Completed</button>
                     <% } else if (product.offer_status === 'made') { %>
@@ -120,6 +133,8 @@
                             <button type="submit" class="bg-[#da1212] text-white py-2 px-4 rounded-lg text-lg shadow-lg hover:bg-red-700 transition duration-200">Delete Listing</button>
                         </form>
                     </div>
+
+                    <!-- Seller's offer status buttons -->
                     <% if (product.offer_status === 'completed') { %>
                         <button id="seller-complete-offer-button" disabled class="bg-red-600 text-white py-2 px-4 rounded-lg text-lg shadow-lg hover:bg-red-700 transition duration-200 opacity-50 cursor-not-allowed">Offer Completed</button>
                     <% } else if (product.offer_status === 'made') { %>
@@ -135,8 +150,10 @@
         <%- include('footer') %>
     </div>
 
+    <!-- Overlay for scroll lock -->
     <div id="scroll-lock" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden"></div>
 
+    <!-- Review prompt -->
     <form action="/product/<%= product.id %>" method="POST" class="">
         <div class="fixed inset-0 flex items-center justify-center z-50 hidden" id="leave-review-box">
             <div class="bg-[#041562] p-6 rounded-lg shadow-lg w-[55%] h-[80%] flex flex-col items-center">
@@ -158,11 +175,13 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // Get all thumbnail elements and set up click event to change the main image
             const thumbnails = document.querySelectorAll('.thumbnail');
             thumbnails.forEach(thumbnail => {
                 thumbnail.addEventListener('click', function() {
                     const imageType = this.getAttribute('data-image-type');
                     const imageBase64 = this.getAttribute('data-image-base64');
+                    // Update the main image source with the clicked thumbnail's data
                     document.getElementById('main-image').src = `data:${imageType};base64,${imageBase64}`;
                 });
             });
@@ -170,6 +189,7 @@
             // Convert `isFavourite` to a JavaScript boolean
             const isFavourite = JSON.parse('<%= JSON.stringify(isFavourite) %>');
 
+            // Update the heart icon based on whether the item is a favourite
             const heartIcon = document.getElementById('favourite');
             if (heartIcon) {
                 if (isFavourite) {
@@ -179,19 +199,24 @@
                 }
             }
 
+            // Initialize transaction button event handlers
             transactionProcess();
         });
 
+        // Function to handle offer and transaction-related button actions
         function transactionProcess() {
+            // Get buttons for making and completing offers
             const makeOfferButton = document.getElementById("make-offer-button");
             const sellerCompleteOfferButton = document.getElementById("seller-complete-offer-button");
             const buyerCompleteOfferButton = document.getElementById("buyer-complete-offer-button");
 
+            // Set up click event for making an offer
             if (makeOfferButton) {
                 makeOfferButton.addEventListener("click", function() {
-                    const productId = '<%= product.id %>'; // Pass the product ID
-                    const userId = '<%= sessionUserId %>'; // Pass the user ID
+                    const productId = '<%= product.id %>';
+                    const userId = '<%= sessionUserId %>';
 
+                    // Send request to make an offer
                     fetch('/product/make-offer', {
                         method: 'POST',
                         headers: {
@@ -202,6 +227,7 @@
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
+                            // Update button state on success
                             makeOfferButton.innerText = 'Offer made';
                             makeOfferButton.disabled = true;
                             makeOfferButton.classList.add('opacity-50', 'cursor-not-allowed');
@@ -216,10 +242,12 @@
                 });
             }
 
+            // Set up click event for seller to complete an offer
             if (sellerCompleteOfferButton) {
                 sellerCompleteOfferButton.addEventListener("click", function() {
                     const productId = '<%= product.id %>';
 
+                    // Send request to mark offer as in progress
                     fetch('/product/offer-in-progress', {
                         method: 'POST',
                         headers: {
@@ -230,6 +258,7 @@
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
+                            // Update button state on success
                             sellerCompleteOfferButton.innerText = 'Offer Completed';
                             sellerCompleteOfferButton.disabled = true;
                             sellerCompleteOfferButton.classList.add('opacity-50', 'cursor-not-allowed');
@@ -244,10 +273,12 @@
                 });
             }
 
+            // Set up click event for buyer to complete an offer
             if (buyerCompleteOfferButton) {
                 buyerCompleteOfferButton.addEventListener("click", function() {
                     const productId = '<%= product.id %>';
 
+                    // Send request to complete the offer
                     fetch('/product/complete-offer', {
                         method: 'POST',
                         headers: {
@@ -258,13 +289,16 @@
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
+                            // Update button and UI elements on success
                             buyerCompleteOfferButton.innerText = 'Offer Completed';
                             buyerCompleteOfferButton.disabled = true;
                             buyerCompleteOfferButton.classList.add('opacity-50', 'cursor-not-allowed');
 
+                            // Blur the background and show the review box
                             const body = document.getElementById('blur-container');
                             body.classList.add('blur-sm');
 
+                            // Lock the scroll
                             const reviewBox = document.getElementById('leave-review-box');
                             reviewBox.classList.remove('hidden');
 
@@ -284,6 +318,7 @@
             }
         }
 
+        // Function to set email details for the 'Make an Offer' button
         function setEmailDetails() {
             const userEmail = "<%= user.email %>"; // Get the user's email from the server-side variable
             const productName = "<%= product.name %>";
@@ -293,6 +328,7 @@
             document.getElementById('offer-link').setAttribute('href', link);
         }
 
+        // Function to close the review box and remove blur effect
         function closeReview() {
             const reviewBox = document.getElementById('leave-review-box');
             reviewBox.classList.add('hidden');
@@ -300,6 +336,7 @@
             body.classList.remove('blur-sm');
         }
 
+        // Function to change star rating color
         function changeColor(index) {
             for (let i = 1; i <= 5; i++) {
                 const star = document.getElementById(`star-${i}`);
@@ -311,17 +348,20 @@
                     }
                 }
             }
+            // Set the rating input value
             document.getElementById('rating-input').value = index;
         }
 
+        // Function to add a product to favourites
         function addToFavourites() {
             const heart = document.getElementById('favourite');
-            const isFavourite = heart.src.includes('85038'); // Check if the heart is empty
+            const isFavourite = heart.src.includes('85038'); // Check if the heart icon is empty
 
             const productId = '<%= product.id %>';
             const userId = '<%= sessionUserId %>';
 
             if (isFavourite) {
+                // Send request to add to favourites
                 fetch("/product/favourites/add", {
                     method: 'POST',
                     headers: {
@@ -339,15 +379,18 @@
                 })
                 .catch(error => console.error('Error:', error));
             } else {
+                // If already a favourite, remove it
                 removeFromFavourites();
             }
         }
 
+        // Function to remove a product from favourites
         function removeFromFavourites() {
             const heart = document.getElementById('favourite');
             const productId = '<%= product.id %>';
             const userId = '<%= sessionUserId %>';
 
+            // Send request to remove from favourites
             fetch("/product/favourites/remove", {
                 method: 'POST',
                 headers: {
