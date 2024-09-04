@@ -106,29 +106,31 @@
     <!-- Navigation bar -->
     <%- include('navbar') %>
 
+    <!-- Form for adding or editing a product -->
     <form action="<%= product ? '/product/edit/' + product.id : '/product/new' %>" method="POST" enctype="multipart/form-data" class="flex flex-col flex-grow">
         <div class="flex flex-col md:flex-row flex-grow p-4">
             <div class="md:w-1/2 p-2">
+                <!-- Section for uploading images -->
                 <h2 class="text-xl md:text-2xl mb-4">Upload Images</h2>
                 <div class="file-input-container" id="file-input-container">
                     <span class="plus-sign">+</span>
                     <input type="file" name="images" id="images" accept="image/*" multiple onchange="previewImages(event)">
                 </div>
                 <div class="image-previews" id="image-previews">
-                    <div class="image-previews" id="image-previews">
-                        <% if (product && imageData && imageData.length > 0) { %>
-                            <% imageData.forEach(function(image) { %>
-                                <div class="image-preview" data-id="<%= image.id %>">
-                                    <img src="<%= image.src %>" alt="Uploaded Image">
-                                    <button type="button" class="remove-btn" onclick="removeExistingImage('<%= image.id %>', this)">&times;</button>
-                                    <input type="hidden" name="existingImages[]" value="<%= image.id %>">
-                                </div>
-                            <% }) %>
-                        <% } %>
-                    </div>                    
-                </div>
+                    <!-- Existing image previews -->
+                    <% if (product && imageData && imageData.length > 0) { %>
+                        <% imageData.forEach(function(image) { %>
+                            <div class="image-preview" data-id="<%= image.id %>">
+                                <img src="<%= image.src %>" alt="Uploaded Image">
+                                <button type="button" class="remove-btn" onclick="removeExistingImage('<%= image.id %>', this)">&times;</button>
+                                <input type="hidden" name="existingImages[]" value="<%= image.id %>">
+                            </div>
+                        <% }) %>
+                    <% } %>
+                </div>                    
             </div>
             <div class="md:w-1/2 p-2">
+                <!-- Category selection -->
                 <div class="form-group mb-4">
                     <label for="category" class="block text-gray-700 font-bold">Category:</label>
                     <select name="category" id="category" class="w-full border border-gray-300 rounded py-2 px-3" required>
@@ -141,6 +143,8 @@
                         <option value="Others" <%= product && product.category === 'Others' ? 'selected' : '' %>>Others</option>
                     </select>
                 </div>
+
+                <!-- Transaction type options -->
                 <div class="form-group mb-4">
                     <label class="block text-gray-700 font-bold">Transaction:</label>
                     <div class="transaction-options flex flex-wrap gap-4">
@@ -158,10 +162,14 @@
                         </label>
                     </div>
                 </div>
+
+                <!-- Product name input -->
                 <div class="form-group mb-4">
                     <label for="name" class="block text-gray-700 font-bold">Product Name:</label>
                     <input type="text" name="name" id="name" class="w-full border border-gray-300 rounded py-2 px-3" value="<%= product ? product.name : '' %>" required>
                 </div>
+
+                <!-- Product condition options -->
                 <div class="form-group mb-4">
                     <label class="block text-gray-700 font-bold">Condition:</label>
                     <div class="condition-options flex flex-wrap gap-4">
@@ -184,6 +192,8 @@
                     </div>
                     <span id="condition-error" class="text-red-600 text-sm hidden">Please pick one.</span>
                 </div>
+
+                <!-- Product price input -->
                 <div class="form-group mb-4">
                     <label for="price" class="block text-gray-700 font-bold">Price:</label>
                     <div class="relative">
@@ -192,12 +202,15 @@
                     </div>
                     <span id="price-error" class="text-red-600 text-sm hidden">Please enter a valid price.</span>
                 </div>
+
+                <!-- Product description input -->
                 <div class="form-group mb-4">
                     <label for="description" class="block text-gray-700 font-bold">Description:</label>
                     <textarea name="description" id="description" class="w-full border border-gray-300 rounded py-2 px-3" rows="4" required><%= product ? product.content_description : '' %></textarea>
                 </div>
+
                 <% if (product) { %>
-                    <!-- Show "Edit Product" button if editing -->
+                    <!-- Show "Save Changes" button if editing -->
                     <button type="submit" class="submit-button bg-[#da1212] text-white py-2 px-4 rounded">Save Changes</button>
                 <% } else { %>
                     <!-- Show "Add Product" button if creating -->
@@ -211,10 +224,12 @@
     <%- include('footer') %>
 
     <script>
+        // Get the image preview container and initialize a map to track files
         const previewContainer = document.getElementById('image-previews');
         const fileMap = new Map(); // Map to track files by their object URL
 
         document.addEventListener('DOMContentLoaded', () => {
+            // Get transaction options checkboxes and price input field
             const transactionOptions = document.querySelectorAll('.transaction-options .bubble-option input[type="checkbox"]');
             const priceInput = document.getElementById('price');
 
@@ -225,7 +240,7 @@
                 Free: { default: '#FFFFFF', selected: '#32CD32' }
             };
 
-            // Function to update colors
+            // Function to update colors of transaction options based on selection
             const updateColors = (option, isSelected) => {
                 const type = option.value;
                 const parentLabel = option.parentElement;
@@ -237,8 +252,10 @@
 
             transactionOptions.forEach(option => {
 
+                // Initialize color for existing selection
                 updateColors(option, option.checked);
 
+                // Add change event listener to update state based on user interaction
                 option.addEventListener('change', () => {
                     const selectedOptions = Array.from(transactionOptions).filter(opt => opt.checked);
                     const transactionValues = selectedOptions.map(opt => opt.value);
@@ -280,6 +297,7 @@
                 }
             });
 
+            // Handle condition options selection
             const conditionOptions = document.querySelectorAll('.condition-options .bubble-option');
             conditionOptions.forEach(option => {
                 option.addEventListener('click', () => {
@@ -291,54 +309,70 @@
         });
 
         document.addEventListener('DOMContentLoaded', () => {
-            const imagesArray = []; // Array to store the files
+            // Initialize an empty array to store selected files
+            const imagesArray = []; 
+
+            // Get references to the preview container, file input, and form elements
             const previewContainer = document.getElementById('image-previews');
             const fileInput = document.getElementById('images');
-            const form = document.querySelector('form'); // Select the form element
+            const form = document.querySelector('form');
 
+            // Function to handle image preview and limit file uploads
             function previewImages(event) {
+                // Convert FileList to an array
                 const files = Array.from(event.target.files);
 
+                // Check if adding these files would exceed the limit of 4
                 if (imagesArray.length + files.length > 4) {
                     alert('You can upload a maximum of 4 images.');
                     return;
                 }
 
+            // Process each file
             files.forEach(file => {
+                // Create a unique identifier for the file based on its name and lastModified timestamp
                 const fileIdentifier = `${file.name}-${file.lastModified}`;
+
+                // Check if the file is already in the array to avoid duplicates
                 if (!imagesArray.some(existingFile => existingFile.identifier === fileIdentifier)) {
+                    // Add the new file to the array
                     imagesArray.push({ file, identifier: fileIdentifier });
 
+                    // Create a URL for the file and create an image preview element
                     const fileURL = URL.createObjectURL(file);
                     const preview = document.createElement('div');
                     preview.classList.add('image-preview');
 
+                    // Create and configure an image preview element
                     const img = document.createElement('img');
                     img.src = fileURL;
                     preview.appendChild(img);
 
+                    // Create a remove button for the preview
                     const removeBtn = document.createElement('button');
                     removeBtn.classList.add('remove-btn');
                     removeBtn.innerHTML = '&times;';
+
+                    // Set up the button to remove the image from the preview and array
                     removeBtn.onclick = function () {
                         const index = imagesArray.findIndex(existingFile => existingFile.identifier === fileIdentifier);
                     if (index > -1) {
-                        imagesArray.splice(index, 1);
+                        imagesArray.splice(index, 1); // Remove the file from the array
                     }
-                        previewContainer.removeChild(preview);
-                        updateFileInput();
+                        previewContainer.removeChild(preview); // Remove the preview from the DOM
+                        updateFileInput(); // Update the file input element
                     };
                     
-                    preview.appendChild(removeBtn);
+                    preview.appendChild(removeBtn); // Add the remove button to the preview
 
-                    previewContainer.appendChild(preview);
+                    previewContainer.appendChild(preview); // Add the preview to the container
             }
         });
 
-            updateFileInput();
+            updateFileInput(); // Update the file input element with the current files
         }
 
-
+            // Update file input element with current file list
             function updateFileInput() {
                 const dataTransfer = new DataTransfer(); // Create a new DataTransfer object
 
@@ -367,6 +401,7 @@
             });
         });
 
+            // Function to remove an existing image
             function removeExistingImage(imageId, buttonElement) {
                 const previewElement = buttonElement.closest('.image-preview');
                 previewElement.remove(); // Remove the preview from the DOM
