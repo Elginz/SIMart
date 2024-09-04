@@ -1,5 +1,4 @@
 <!-- views/index.ejs -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -53,7 +52,7 @@
         <!-- Search bar -->
         <div class="bg-gray-200 rounded-lg shadow-lg w-full mx-auto">
             <form id="filter-form" class="flex space-x-4 justify-center py-4" action="/" method="GET">
-                <input type="text" name="name" placeholder="Product Name" class="px-4 py-2 border rounded-md shadow-lg" style="width: 50%;" value="<%= typeof name !== 'undefined' ? name : '' %>">
+                <input type="text" name="product_name" placeholder="Product Name" class="px-4 py-2 border rounded-md shadow-lg" style="width: 50%;" value="<%= typeof product_name !== 'undefined' ? product_name : '' %>">
                 <select name="transaction_type" class="px-4 py-2 border rounded-md shadow-lg">
                     <option value="" <%= !transaction_type ? 'selected' : '' %>>All</option>
                     <option value="Sell" <%= transaction_type === 'Sell' ? 'selected' : '' %>>For Sale</option>
@@ -99,7 +98,7 @@
         <!-- Categories -->
         <h1 class="text-2xl md:text-3xl leading-normal mb-4 ml-10">Categories</h1>
         <div class="flex overflow-x-auto space-x-2 p-4 justify-center">
-            <!-- category buttons  -->
+        <!-- <div class="flex overflow-x-auto space-x-4 p-4 justify-start w-full"> -->
             <button class="flex flex-col items-center p-2 bg-red-600 hover:scale-105 active:scale-95 text-white rounded-xl flex-shrink-0 w-32 sm:w-36 md:w-40 lg:w-44 xl:w-48 text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl" onclick="window.location.href='/category/fashion'">
                 <img src="https://img.icons8.com/?size=100&id=110247&format=png&color=FFFFFF" alt="Fashion Icon" class="h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 lg:h-14 lg:w-14 xl:h-16 xl:w-16 mb-1">
                 Fashion
@@ -135,49 +134,55 @@
         <h1 class="text-2xl md:text-3xl leading-normal mb-4 mt-24 ml-10">Newly Listed</h1>
         <div id="listings-section" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 px-4 py-6">
             <% if (product && product.length > 0) { %>
-             <!-- print products for each listing, print each product in order of newest to oldest  -->
-            <% product.forEach((listing) => { %>
-                <a href="/product/<%= listing.id %>" class="flex flex-col items-center hover:shadow-xl active:scale-95 p-6 border-none rounded-lg" data-transaction-type="<%= listing.transaction_type %>">
-                    <div class="w-full h-auto">
-                        <% if (images[listing.id] && images[listing.id].length > 0) { %>
-                            <% const image = images[listing.id][0]; %>
+                <% product.forEach((listing) => { %>
+                    <a href="/product/<%= listing.id %>" class="flex flex-col items-center hover:shadow-xl active:scale-95 p-6 border-none rounded-lg" data-transaction-type="<%= listing.transaction_type %>">
+                        <div class="w-full h-auto">
+                            <% if (listing.id === 1) { %> <!-- Assuming 1 is the ID for the headset listing -->
+                                <img 
+                                    src="/images/headset.jpg" 
+                                    class="w-80 h-96 object-cover rounded-lg cursor-pointer thumbnail" 
+                                    alt="Headset Image">
+                            <% } else if (listing.id === 2) { %> <!-- Assuming 2 is the ID for the game console listing -->
+                                <img 
+                                    src="/images/game-console.jpg" 
+                                    class="w-80 h-96 object-cover rounded-lg cursor-pointer thumbnail" 
+                                    alt="Game Console Image">
+                            <% } else if (images[listing.id] && images[listing.id].length > 0) { %>
+                                <% const image = images[listing.id][0]; %>
                                 <img 
                                     src="data:<%= image.image_type %>;base64,<%= image.image.toString('base64') %>" 
-                                    class="w-[100%] h-[400px] object-cover rounded-lg cursor-pointer thumbnail" 
-                                    alt="Product Image"
-                                    data-image-type="<%= image.image_type %>"
-                                    data-image-base64="<%= image.image.toString('base64') %>">
-                        <% } else { %>
-                            <!-- error handling -->
-                            <p>No image available.</p>
-                        <% } %>
-                        <p class="pt-3 pb-1 font-bold text-lg sm:text-xl md:text-2xl capitalize"><%= listing.name %></p>
-                        <p class="pb-1 text-lg sm:text-xl">$<%= listing.price %></p>
-                        <div class="flex space-x-1 my-3">
-                            <!-- renders type of transaction -->
-                            <% listing.transaction_type.split(',').forEach(function(type) { %>
-                                <%- renderTransactionType(type) %>
-                            <% }); %>
+                                    class="w-80 h-96 object-cover rounded-lg cursor-pointer thumbnail" 
+                                    alt="Product Image">
+                            <% } else { %>
+                                <img 
+                                    src="/images/default-product.jpg" 
+                                    class="w-80 h-96 object-cover rounded-lg cursor-pointer thumbnail" 
+                                    alt="Default Product Image">
+                            <% } %>
+                            <p class="pt-3 pb-1 font-bold text-lg sm:text-xl md:text-2xl capitalize"><%= listing.product_name %></p>
+                            <p class="pb-1 text-lg sm:text-xl">$<%= listing.price %></p>
+                            <div class="flex space-x-1 my-3">
+                                <% listing.transaction_type.split(',').forEach(function(type) { %>
+                                    <div class="px-4 pt-1 pb-1.5 rounded-full text-white" style="background-color: #DA1212;">
+                                        <%= type.trim() %>
+                                    </div>
+                                <% }); %>
+                            </div>
                         </div>
-                    </div>
-                </a>
-            <% }) %>
-
+                    </a>
+                <% }) %>
             <% } else { %>
                 <p class="text-center col-span-full">No listings available.</p>
             <% } %>
-        </div>
-        <br>
-
+        </div>        
         <!-- End of Listings -->
     </div>
 
     <!-- Footer -->
     <%- include('footer') %>
-    <!-- jQuery for JavaScript -->
+    
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script type="text/javascript">
-        // Javascript for logout button
         $(".logoutBtn").click(function () {
             alert("Logged out");
         });
@@ -188,10 +193,8 @@
         spaceBetween: 10,
         loop: true,
         autoplay: {
-            //delay between transitions
-            delay: 3000, 
-            //  autoplay after user interactions
-            disableOnInteraction: false, 
+            delay: 3000, // Delay between transitions in ms
+            disableOnInteraction: false, // Continue autoplay after user interactions
         },
         pagination: {
             el: '.swiper-pagination',
@@ -201,8 +204,7 @@
             nextEl: '.swiper-button-next',
             prevEl: '.swiper-button-prev',
         },
-        // Transition speed in ms
-        speed: 600,
+        speed: 600, // Transition speed in ms
     });
 
     </script>
