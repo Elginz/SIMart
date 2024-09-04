@@ -12,7 +12,10 @@
     <!-- Navigation bar -->
     <%- include('navbar') %>
 
+    <!-- Display category name -->
     <span id="category-name" class="pl-4 sm:pl-8 md:pl-16 pt-16 pb-10 font-bold text-2xl capitalize sm:text-3xl md:text-4xl lg:text-5xl"><%= category %></span>
+
+    <!-- Start of Listings -->
     <div id="category-section" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 px-4 py-6">
         <% listings.forEach((listing, index) => { %>
             <a href="/product/<%= listing.id %>" class="flex flex-col items-center hover:shadow-xl active:scale-95 p-6 border-none rounded-lg" data-transaction-type="<%= listing.transaction_type %>">
@@ -39,6 +42,7 @@
             </a>
         <% }) %>
    </div>
+   <!-- End of Listings -->
 
     <!-- Footer -->
     <%- include('footer') %>
