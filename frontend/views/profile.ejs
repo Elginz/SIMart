@@ -126,6 +126,7 @@
 
     <!-- User's profile -->
     <div class="flex flex-col md:flex-row p-6 md:p-10 w-full">
+
         <!-- Profile picture -->
         <div class="flex justify-center md:justify-center w-full md:w-[40%] py-4"> 
             <div class="profile-pic-container relative">
@@ -133,6 +134,7 @@
                 <form id="image-form" action="/profile/update-image" method="post" enctype="multipart/form-data">
                     <input type="file" name="image" id="image-input" accept="image/*" style="display: none;" onchange="document.getElementById('image-form').submit();">
                 </form>
+                <!-- Edit and save button for profile picture is visible only if user is viewing their own profile -->
                 <% if (sessionUserId === user.id) { %>
                     <div class="profile-pic-edit-icon" onclick="document.getElementById('image-input').click();">
                         <img src="https://img.icons8.com/?size=100&id=89802&format=png&color=da1212" alt="Edit Icon" id="image-edit" class="w-8 md:w-16">
@@ -150,6 +152,7 @@
                         <span id="name-display" class="capitalize"><%= user.name %></span>
                         <input type="text" id="name-input" name="name" value="<%= user.name %>" class="bg-transparent p-2 border border-gray-300 rounded focus:outline-none capitalize hidden">
                     </div>
+                    <!-- Edit and save button for name is visible only if user is viewing their own profile -->
                     <% if (sessionUserId === user.id) { %>
                         <div>
                             <img src="https://img.icons8.com/?size=100&id=89802&format=png&color=da1212" alt="Edit Icon" id="name-edit" class="mx-4 py-2 w-6 md:w-8 edit-button" onclick="toggleEdit('name')">
@@ -180,6 +183,7 @@
                                 <% }) %>
                             </select>
                         </div>
+                        <!-- Edit and save button for course name is visible only if user is viewing their own profile -->
                         <% if (sessionUserId === user.id) { %>
                             <div>
                                 <img src="https://img.icons8.com/?size=100&id=89802&format=png&color=da1212" alt="Edit Icon" id="course-edit" class="mx-4 py-2 w-8 edit-button" onclick="toggleEdit('course')">
@@ -207,6 +211,7 @@
                         <span id="description-display"><%= user.description %></span>
                         <textarea id="description-input" name="description" rows="3" cols="50" class="bg-transparent p-2 border border-gray-300 rounded focus:outline-none hidden"><%= user.description %></textarea>
                     </div>
+                    <!-- Edit and save button for description is visible only if user is viewing their own profile -->
                     <% if (sessionUserId === user.id) { %>
                         <div>
                             <img src="https://img.icons8.com/?size=100&id=89802&format=png&color=da1212" alt="Edit Icon" id="description-edit" class="mx-4 py-2 w-6 md:w-8 edit-button" onclick="toggleEdit('description')">
@@ -245,140 +250,136 @@
         <% } %>
     </div>
             
-        <!-- Listings section -->
-        <!-- Listings section -->
-<div id="listings-section" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pl-4 pr-4 pt-4">
-    <% listings.forEach((listing, index) => { %>
-        <a href="/product/<%= listing.id %>" class="flex flex-col items-center hover:shadow-xl active:scale-95 p-6 border-none rounded-lg" data-transaction-type="<%= listing.transaction_type %>">
-            <div class="w-full h-auto">
-                <% if (listing.id === 1) { %> <!-- Headset for Product ID 1 -->
-                    <img 
-                        src="/images/headset.jpg" 
-                        class="w-[100%] h-[400px] mt-8 object-cover rounded-lg cursor-pointer thumbnail" 
-                        alt="Headphones Image">
-                <% } else if (listing.id === 2) { %> <!-- Game Console for Product ID 2 -->
-                    <img 
-                        src="/images/game-console.jpg" 
-                        class="w-[100%] h-[400px] mt-8 object-cover rounded-lg cursor-pointer thumbnail" 
-                        alt="Game Console Image">
-                <% } else if (listingsImages[listing.id] && listingsImages[listing.id].length > 0) { %>
-                    <% const image = listingsImages[listing.id][0]; %>
-                    <img 
-                        src="data:<%= image.image_type %>;base64,<%= image.image.toString('base64') %>" 
-                        class="w-[100%] h-[400px] mt-8 object-cover rounded-lg cursor-pointer thumbnail" 
-                        alt="Product Image"
-                        data-image-type="<%= image.image_type %>"
-                        data-image-base64="<%= image.image.toString('base64') %>">
-                <% } else { %>
-                    <p>No image available.</p>
-                <% } %>
-                <p class="pt-3 pb-1 font-bold text-lg sm:text-xl md:text-2xl capitalize"><%= listing.name %></p>
-                <p class="pb-1 text-lg sm:text-xl">$<%= listing.price %></p>
-                <div class="flex space-x-1 my-3 text-center">
-                    <% listing.transaction_type.split(',').forEach(function(type) { %>
-                        <%- renderTransactionType(type) %>
-                    <% }); %>
-                </div>
-            </div>
-        </a>
-    <% }) %>
-</div>
-
-
-        <!-- Reviews section -->
-        <div id="reviews-section" class="flex flex-col px-4 md:px-8 lg:px-36 py-4 space-y-4">
-            <% reviews.forEach((review, index) => { %>
-                <% if (reviewers[review.id]) { %>
-                    <% const reviewer = reviewers[review.id] %>
-                    <div class="flex flex-col md:flex-row items-center md:items-start bg-[#D9D9D9] p-4 rounded-xl space-y-4 md:space-y-0 md:space-x-4">
-                        <!-- Profile Image -->
-                        <div class="flex-shrink-0 flex justify-center">
-                            <img src="<%= reviewer.image ? 'data:' + reviewer.image_type + ';base64,' + reviewer.image.toString('base64') : 'https://img.icons8.com/?size=100&id=23265&format=png&color=da1212' %>" alt="Profile Picture" class="w-20 h-20 md:w-24 md:h-24 object-cover rounded-full">
-                        </div>
-                        <!-- Review Content -->
-                        <div class="flex flex-col items-center md:items-start space-y-2">
-                            <!-- Reviewer Name -->
-                            <p class="font-bold text-lg md:text-xl capitalize text-center md:text-left"><%= reviewer.name %></p>
-                            <!-- Review Rating -->
-                            <span id="review-rating" class="flex items-center space-x-2 justify-center md:justify-start">
-                                <img src="/images/<%= review.stars_given %> star.png" alt="<%= review.stars_given %> star" class="h-5 md:h-6">
-                            </span>
-                            <!-- Review Content -->
-                            <p class="text-base md:text-lg capitalize text-center md:text-left"><%= review.content %></p>
-                        </div>
+    <!-- Listings section -->
+    <div id="listings-section" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pl-4 pr-4 pt-4">
+        <% listings.forEach((listing, index) => { %>
+            <a href="/product/<%= listing.id %>" class="flex flex-col items-center hover:shadow-xl active:scale-95 p-6 border-none rounded-lg" data-transaction-type="<%= listing.transaction_type %>">
+                <div class="w-full h-auto">
+                    <% if (listing.id === 1) { %> <!-- Headset for Product ID 1 -->
+                        <img 
+                            src="/images/headset.jpg" 
+                            class="w-[100%] h-[400px] mt-8 object-cover rounded-lg cursor-pointer thumbnail" 
+                            alt="Headphones Image">
+                    <% } else if (listing.id === 2) { %> <!-- Game Console for Product ID 2 -->
+                        <img 
+                            src="/images/game-console.jpg" 
+                            class="w-[100%] h-[400px] mt-8 object-cover rounded-lg cursor-pointer thumbnail" 
+                            alt="Game Console Image">
+                    <% } else if (listingsImages[listing.id] && listingsImages[listing.id].length > 0) { %>
+                        <% const image = listingsImages[listing.id][0]; %>
+                        <img 
+                            src="data:<%= image.image_type %>;base64,<%= image.image.toString('base64') %>" 
+                            class="w-[100%] h-[400px] mt-8 object-cover rounded-lg cursor-pointer thumbnail" 
+                            alt="Product Image"
+                            data-image-type="<%= image.image_type %>"
+                            data-image-base64="<%= image.image.toString('base64') %>">
+                    <% } else { %>
+                        <p>No image available.</p>
+                    <% } %>
+                    <p class="pt-3 pb-1 font-bold text-lg sm:text-xl md:text-2xl capitalize"><%= listing.name %></p>
+                    <p class="pb-1 text-lg sm:text-xl">$<%= listing.price %></p>
+                    <div class="flex space-x-1 my-3 text-center">
+                        <% listing.transaction_type.split(',').forEach(function(type) { %>
+                            <%- renderTransactionType(type) %>
+                        <% }); %>
                     </div>
-                <% } %>
-            <% }) %>
-        </div>
-        
-        
-
-<!-- Transactions section -->
-<div id="transactions-section" class="flex flex-col justify-center px-4 sm:px-8 md:px-12 lg:px-24 xl:px-36 py-4">
-    <% transactions.forEach((transaction, index) => { %>
-        <a href="/product/<%= transaction.id %>" data-transaction-type="<%= transaction.transaction_type %>" class="flex flex-col md:flex-row bg-[#D9D9D9] rounded-xl mb-4 p-4">
-            <div class="flex-shrink-0">
-                <% if (transactionsImages[transaction.id] && transactionsImages[transaction.id].length > 0) { %>
-                    <% const image = transactionsImages[transaction.id][0]; %>
-                    <img 
-                        src="data:<%= image.image_type %>;base64,<%= image.image.toString('base64') %>" 
-                        class="w-20 h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 object-cover rounded-lg" 
-                        alt="Product Image"
-                        data-image-type="<%= image.image_type %>"
-                        data-image-base64="<%= image.image.toString('base64') %>">
-                <% } %>
-            </div>
-            <div class="flex flex-col px-4 space-y-2 flex-grow">
-                <p class="font-bold text-lg md:text-xl lg:text-2xl"><%= transaction.name %></p>
-                <div class="flex space-x-1">
-                    <% transaction.transaction_type.split(',').forEach(function(type) { %>
-                        <%- renderTransactionType(type) %>
-                    <% }); %>
                 </div>
-            </div>
-            <div class="flex items-center justify-end flex-shrink-0">
-                <p class="font-bold text-lg md:text-xl lg:text-2xl capitalize"><%= transaction.offer_status %></p>
-            </div>
-        </a>
-    <% }) %>
-</div>
-
-        <!-- Favourites section -->
-        <div id="favourites-section" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-4 hidden">
-            <% favourites.forEach((favourite, index) => { %>
-                <a href="/product/<%= favourite.id %>" class="flex flex-col items-center hover:shadow-xl active:scale-95 p-6 border-none rounded-lg" data-transaction-type="<%= favourite.transaction_type %>">
-                    <div class="w-full h-auto">
-                        <% if (favouritesImages[favourite.id] && favouritesImages[favourite.id].length > 0) { %>
-                            <% const image = favouritesImages[favourite.id][0]; %>
-                                <img 
-                                    src="data:<%= image.image_type %>;base64,<%= image.image.toString('base64') %>" 
-                                    class="w-[100%] h-[400px] mt-8 object-cover rounded-lg cursor-pointer thumbnail" 
-                                    alt="Product Image"
-                                    data-image-type="<%= image.image_type %>"
-                                    data-image-base64="<%= image.image.toString('base64') %>">
-                        <% } else { %>
-                            <p>No image available.</p>
-                        <% } %>
-                        <p class="pt-3 pb-1 font-bold text-lg sm:text-xl md:text-2xl capitalize"><%= favourite.name %></p>
-                        <p class="pb-1 text-lg sm:text-xl">$<%= favourite.price %></p>
-                        <div class="flex space-x-1 my-3 text-center">
-                            <% favourite.transaction_type.split(',').forEach(function(type) { %>
-                                <%- renderTransactionType(type) %>
-                            <% }); %>
-                        </div>
-                    </div>
-                </a>
-            <% }) %>
-        </div>
+            </a>
+        <% }) %>
     </div>
+    
+    <!-- Reviews section -->
+    <div id="reviews-section" class="flex flex-col px-4 md:px-8 lg:px-36 py-4 space-y-4">
+        <% reviews.forEach((review, index) => { %>
+            <% if (reviewers[review.id]) { %>
+                <% const reviewer = reviewers[review.id] %>
+                <div class="flex flex-col md:flex-row items-center md:items-start bg-[#D9D9D9] p-4 rounded-xl space-y-4 md:space-y-0 md:space-x-4">
+                    <!-- Profile Image -->
+                    <div class="flex-shrink-0 flex justify-center">
+                        <img src="<%= reviewer.image ? 'data:' + reviewer.image_type + ';base64,' + reviewer.image.toString('base64') : 'https://img.icons8.com/?size=100&id=23265&format=png&color=da1212' %>" alt="Profile Picture" class="w-20 h-20 md:w-24 md:h-24 object-cover rounded-full">
+                    </div>
+                    <div class="flex flex-col items-center md:items-start space-y-2">
+                        <!-- Reviewer Name -->
+                        <p class="font-bold text-lg md:text-xl capitalize text-center md:text-left"><%= reviewer.name %></p>
+                        <!-- Review Rating -->
+                        <span id="review-rating" class="flex items-center space-x-2 justify-center md:justify-start">
+                            <img src="/images/<%= review.stars_given %> star.png" alt="<%= review.stars_given %> star" class="h-5 md:h-6">
+                        </span>
+                        <!-- Review Content -->
+                        <p class="text-base md:text-lg capitalize text-center md:text-left"><%= review.content %></p>
+                    </div>
+                </div>
+            <% } %>
+        <% }) %>
+    </div>
+    
+    <!-- Transactions section -->
+    <div id="transactions-section" class="flex flex-col justify-center px-4 sm:px-8 md:px-12 lg:px-24 xl:px-36 py-4">
+        <% transactions.forEach((transaction, index) => { %>
+            <a href="/product/<%= transaction.id %>" data-transaction-type="<%= transaction.transaction_type %>" class="flex flex-col md:flex-row bg-[#D9D9D9] rounded-xl mb-4 p-4">
+                <div class="flex-shrink-0">
+                    <% if (transactionsImages[transaction.id] && transactionsImages[transaction.id].length > 0) { %>
+                        <% const image = transactionsImages[transaction.id][0]; %>
+                        <img 
+                            src="data:<%= image.image_type %>;base64,<%= image.image.toString('base64') %>" 
+                            class="w-20 h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 object-cover rounded-lg" 
+                            alt="Product Image"
+                            data-image-type="<%= image.image_type %>"
+                            data-image-base64="<%= image.image.toString('base64') %>">
+                    <% } %>
+                </div>
+                <div class="flex flex-col px-4 space-y-2 flex-grow">
+                    <p class="font-bold text-lg md:text-xl lg:text-2xl"><%= transaction.name %></p>
+                    <div class="flex space-x-1">
+                        <% transaction.transaction_type.split(',').forEach(function(type) { %>
+                            <%- renderTransactionType(type) %>
+                        <% }); %>
+                    </div>
+                </div>
+                <div class="flex items-center justify-end flex-shrink-0">
+                    <p class="font-bold text-lg md:text-xl lg:text-2xl capitalize"><%= transaction.offer_status %></p>
+                </div>
+            </a>
+        <% }) %>
+    </div>
+    
+    <!-- Favourites section -->
+    <div id="favourites-section" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-4 hidden">
+        <% favourites.forEach((favourite, index) => { %>
+            <a href="/product/<%= favourite.id %>" class="flex flex-col items-center hover:shadow-xl active:scale-95 p-6 border-none rounded-lg" data-transaction-type="<%= favourite.transaction_type %>">
+                <div class="w-full h-auto">
+                    <% if (favouritesImages[favourite.id] && favouritesImages[favourite.id].length > 0) { %>
+                        <% const image = favouritesImages[favourite.id][0]; %>
+                            <img 
+                                src="data:<%= image.image_type %>;base64,<%= image.image.toString('base64') %>" 
+                                class="w-[100%] h-[400px] mt-8 object-cover rounded-lg cursor-pointer thumbnail" 
+                                alt="Product Image"
+                                data-image-type="<%= image.image_type %>"
+                                data-image-base64="<%= image.image.toString('base64') %>">
+                    <% } else { %>
+                        <p>No image available.</p>
+                    <% } %>
+                    <p class="pt-3 pb-1 font-bold text-lg sm:text-xl md:text-2xl capitalize"><%= favourite.name %></p>
+                    <p class="pb-1 text-lg sm:text-xl">$<%= favourite.price %></p>
+                    <div class="flex space-x-1 my-3 text-center">
+                        <% favourite.transaction_type.split(',').forEach(function(type) { %>
+                            <%- renderTransactionType(type) %>
+                        <% }); %>
+                    </div>
+                </div>
+            </a>
+        <% }) %>
+    </div>
+</div>
 
-    <!-- Footer -->
-    <%- include('footer') %>
+<!-- Footer -->
+<%- include('footer') %>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
 
+    // Handle logout button click
     $(".logoutBtn").click(function () {
         alert("Logged Out");
     });
@@ -390,7 +391,7 @@
         switchSection(section);
     });
 
-    // switch section
+    // Switch between different sections
     function switchSection(id) {
         const elements = document.querySelectorAll('.cursor-pointer');
         elements.forEach(el => {
@@ -398,10 +399,12 @@
             el.classList.add('text-black');
         });
 
+        // Highlight the selected section
         const selectedElement = document.getElementById(id);
         selectedElement.classList.remove('text-black');
         selectedElement.classList.add('red', 'underline');
 
+        // Hide all sections
         const sections = {
             listings: "listings-section",
             reviews: "reviews-section",
@@ -413,6 +416,7 @@
             document.getElementById(sections[section]).classList.add('hidden');
         }
 
+        // Show the selected section
         switch(id) {
             case 'listings':
                 document.getElementById(sections.listings).classList.remove('hidden');
@@ -429,14 +433,17 @@
         }
     }
 
-    // To edit user's information
+    // Toggle between display and edit mode for user information
     function toggleEdit(field) {
         const displayElement = document.getElementById(`${field}-display`);
         const inputElement = document.getElementById(`${field}-input`);
         const editIcon = document.getElementById(`${field}-edit`);
         const saveButton = document.getElementById(`${field}-save`);
+
+        // Hide all edit icons
         document.querySelectorAll('.edit-button').forEach(icon => icon.classList.add('hidden'));
-        
+
+        // Toggle between display and edit modes
         if (displayElement.classList.contains('hidden')) {
             displayElement.classList.remove('hidden');
             inputElement.classList.add('hidden');
