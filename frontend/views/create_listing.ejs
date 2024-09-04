@@ -125,6 +125,7 @@
 
     <form action="<%= product ? '/product/edit/' + product.id : '/product/new' %>" method="POST" enctype="multipart/form-data" class="flex flex-col flex-grow">
         <div class="flex flex-col md:flex-row flex-grow p-4">
+            <!-- Image upload section -->
             <div class="md:w-1/2 p-2">
                 <h2 class="text-xl md:text-2xl mb-4">Upload Images</h2>
                 <div class="file-input-container" id="file-input-container">
@@ -145,7 +146,10 @@
                     </div>                    
                 </div>
             </div>
+
+            <!-- Product details section -->
             <div class="md:w-1/2 p-2">
+                <!-- Category selection -->
                 <div class="form-group mb-4">
                     <label for="category" class="block text-gray-700 font-bold">Category:</label>
                     <select name="category" id="category" class="w-full border border-gray-300 rounded py-2 px-3" required>
@@ -158,6 +162,8 @@
                         <option value="Others" <%= product && product.category === 'Others' ? 'selected' : '' %>>Others</option>
                     </select>
                 </div>
+
+                <!-- Transaction type selection -->
                 <div class="form-group mb-4">
                     <label class="block text-gray-700 font-bold">Transaction:</label>
                     <div class="transaction-options flex flex-wrap gap-4">
@@ -175,10 +181,14 @@
                         </label>
                     </div>
                 </div>
+
+                <!-- Product name input -->
                 <div class="form-group mb-4">
                     <label for="name" class="block text-gray-700 font-bold">Product Name:</label>
                     <input type="text" name="name" id="name" class="w-full border border-gray-300 rounded py-2 px-3" value="<%= product ? product.name : '' %>" required>
                 </div>
+
+                <!-- Condition selection -->
                 <div class="form-group mb-4">
                     <label class="block text-gray-700 font-bold">Condition:</label>
                     <div class="condition-options flex flex-wrap gap-4">
@@ -201,6 +211,8 @@
                     </div>
                     <span id="condition-error" class="text-red-600 text-sm hidden">Please pick one.</span>
                 </div>
+
+                <!-- Price input -->
                 <div class="form-group mb-4">
                     <label for="price" class="block text-gray-700 font-bold">Price:</label>
                     <div class="relative">
@@ -209,12 +221,14 @@
                     </div>
                     <span id="price-error" class="text-red-600 text-sm hidden">Please enter a valid price.</span>
                 </div>
+
+                <!-- Description input -->
                 <div class="form-group mb-4">
                     <label for="description" class="block text-gray-700 font-bold">Description:</label>
                     <textarea name="description" id="description" class="w-full border border-gray-300 rounded py-2 px-3" rows="4" required><%= product ? product.content_description : '' %></textarea>
                 </div>
                 <% if (product) { %>
-                    <!-- Show "Edit Product" button if editing -->
+                    <!-- Show "Save Changes" button if editing -->
                     <button type="submit" class="submit-button bg-[#da1212] text-white py-2 px-4 rounded">Save Changes</button>
                 <% } else { %>
                     <!-- Show "Add Product" button if creating -->
