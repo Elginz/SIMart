@@ -242,6 +242,7 @@
     <%- include('footer') %>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // Get form elements
             const transactionOptions = document.querySelectorAll('.transaction-options .bubble-option input[type="checkbox"]');
             const priceInput = document.getElementById('price');
             const form = document.querySelector('form');
@@ -255,7 +256,7 @@
                 Free: { default: '#FFFFFF', selected: '#32CD32' }
             };
     
-            // Function to update colors
+             // Update colors based on selection
             const updateColors = (option, isSelected) => {
                 const type = option.value;
                 const parentLabel = option.parentElement;
@@ -328,7 +329,8 @@
                     priceError.classList.add('hidden');
                 }
             });
-    
+
+            // Handle condition selection
             const conditionOptions = document.querySelectorAll('.condition-options .bubble-option');
             conditionOptions.forEach(option => {
                 option.addEventListener('click', () => {
@@ -344,48 +346,67 @@
             const previewContainer = document.getElementById('image-previews');
             const fileInput = document.getElementById('images');
             const form = document.querySelector('form'); // Select the form element
-    
+
+            // Function to handle image previews
             function previewImages(event) {
+                // Convert FileList to an array
                 const files = Array.from(event.target.files);
-    
+
+                // Check if adding the new files exceeds the limit of 4 images
                 if (imagesArray.length + files.length > 4) {
                     alert('You can upload a maximum of 4 images.');
                     return;
                 }
-    
+
+                // Process each selected file
                 files.forEach(file => {
+                    // Create a unique identifier for each file
                     const fileIdentifier = `${file.name}-${file.lastModified}`;
+
+                    // Check if the file is already in the imagesArray
                     if (!imagesArray.some(existingFile => existingFile.identifier === fileIdentifier)) {
+                        // Add new file to the imagesArray
                         imagesArray.push({ file, identifier: fileIdentifier });
-    
+
+                        // Create a URL for the file
                         const fileURL = URL.createObjectURL(file);
+                        // Create a container for the image preview
                         const preview = document.createElement('div');
                         preview.classList.add('image-preview');
-    
+
+                        // Create and add an img element to the preview
                         const img = document.createElement('img');
                         img.src = fileURL;
                         preview.appendChild(img);
-    
+
+                        // Create and add a remove button to the preview
                         const removeBtn = document.createElement('button');
                         removeBtn.classList.add('remove-btn');
                         removeBtn.innerHTML = '&times;';
                         removeBtn.onclick = function () {
+                            // Remove the file from imagesArray
                             const index = imagesArray.findIndex(existingFile => existingFile.identifier === fileIdentifier);
                             if (index > -1) {
                                 imagesArray.splice(index, 1);
                             }
+                            // Remove the preview element from the DOM
                             previewContainer.removeChild(preview);
+
+                            // Update the file input element with the remaining files
                             updateFileInput();
                         };
-    
+
+                        // Add the picture and remove button to the container
                         preview.appendChild(removeBtn);
                         previewContainer.appendChild(preview);
                     }
                 });
-    
+
+                // Update the file input with the current files
                 updateFileInput();
             }
-    
+
+            // Function to update file input
             function updateFileInput() {
                 const dataTransfer = new DataTransfer(); // Create a new DataTransfer object
     
@@ -413,7 +434,8 @@
                 form.submit();
             });
         });
-    
+
+        // Function to remove existing images
         function removeExistingImage(imageId, buttonElement) {
             const previewElement = buttonElement.closest('.image-preview');
             previewElement.remove(); // Remove the preview from the DOM
