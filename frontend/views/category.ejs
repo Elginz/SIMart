@@ -20,14 +20,24 @@
         <% listings.forEach((listing, index) => { %>
             <a href="/product/<%= listing.id %>" class="flex flex-col items-center hover:shadow-xl active:scale-95 p-6 border-none rounded-lg" data-transaction-type="<%= listing.transaction_type %>">
                 <div class="w-full h-auto">
-                    <% if (listingsImages[listing.id] && listingsImages[listing.id].length > 0) { %>
+                    <% if (listing.id === 1) { %>
+                        <img 
+                            src="/images/headset.jpg" 
+                            class="w-[100%] h-[400px] mt-8 object-cover rounded-lg cursor-pointer thumbnail" 
+                            alt="Headphone Image">
+                    <% } else if (listing.id === 2) { %>
+                        <img 
+                            src="/images/game-console.jpg" 
+                            class="w-[100%] h-[400px] mt-8 object-cover rounded-lg cursor-pointer thumbnail" 
+                            alt="Game Console Image">
+                    <% } else if (listingsImages[listing.id] && listingsImages[listing.id].length > 0) { %>
                         <% const image = listingsImages[listing.id][0]; %>
-                            <img 
-                                src="data:<%= image.image_type %>;base64,<%= image.image.toString('base64') %>" 
-                                class="w-[100%] h-[400px] mt-8 object-cover rounded-lg cursor-pointer thumbnail" 
-                                alt="Product Image"
-                                data-image-type="<%= image.image_type %>"
-                                data-image-base64="<%= image.image.toString('base64') %>">
+                        <img 
+                            src="data:<%= image.image_type %>;base64,<%= image.image.toString('base64') %>" 
+                            class="w-[100%] h-[400px] mt-8 object-cover rounded-lg cursor-pointer thumbnail" 
+                            alt="Product Image"
+                            data-image-type="<%= image.image_type %>"
+                            data-image-base64="<%= image.image.toString('base64') %>">
                     <% } else { %>
                         <p>No image available.</p>
                     <% } %>
@@ -41,7 +51,7 @@
                 </div>
             </a>
         <% }) %>
-   </div>
+    </div>    
    <!-- End of Listings -->
 
     <!-- Footer -->
