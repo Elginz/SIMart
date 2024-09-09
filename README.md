@@ -16,7 +16,7 @@
   - npm i (Install the node package modules)
   - npm i express-session (Install express sessions)
   - npm run build-db (Build the database)
-  - npm run (To run the program)
+  - npm run start (To run the program)
     
 **Issues (potential)**
 - You may notice an error in building the code. Most of the error comes from the db. Run the following command in the terminal to view sql db issue. It manually executes schema file
