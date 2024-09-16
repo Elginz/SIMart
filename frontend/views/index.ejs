@@ -164,9 +164,7 @@
                             <p class="pb-1 text-lg sm:text-xl">$<%= listing.price %></p>
                             <div class="flex space-x-1 my-3">
                                 <% listing.transaction_type.split(',').forEach(function(type) { %>
-                                    <div class="px-4 pt-1 pb-1.5 rounded-full text-white" style="background-color: #DA1212;">
-                                        <%= type.trim() %>
-                                    </div>
+                                    <%- renderTransactionType(type) %>
                                 <% }); %>
                             </div>
                         </div>
