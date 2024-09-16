@@ -225,7 +225,7 @@
                 <!-- Description input -->
                 <div class="form-group mb-4">
                     <label for="description" class="block text-gray-700 font-bold">Description:</label>
-                    <textarea name="description" id="description" class="w-full border border-gray-300 rounded py-2 px-3" rows="4" required><%= product ? product.content_description : '' %></textarea>
+                    <textarea name="description" id="description" class="w-full border border-gray-300 rounded py-2 px-3" rows="4" required><%= product ? product.description : '' %></textarea>
                 </div>
                 <% if (product) { %>
                     <!-- Show "Save Changes" button if editing -->
