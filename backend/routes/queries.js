@@ -196,6 +196,15 @@ const deleteProduct = (id) => {
     });
 };
 
+// Function to delete a product image from the database
+const deleteProductImage = (id) => {
+    return new Promise((resolve, reject) => {
+        // Delete a product record from the database using its ID
+        const query = "DELETE FROM product_images WHERE id = ?";
+        db.run(query, [id], err => err ? reject(err) : resolve());
+    });
+};
+
 // Function to update the offer status of a product
 const updateOfferMadeBy = (productId, userId) => {
     return new Promise((resolve, reject) => {
@@ -293,6 +302,7 @@ module.exports = {
     insertProductImage,
     updateProduct,
     deleteProduct,
+    deleteProductImage,
     updateOfferMadeBy,
     updateOfferStatus,
     insertReview,
