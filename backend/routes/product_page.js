@@ -16,6 +16,7 @@ const {
     insertProductImage,
     updateProduct,
     deleteProduct,
+    deleteProductImage,
     updateOfferMadeBy,
     updateOfferStatus,
     insertReview,
