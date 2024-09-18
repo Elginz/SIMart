@@ -133,17 +133,15 @@
                     <input type="file" name="images" id="images" accept="image/*" multiple onchange="previewImages(event)">
                 </div>
                 <div class="image-previews" id="image-previews">
-                    <div class="image-previews" id="image-previews">
-                        <% if (product && imageData && imageData.length > 0) { %>
-                            <% imageData.forEach(function(image) { %>
-                                <div class="image-preview" data-id="<%= image.id %>">
-                                    <img src="<%= image.src %>" alt="Uploaded Image">
-                                    <button type="button" class="remove-btn" onclick="removeExistingImage('<%= image.id %>', this)">&times;</button>
-                                    <input type="hidden" name="existingImages[]" value="<%= image.id %>">
-                                </div>
-                            <% }) %>
-                        <% } %>
-                    </div>                    
+                    <% if (product && imageData && imageData.length > 0) { %>
+                        <% imageData.forEach(function(image) { %>
+                            <div class="image-preview" data-id="<%= image.id %>" class="pt-15">
+                                <img src="<%= image.src %>" alt="Uploaded Image">
+                                <button type="button" class="remove-btn pb-5" onclick="removeExistingImage('<%= image.id %>', this)">&times;</button>
+                                <input type="hidden" name="existingImages[]" value="<%= image.id %>">
+                            </div>
+                        <% }) %>
+                    <% } %>
                 </div>
             </div>
 
@@ -180,6 +178,7 @@
                             For Free
                         </label>
                     </div>
+                    <span id="transaction-error" class="text-red-600 text-sm hidden">Please select at least one transaction type.</span>
                 </div>
 
                 <!-- Product name input -->
@@ -193,7 +192,7 @@
                     <label class="block text-gray-700 font-bold">Condition:</label>
                     <div class="condition-options flex flex-wrap gap-4">
                         <label class="bubble-option <%= product && product.condition === 'Brand new' ? 'selected' : '' %>">
-                            <input type="radio" id="brand_new" name="condition" value="Brand new" <%= product && product.condition === 'Brand new' ? 'checked' : '' %> required>
+                            <input type="radio" id="brand_new" name="condition" value="Brand new" <%= product && product.condition === 'Brand new' ? 'checked' : '' %>>
                             Brand New
                         </label>
                         <label class="bubble-option <%= product && product.condition === 'Lightly used' ? 'selected' : '' %>">
@@ -244,6 +243,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             // Get form elements
             const transactionOptions = document.querySelectorAll('.transaction-options .bubble-option input[type="checkbox"]');
+            const conditionOptions = document.querySelectorAll('.condition-options .bubble-option input[type="radio"]');
             const priceInput = document.getElementById('price');
             const form = document.querySelector('form');
             const conditionError = document.getElementById('condition-error');
@@ -299,15 +299,41 @@
                     });
                 });
             });
+
+            // Handle condition selection
+            const selectCondition = document.querySelectorAll('.condition-options .bubble-option');
+            selectCondition.forEach(option => {
+                option.addEventListener('click', () => {
+                    selectCondition.forEach(opt => opt.classList.remove('selected'));
+                    option.classList.add('selected');
+                    option.querySelector('input[type="radio"]').checked = true;
+                });
+            });
     
             // Validate form function
             function validateForm() {
+                // Transaction type validation
                 const selectedTransactionOptions = Array.from(transactionOptions).some(opt => opt.checked);
+                const transactionError = document.getElementById('transaction-error');
+
                 if (!selectedTransactionOptions) {
-                    alert('Please select at least one transaction type.');
-                    return false; // Prevent form submission
+                    transactionError.classList.remove('hidden');
+                } else {
+                    transactionError.classList.add('hidden');
                 }
-                return true; // Allow form submission
+
+                // Condition selection validation
+                const selectedConditionOptions = Array.from(conditionOptions).some(opt => opt.checked);
+                const conditionError = document.getElementById('condition-error');
+
+                if (!selectedConditionOptions) {
+                    conditionError.classList.remove('hidden');
+                } else {
+                    conditionError.classList.add('hidden');
+                }
+
+                // Prevent form submission if either validation fails
+                return selectedTransactionOptions && selectedConditionOptions;
             }
     
             // Handle form submission
@@ -330,22 +356,10 @@
                 }
             });
 
-            // Handle condition selection
-            const conditionOptions = document.querySelectorAll('.condition-options .bubble-option');
-            conditionOptions.forEach(option => {
-                option.addEventListener('click', () => {
-                    conditionOptions.forEach(opt => opt.classList.remove('selected'));
-                    option.classList.add('selected');
-                    option.querySelector('input[type="radio"]').checked = true;
-                });
-            });
-        });
-    
-        document.addEventListener('DOMContentLoaded', () => {
+            // Handle images
             const imagesArray = []; // Array to store the files
             const previewContainer = document.getElementById('image-previews');
             const fileInput = document.getElementById('images');
-            const form = document.querySelector('form'); // Select the form element
 
             // Function to handle image previews
             function previewImages(event) {
@@ -421,18 +435,6 @@
     
             // Attach the event listener to the file input
             fileInput.addEventListener('change', previewImages);
-    
-            // Handle form submission
-            form.addEventListener('submit', (event) => {
-                // Prevent default submission to ensure all files are included
-                event.preventDefault();
-    
-                // Ensure the files are set properly in the input element
-                updateFileInput();
-    
-                // Now submit the form
-                form.submit();
-            });
         });
 
         // Function to remove existing images
