@@ -197,10 +197,10 @@
             <!-- User's email address -->
             <!-- visible only if the user is not viewing their own profile -->
             <% if (sessionUserId !== user.id) { %>
-                <div class = "flex justify-center">
-                <a href="mailto:<%= user.email %>" class="flex items-center ml-[5%]">
-                    <img src="https://img.icons8.com/?size=100&id=2848&format=png&color=da1212" alt="Email Icon" class="w-8 h-8">
-                </a>
+                <div class = "flex">
+                    <a href="mailto:<%= user.email %>" class="flex items-center ml-[5%]">
+                        <img src="https://img.icons8.com/?size=100&id=2848&format=png&color=da1212" alt="Email Icon" class="w-8 h-8">
+                    </a>
                 </div>
             <% } %>
 
