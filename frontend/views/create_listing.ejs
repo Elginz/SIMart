@@ -141,11 +141,11 @@
                                 <input type="hidden" name="existingImages[]" value="<%= image.id %>">
                             </div>
                         <% }) %>
-                   <% } else if (product.id === 1) { %> <!-- For the headset listing -->
+                   <% } else if (product && product.id === 1) { %> <!-- For the headset listing -->
                         <div class="image-preview" class="pt-15">
                             <img src="/images/headset.jpg" alt="Uploaded Image">
                         </div>
-                    <% } else if (product.id === 2) { %> <!-- For the game console listing -->
+                    <% } else if (product && product.id === 2) { %> <!-- For the game console listing -->
                         <div class="image-preview" class="pt-15">
                             <img src="/images/game-console.jpg" alt="Uploaded Image">
                         </div>
