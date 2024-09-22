@@ -42,4 +42,6 @@
 - It may take up to 1 minute to load the website.
 
 
+<h1 align="center"> Demo Video for reference: <a href="https://drive.google.com/file/d/1T8clmBOWnLLcRw6_3YfdbfHe7PjVF7ig/view">SMart Demo Video</a> </h1>
+
 
