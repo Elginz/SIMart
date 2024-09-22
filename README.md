@@ -19,10 +19,11 @@
   - npm run start (To run the program)
  
 - Log in using any of these accounts
-  - email: matthew@mail.com
-    password: 123
-  - email: sean@mail.com
-    password: 123
+  - email: seanTest@mymail.sim.edu.sg
+    password: P@ssword1
+  - email: matthewTest@mymail.sim.edu.sg
+    password: P@ssword2
+
     
 **Issues (potential)**
 - You may notice an error in building the code. Most of the error comes from the db. Run the following command in the terminal to view sql db issue. It manually executes schema file
