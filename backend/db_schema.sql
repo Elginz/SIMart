@@ -243,21 +243,21 @@ VALUES
 -- default listings
 INSERT OR IGNORE INTO product (user_id, name, description, price, category, transaction_type, condition, created_at, availability) 
 VALUES 
-((SELECT id FROM users WHERE email = 'sean@mail.com'), 'Headphones', 'Used once over my headscarf, so dont have to worry about hygine. Figured i didnt need it actualy hence selling comes with original full box and its accessories warranty not activated, Model is on photo, so you can google its functions on your end. Bought at $149, my loss your gain', 120, 'Electronics', 'Sell', 'Lightly used', '2021-11-11 11:11:11', true),
-((SELECT id FROM users WHERE email = 'matthew@mail.com'), 'Game console', 'Used once over my headscarf, so dont have to worry about hygine. Figured i didnt need it actualy hence selling comes with original full box and its accessories warranty not activated, Model is on photo, so you can google its functions on your end. Bought at $149, my loss your gain', 270, 'Electronics', 'Sell, Trade', 'Lightly used', '2021-11-11 11:11:11', true);
+((SELECT id FROM users WHERE email = 'seanTest@mymail.sim.edu.sg'), 'Headphones', 'Used once over my headscarf, so dont have to worry about hygine. Figured i didnt need it actualy hence selling comes with original full box and its accessories warranty not activated, Model is on photo, so you can google its functions on your end. Bought at $149, my loss your gain', 120, 'Electronics', 'Sell', 'Lightly used', '2021-11-11 11:11:11', true),
+((SELECT id FROM users WHERE email = 'matthewTest@mymail.sim.edu.sg'), 'Game console', 'Used once over my headscarf, so dont have to worry about hygine. Figured i didnt need it actualy hence selling comes with original full box and its accessories warranty not activated, Model is on photo, so you can google its functions on your end. Bought at $149, my loss your gain', 270, 'Electronics', 'Sell, Trade', 'Lightly used', '2021-11-11 11:11:11', true);
 
 -- default reviews
 INSERT OR IGNORE INTO reviews (user_id, reviewer_id, content, created_at, stars_given) 
 VALUES 
-((SELECT id FROM users WHERE email = 'sean@mail.com'), 3, 'Great transaction! Met up at school as agreed, and the item was exactly as described. The seller was punctual and friendly. Would definitely deal with them again. Thanks!', '2021-11-11 11:11:11', 4),
-((SELECT id FROM users WHERE email = 'sean@mail.com'), 4, 'The transaction went smoothly. The item was in decent condition, though it showed a bit more wear than expected. Communication could have been better.', '2021-11-11 11:11:11', 3),
-((SELECT id FROM users WHERE email = 'sean@mail.com'), 5, 'Excellent transaction! The buyer was prompt, friendly, and easy to coordinate with. We met at school for the exchange, and everything went smoothly.', '2021-11-11 11:11:11', 5),
-((SELECT id FROM users WHERE email = 'sean@mail.com'), 6, 'Smooth transaction at school! User was punctual and item was as described. Great communication, easy meetup.', '2021-11-11 11:11:11', 4);
+((SELECT id FROM users WHERE email = 'seanTest@mymail.sim.edu.sg'), 3, 'Great transaction! Met up at school as agreed, and the item was exactly as described. The seller was punctual and friendly. Would definitely deal with them again. Thanks!', '2021-11-11 11:11:11', 4),
+((SELECT id FROM users WHERE email = 'seanTest@mymail.sim.edu.sg'), 4, 'The transaction went smoothly. The item was in decent condition, though it showed a bit more wear than expected. Communication could have been better.', '2021-11-11 11:11:11', 3),
+((SELECT id FROM users WHERE email = 'seanTest@mymail.sim.edu.sg'), 5, 'Excellent transaction! The buyer was prompt, friendly, and easy to coordinate with. We met at school for the exchange, and everything went smoothly.', '2021-11-11 11:11:11', 5),
+((SELECT id FROM users WHERE email = 'seanTest@mymail.sim.edu.sg'), 6, 'Smooth transaction at school! User was punctual and item was as described. Great communication, easy meetup.', '2021-11-11 11:11:11', 4);
 
 -- default favourites
 INSERT OR IGNORE INTO favourites (user_id, product_id, photo) 
 VALUES 
-((SELECT id FROM users WHERE email = 'sean@mail.com'), (SELECT id FROM product WHERE user_id = (SELECT id FROM users WHERE email = 'matthew@mail.com')), '');
+((SELECT id FROM users WHERE email = 'seanTest@mymail.sim.edu.sg'), (SELECT id FROM product WHERE user_id = (SELECT id FROM users WHERE email = 'matthewTest@mymail.sim.edu.sg')), '');
 
 
 
